@@ -22,8 +22,8 @@
     --green: #15803d;
     --green-bg: #dcfce7;
     --red: #b91c1c;
-    --shadow: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-hover: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.10);
     --radius: 12px;
     --transition: 0.2s ease;
     --nav-height: 56px;
@@ -66,15 +66,14 @@ button, input, select {
     min-height: 100vh;
 }
 
-/* Top Bar */
 .top-bar {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(255,255,255,0.96);
+    background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--gray-200);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     height: var(--nav-height);
     display: flex;
     align-items: center;
@@ -119,7 +118,7 @@ button, input, select {
 .top-bar .search-box:focus-within {
     background: var(--white);
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(245,200,66,0.15);
+    box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.15);
 }
 .top-bar .search-box input {
     border: none;
@@ -212,7 +211,7 @@ button, input, select {
     background: var(--gold-light);
     padding: 2px 10px;
     border-radius: 30px;
-    border: 1px solid rgba(245,200,66,0.3);
+    border: 1px solid rgba(245, 200, 66, 0.3);
     white-space: nowrap;
     max-width: 200px;
     overflow: hidden;
@@ -274,7 +273,6 @@ button, input, select {
     width: 100%;
 }
 
-/* Left Sidebar */
 .left-sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;
@@ -288,7 +286,7 @@ button, input, select {
     box-shadow: var(--shadow);
     padding: 10px 0;
     border: 1px solid var(--gray-200);
-    display: none; /* hidden on mobile, shown on desktop via media query */
+    display: none;
 }
 .left-sidebar::-webkit-scrollbar {
     width: 4px;
@@ -372,7 +370,6 @@ button, input, select {
     border-radius: 12px;
 }
 
-/* Main Content */
 .main-content {
     flex: 1;
     min-width: 0;
@@ -420,7 +417,6 @@ button, input, select {
     margin: 0;
 }
 
-/* Right Sidebar */
 .right-sidebar {
     width: var(--right-sidebar-width);
     flex-shrink: 0;
@@ -429,7 +425,7 @@ button, input, select {
     height: fit-content;
     max-height: calc(100vh - var(--nav-height) - 32px);
     overflow-y: auto;
-    display: none; /* hidden on mobile */
+    display: none;
     flex-direction: column;
     gap: 12px;
 }
@@ -526,9 +522,6 @@ button, input, select {
     color: var(--gray-900);
 }
 
-/* =========================================================
-   STUDY FIELD TABS
-   ========================================================= */
 .study-field-tabs-wrapper {
     position: relative;
     overflow: hidden;
@@ -597,9 +590,6 @@ button, input, select {
     right: 4px;
 }
 
-/* =========================================================
-   FLOATING HOME BUTTON
-   ========================================================= */
 .floating-home-btn {
     position: fixed;
     bottom: 20px;
@@ -612,7 +602,7 @@ button, input, select {
     width: 48px;
     height: 48px;
     font-size: 1.2rem;
-    box-shadow: 0 4px 20px rgba(245,200,66,0.35);
+    box-shadow: 0 4px 20px rgba(245, 200, 66, 0.35);
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -630,12 +620,9 @@ button, input, select {
 .floating-home-btn:hover {
     background: var(--gold-dark);
     transform: scale(1.08);
-    box-shadow: 0 8px 30px rgba(245,200,66,0.45);
+    box-shadow: 0 8px 30px rgba(245, 200, 66, 0.45);
 }
 
-/* =========================================================
-   UNIVERSITY CARDS
-   ========================================================= */
 .institution-card {
     background: var(--white);
     border: 1px solid var(--gray-200);
@@ -697,9 +684,6 @@ button, input, select {
     font-size: 0.85rem;
 }
 
-/* =========================================================
-   TABS & FILTERS
-   ========================================================= */
 .tabs {
     display: flex;
     gap: 4px;
@@ -723,12 +707,12 @@ button, input, select {
 }
 .tab:hover {
     color: var(--gray-900);
-    background: rgba(0,0,0,0.04);
+    background: rgba(0, 0, 0, 0.04);
 }
 .tab.active {
     background: var(--gold);
     color: var(--gray-900);
-    box-shadow: 0 2px 8px rgba(245,200,66,0.25);
+    box-shadow: 0 2px 8px rgba(245, 200, 66, 0.25);
 }
 
 .filter-bar {
@@ -897,13 +881,10 @@ button, input, select {
     background: var(--green);
 }
 
-/* =========================================================
-   MODALS
-   ========================================================= */
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(6px);
     display: none;
     align-items: center;
@@ -923,7 +904,7 @@ button, input, select {
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 .modal-close {
     position: absolute;
@@ -1050,9 +1031,6 @@ button, input, select {
     min-width: 100px;
 }
 
-/* =========================================================
-   STUDY FIELD CONTENT
-   ========================================================= */
 .study-field-content {
     display: none;
 }
@@ -1178,9 +1156,6 @@ button, input, select {
     margin: 10px 0;
 }
 
-/* =========================================================
-   APS CALCULATOR
-   ========================================================= */
 .subject-entry {
     display: flex;
     gap: 6px;
@@ -1274,9 +1249,6 @@ button, input, select {
     text-align: right;
 }
 
-/* =========================================================
-   FINDER
-   ========================================================= */
 .finder-steps {
     display: flex;
     flex-direction: column;
@@ -1329,9 +1301,6 @@ button, input, select {
     margin-top: 10px;
 }
 
-/* =========================================================
-   DECISION CHECKLIST
-   ========================================================= */
 #decision-checklist {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1377,9 +1346,6 @@ button, input, select {
     margin-top: 10px;
 }
 
-/* =========================================================
-   RESOURCES
-   ========================================================= */
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1413,9 +1379,6 @@ button, input, select {
     color: var(--gray-500);
 }
 
-/* =========================================================
-   NOTICE & INFO BOXES
-   ========================================================= */
 .notice {
     background: var(--gold-light);
     border-left: 4px solid var(--gold);
@@ -1434,9 +1397,6 @@ button, input, select {
     border: 1px solid var(--gray-200);
 }
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
 footer {
     background: var(--white);
     border-top: 1px solid var(--gray-200);
@@ -1465,9 +1425,6 @@ footer {
     color: var(--gray-900);
 }
 
-/* =========================================================
-   CAROUSEL
-   ========================================================= */
 .carousel-wrapper {
     position: relative;
     overflow: hidden;
@@ -1559,9 +1516,6 @@ footer {
     border-radius: 10px;
 }
 
-/* =========================================================
-   DASHBOARD & INBOX
-   ========================================================= */
 .dashboard-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1613,7 +1567,7 @@ footer {
     background: var(--gold-light);
     padding: 2px 8px;
     border-radius: 20px;
-    border: 1px solid rgba(245,200,66,0.3);
+    border: 1px solid rgba(245, 200, 66, 0.3);
     transition: var(--transition);
 }
 .dashboard-list .univ-action:hover {
@@ -1758,9 +1712,6 @@ footer {
     white-space: nowrap;
 }
 
-/* =========================================================
-   COMPARE TABLE
-   ========================================================= */
 .compare-table-wrap {
     overflow-x: auto;
     margin-top: 10px;
@@ -1817,9 +1768,6 @@ footer {
     margin-top: 12px;
 }
 
-/* =========================================================
-   RESPONSIVE – TABLETS & DESKTOP
-   ========================================================= */
 @media (min-width: 768px) {
     .top-bar .search-box {
         flex: 0 1 320px;
@@ -1894,9 +1842,6 @@ footer {
     }
 }
 
-/* =========================================================
-   SMALL PHONES – extra tweaks
-   ========================================================= */
 @media (max-width: 480px) {
     .top-bar .search-box {
         flex: 0 1 140px;
