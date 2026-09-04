@@ -1279,16 +1279,16 @@ function updateNotificationUI() {
 }
 
 // ============================================================
-// INBOX
+// INBOX – FIXED
 // ============================================================
 const adminMessages = [
-    { id: 1, sender: "Admin Sia13", date: "2026-09-04", time: "08:30",
+    { id: 1, sender: "Admin Sia13", date: "2026-09-04", time: "",
         message: "Good morning! Don't forget to check the new university requirements for 2027." },
-    { id: 2, sender: "Admin Sia13", date: "2026-09-04", time: "12:15",
+    { id: 2, sender: "Admin Sia13", date: "2026-09-04", time: "",
         message: "Reminder: The APS calculator has been updated with the latest guidelines." },
-    { id: 3, sender: "Admin Sia13", date: "2026-09-03", time: "14:00",
+    { id: 3, sender: "Admin Sia13", date: "2026-09-03", time: "",
         message: "Welcome to MyTertiary! Start by exploring the 'What Can I Study?' section." },
-    { id: 4, sender: "Admin Sia13", date: "2026-09-04", time: "16:45",
+    { id: 4, sender: "Admin Sia13", date: "2026-09-04", time: "",
         message: "University applications for 2027 are opening soon. Get your documents ready!" }
 ];
 
@@ -1316,28 +1316,59 @@ function markMessagesAsRead() {
 }
 
 function openInbox() {
-    markMessagesAsRead();
     const container = document.getElementById('inboxModalContent');
+    const modal = document.getElementById('inboxModal');
+    if (!container || !modal) {
+        console.error('Inbox elements not found!');
+        return;
+    }
+
+    markMessagesAsRead();
+
     const today = new Date().toISOString().slice(0, 10);
     const todaysMessages = adminMessages.filter(msg => msg.date === today);
+
     if (todaysMessages.length === 0) {
-        container.innerHTML = `<div class="dashboard-empty">No new messages from Admin today.</div>`;
+        container.innerHTML = `<div class="dashboard-empty">📭 No new messages from Admin today. Check back later!</div>`;
     } else {
         let html = '';
         todaysMessages.forEach(msg => {
-            html +=
-                `<div class="inbox-item"><div class="inbox-avatar"><img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span></div><div class="inbox-content"><div class="inbox-header"><span class="inbox-sender"><span class="sender-avatar-sm"><img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span></span>${escapeHTML(msg.sender)}</span><span class="inbox-time"><i class="far fa-clock"></i> ${escapeHTML(msg.time)}</span></div><div class="inbox-message">${escapeHTML(msg.message)}</div></div></div>`;
+            html += `
+                <div class="inbox-item">
+                    <div class="inbox-avatar">
+                        <img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
+                    </div>
+                    <div class="inbox-content">
+                        <div class="inbox-header">
+                            <span class="inbox-sender">
+                                <span class="sender-avatar-sm">
+                                    <img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                    <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
+                                </span>
+                                ${escapeHTML(msg.sender)}
+                            </span>
+                            <span class="inbox-time"><i class="far fa-clock"></i> ${escapeHTML(msg.time)}</span>
+                        </div>
+                        <div class="inbox-message">${escapeHTML(msg.message)}</div>
+                    </div>
+                </div>
+            `;
         });
         container.innerHTML = html;
     }
+
     updateNotificationUI();
-    document.getElementById('inboxModal').classList.add('show');
-    document.getElementById('inboxModal').setAttribute('aria-hidden', 'false');
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
 }
 
 function closeInbox() {
-    document.getElementById('inboxModal').classList.remove('show');
-    document.getElementById('inboxModal').setAttribute('aria-hidden', 'true');
+    const modal = document.getElementById('inboxModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+    }
 }
 
 // ============================================================
@@ -2197,6 +2228,9 @@ document.getElementById('inboxModal')?.addEventListener('click', function(e) { i
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('inboxModal')
         .classList.contains('show')) closeInbox(); });
 
+// ============================================================
+// NOTIFICATION PERMISSION BUTTON
+// ============================================================
 document.getElementById('notificationPermissionBtn')?.addEventListener('click', requestNotificationPermission);
 
 // ============================================================
@@ -2246,4 +2280,4 @@ if (Notification.permission === 'granted') {
     document.getElementById('notificationPermissionBtn').classList.add('granted');
 }
 
-console.log('✅ MyTertiary ZA — All features functional, social links clickable.');
+console.log('✅ MyTertiary ZA — All features functional, inbox fixed.');
