@@ -1090,8 +1090,7 @@ function generateLogoHTML(inst, modalSize = false) {
 // ============================================================
 // STORAGE
 // ============================================================
-const STORAGE_KEYS = { SAVED: 'mytertiary_saved', VIEWED: 'mytertiary_viewed', COMPARE: 'mytertiary_compare',
-    LAST_READ: 'mytertiary_last_read', READ_MESSAGES: 'mytertiary_read_messages' };
+const STORAGE_KEYS = { SAVED: 'mytertiary_saved', VIEWED: 'mytertiary_viewed', COMPARE: 'mytertiary_compare' };
 
 function getSavedIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.SAVED)) || []; } catch { return []; } }
 
@@ -1113,163 +1112,55 @@ function getCompareIds() { try { return JSON.parse(localStorage.getItem(STORAGE_
 
 function setCompareIds(ids) { localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(ids)); }
 
-function getReadMessages() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.READ_MESSAGES)) || []; } catch { return []; } }
-
-function setReadMessages(ids) { localStorage.setItem(STORAGE_KEYS.READ_MESSAGES, JSON.stringify(ids)); }
-
 // ============================================================
-// INBOX – FULLY WORKING
+// NOTIFICATIONS (BELL)
 // ============================================================
-const adminMessages = [
-    { id: 1, sender: "Admin Sia13", date: "2026-09-04", time: "08:30",
-        message: "Good morning! Don't forget to check the new university requirements for 2027." },
-    { id: 2, sender: "Admin Sia13", date: "2026-09-04", time: "12:15",
-        message: "Reminder: The APS calculator has been updated with the latest guidelines." },
-    { id: 3, sender: "Admin Sia13", date: "2026-09-03", time: "14:00",
-        message: "Welcome to MyTertiary! Start by exploring the 'What Can I Study?' section." },
-    { id: 4, sender: "Admin Sia13", date: "2026-09-04", time: "16:45",
-        message: "University applications for 2027 are opening soon. Get your documents ready!" },
-    { id: 5, sender: "Admin Sia13", date: "2026-09-05", time: "09:00",
-        message: "✨ New study field guides added! Check out the 'What Can I Study?' section." },
-    { id: 6, sender: "Admin Sia13", date: "2026-09-05", time: "11:30",
-        message: "📢 Reminder: NSFAS applications for 2027 open in October. Start preparing your documents." }
-];
-
-function getUnreadCount() {
-    const readIds = getReadMessages();
-    const unread = adminMessages.filter(msg => !readIds.includes(msg.id));
-    return unread.length;
-}
-
-function updateMessageBadge() {
-    const count = getUnreadCount();
-    const badge = document.getElementById('messageBadge');
-    if (badge) {
-        if (count > 0) {
-            badge.textContent = count;
-            badge.classList.remove('hidden');
-        } else {
-            badge.classList.add('hidden');
-        }
-    }
-}
-
-function markMessagesAsRead() {
-    const allIds = adminMessages.map(m => m.id);
-    setReadMessages(allIds);
-    updateMessageBadge();
-}
-
-function openInbox() {
-    const container = document.getElementById('inboxModalContent');
-    const modal = document.getElementById('inboxModal');
-    if (!container || !modal) return;
-
-    const readIds = getReadMessages();
-    const allMessages = adminMessages;
-
-    if (allMessages.length === 0) {
-        container.innerHTML = `<div class="dashboard-empty">📭 No messages from Admin. Check back later!</div>`;
-    } else {
-        let html = '';
-        allMessages.forEach(msg => {
-            const isRead = readIds.includes(msg.id);
-            html += `
-                        <div class="inbox-item ${isRead ? '' : 'unread'}">
-                            <div class="inbox-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
-                                <span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                            </div>
-                            <div class="inbox-content">
-                                <div class="inbox-header">
-                                    <span class="inbox-sender">
-                                        <span class="sender-avatar-sm">
-                                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
-                                            <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                                        </span>
-                                        ${escapeHTML(msg.sender)}
-                                        ${!isRead ? '<span class="inbox-unread-badge">New</span>' : ''}
-                                    </span>
-                                    <span class="inbox-time"><i class="far fa-clock"></i> ${escapeHTML(msg.date)} at ${escapeHTML(msg.time)}</span>
-                                </div>
-                                <div class="inbox-message">${escapeHTML(msg.message)}</div>
-                            </div>
-                        </div>
-                    `;
-        });
-        container.innerHTML = html;
-    }
-
-    // Mark all as read when inbox is opened
-    markMessagesAsRead();
-    updateNotificationUI();
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-}
-
-function closeInbox() {
-    const modal = document.getElementById('inboxModal');
-    if (modal) {
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-    }
-}
-
-// ============================================================
-// NOTIFICATIONS
-// ============================================================
-function requestNotificationPermission() {
+function updateNotificationBadge() {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
     if (!('Notification' in window)) {
-        showToast('Notifications not supported.');
+        badge.classList.add('hidden');
         return;
     }
     if (Notification.permission === 'granted') {
-        showToast('Notifications already enabled.');
-        sendTestNotification();
+        badge.classList.add('hidden');
+    } else {
+        badge.classList.remove('hidden');
+        badge.textContent = '!';
+    }
+}
+
+function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        showToast('Notifications are not supported by your browser.');
+        return;
+    }
+    if (Notification.permission === 'granted') {
+        showToast('✅ Notifications already enabled.');
+        new Notification('MyTertiary ZA', {
+            body: 'You will now receive updates!',
+            icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
+        });
+        updateNotificationBadge();
         return;
     }
     if (Notification.permission === 'denied') {
-        showToast('Notifications blocked. Enable in browser settings.');
+        showToast('❌ Notifications blocked. Please enable them in your browser settings.');
         return;
     }
     Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
             showToast('✅ Notifications enabled!');
-            document.getElementById('notificationPermissionBtn').textContent = '✅ Enabled';
-            document.getElementById('notificationPermissionBtn').classList.add('granted');
-            sendTestNotification();
-            setTimeout(() => {
-                if (Notification.permission === 'granted') {
-                    new Notification('MyTertiary ZA', {
-                        body: '🎓 New updates for 2027 applications!',
-                        icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-                    });
-                }
-            }, 10000);
+            updateNotificationBadge();
+            new Notification('MyTertiary ZA', {
+                body: '🎓 You will now receive important updates!',
+                icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
+            });
         } else {
             showToast('Notifications denied.');
+            updateNotificationBadge();
         }
     });
-}
-
-function sendTestNotification() {
-    if (Notification.permission === 'granted') {
-        new Notification('MyTertiary ZA', {
-            body: '✅ Notifications working!',
-            icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-        });
-    }
-}
-
-function updateNotificationUI() {
-    const btn = document.getElementById('notificationPermissionBtn');
-    if (Notification.permission === 'granted') {
-        btn.textContent = '✅ Enabled';
-        btn.classList.add('granted');
-    } else {
-        btn.textContent = 'Enable Notifications';
-        btn.classList.remove('granted');
-    }
 }
 
 // ============================================================
@@ -2235,19 +2126,9 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && doc
         .classList.contains('show')) closeCompareModal(); });
 
 // ============================================================
-// INBOX EVENT LISTENERS
+// NOTIFICATION BELL EVENT
 // ============================================================
-document.getElementById('messageBtn')?.addEventListener('click', openInbox);
-document.getElementById('inboxModalClose')?.addEventListener('click', closeInbox);
-document.getElementById('inboxModal')?.addEventListener('click', function(e) { if (e.target === this)
-        closeInbox(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('inboxModal')
-        .classList.contains('show')) closeInbox(); });
-
-// ============================================================
-// NOTIFICATION PERMISSION BUTTON
-// ============================================================
-document.getElementById('notificationPermissionBtn')?.addEventListener('click', requestNotificationPermission);
+document.getElementById('notifBtn')?.addEventListener('click', requestNotificationPermission);
 
 // ============================================================
 // LEFT SIDEBAR NAV
@@ -2288,12 +2169,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // ============================================================
 setTab('all');
 updateCompareBadge();
-updateMessageBadge();
-updateNotificationUI();
+updateNotificationBadge();
 
-if (Notification.permission === 'granted') {
-    document.getElementById('notificationPermissionBtn').textContent = '✅ Enabled';
-    document.getElementById('notificationPermissionBtn').classList.add('granted');
-}
-
-console.log('✅ MyTertiary ZA — All features functional, inbox working.');
+console.log('✅ MyTertiary ZA — Inbox removed, Notification Bell added.');
