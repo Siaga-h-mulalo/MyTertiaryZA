@@ -818,31 +818,41 @@ const admissionData = {
 const programmeRequirements = {
     "Medicine (MBChB)": { typicalAverage: "75–80%+", maths: "70%+", physSci: "70%+",
         lifeSci: "Not usually required, but Life Sciences recommended", english: "65%+", aps: "36–42+",
-        additional: "NBTs, interview, and selection tests often required." },
+        additional: "NBTs, interview, and selection tests often required."
+    },
     "Engineering": { typicalAverage: "60–65%+", maths: "60–70%+", physSci: "60–70%+", lifeSci: "Not usually required",
         english: "50–60%+", aps: "30–38+",
-        additional: "NBTs often required. Specific engineering disciplines may have higher requirements." },
+        additional: "NBTs often required. Specific engineering disciplines may have higher requirements."
+    },
     "Computer Science": { typicalAverage: "55–60%+", maths: "60%+", physSci: "50%+ where required",
         lifeSci: "Not usually required", english: "50–60%+", aps: "28–35+",
-        additional: "Some universities require NBTs or programming aptitude tests." },
+        additional: "Some universities require NBTs or programming aptitude tests."
+    },
     "Law (LLB)": { typicalAverage: "55–60%+", maths: "Not compulsory (but recommended)", physSci: "Not required",
         lifeSci: "Not required", english: "60%+", aps: "30–36+",
-        additional: "NBTs often required. Some universities require additional tests." },
+        additional: "NBTs often required. Some universities require additional tests."
+    },
     "BCom Accounting": { typicalAverage: "55–60%+", maths: "60%+", physSci: "Not required", lifeSci: "Not required",
-        english: "50–60%+", aps: "30–36+", additional: "NBTs may be required." },
+        english: "50–60%+", aps: "30–36+", additional: "NBTs may be required."
+    },
     "Architecture": { typicalAverage: "55–60%+", maths: "50–60%+", physSci: "50%+ where required",
         lifeSci: "Not required", english: "50–60%+", aps: "28–34+",
-        additional: "Portfolio may be required. NBTs often required." },
+        additional: "Portfolio may be required. NBTs often required."
+    },
     "Psychology": { typicalAverage: "50–55%+", maths: "Not compulsory", physSci: "Not required",
-        lifeSci: "Not required", english: "50–60%+", aps: "25–32+", additional: "NBTs may be required." },
+        lifeSci: "Not required", english: "50–60%+", aps: "25–32+", additional: "NBTs may be required."
+    },
     "Nursing": { typicalAverage: "50–60%+", maths: "40–50%+",
         physSci: "Life Sciences preferred, Physical Sciences not always required", lifeSci: "50%+ (Life Sciences)",
-        english: "50%+", aps: "24–30+", additional: "Some universities require NBTs." },
+        english: "50%+", aps: "24–30+", additional: "Some universities require NBTs."
+    },
     "BA Humanities": { typicalAverage: "45–50%+", maths: "Not compulsory", physSci: "Not required",
-        lifeSci: "Not required", english: "50%+", aps: "20–28+", additional: "NBTs may be required." },
+        lifeSci: "Not required", english: "50%+", aps: "20–28+", additional: "NBTs may be required."
+    },
     "Business Management": { typicalAverage: "45–55%+", maths: "40–50%+", physSci: "Not required",
         lifeSci: "Not required", english: "50%+", aps: "22–30+",
-        additional: "NBTs may be required by some universities." }
+        additional: "NBTs may be required by some universities."
+    }
 };
 
 const studyFields = [{
@@ -1081,7 +1091,7 @@ function generateLogoHTML(inst, modalSize = false) {
 // STORAGE
 // ============================================================
 const STORAGE_KEYS = { SAVED: 'mytertiary_saved', VIEWED: 'mytertiary_viewed', COMPARE: 'mytertiary_compare',
-    LAST_READ: 'mytertiary_last_read' };
+    LAST_READ: 'mytertiary_last_read', READ_MESSAGES: 'mytertiary_read_messages' };
 
 function getSavedIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.SAVED)) || []; } catch { return []; } }
 
@@ -1103,9 +1113,164 @@ function getCompareIds() { try { return JSON.parse(localStorage.getItem(STORAGE_
 
 function setCompareIds(ids) { localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(ids)); }
 
-function getLastReadDate() { try { return localStorage.getItem(STORAGE_KEYS.LAST_READ) || ''; } catch { return ''; } }
+function getReadMessages() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.READ_MESSAGES)) || []; } catch { return []; } }
 
-function setLastReadDate(date) { localStorage.setItem(STORAGE_KEYS.LAST_READ, date); }
+function setReadMessages(ids) { localStorage.setItem(STORAGE_KEYS.READ_MESSAGES, JSON.stringify(ids)); }
+
+// ============================================================
+// INBOX – FULLY WORKING
+// ============================================================
+const adminMessages = [
+    { id: 1, sender: "Admin Sia13", date: "2026-09-04", time: "08:30",
+        message: "Good morning! Don't forget to check the new university requirements for 2027." },
+    { id: 2, sender: "Admin Sia13", date: "2026-09-04", time: "12:15",
+        message: "Reminder: The APS calculator has been updated with the latest guidelines." },
+    { id: 3, sender: "Admin Sia13", date: "2026-09-03", time: "14:00",
+        message: "Welcome to MyTertiary! Start by exploring the 'What Can I Study?' section." },
+    { id: 4, sender: "Admin Sia13", date: "2026-09-04", time: "16:45",
+        message: "University applications for 2027 are opening soon. Get your documents ready!" },
+    { id: 5, sender: "Admin Sia13", date: "2026-09-05", time: "09:00",
+        message: "✨ New study field guides added! Check out the 'What Can I Study?' section." },
+    { id: 6, sender: "Admin Sia13", date: "2026-09-05", time: "11:30",
+        message: "📢 Reminder: NSFAS applications for 2027 open in October. Start preparing your documents." }
+];
+
+function getUnreadCount() {
+    const readIds = getReadMessages();
+    const unread = adminMessages.filter(msg => !readIds.includes(msg.id));
+    return unread.length;
+}
+
+function updateMessageBadge() {
+    const count = getUnreadCount();
+    const badge = document.getElementById('messageBadge');
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+}
+
+function markMessagesAsRead() {
+    const allIds = adminMessages.map(m => m.id);
+    setReadMessages(allIds);
+    updateMessageBadge();
+}
+
+function openInbox() {
+    const container = document.getElementById('inboxModalContent');
+    const modal = document.getElementById('inboxModal');
+    if (!container || !modal) return;
+
+    const readIds = getReadMessages();
+    const allMessages = adminMessages;
+
+    if (allMessages.length === 0) {
+        container.innerHTML = `<div class="dashboard-empty">📭 No messages from Admin. Check back later!</div>`;
+    } else {
+        let html = '';
+        allMessages.forEach(msg => {
+            const isRead = readIds.includes(msg.id);
+            html += `
+                        <div class="inbox-item ${isRead ? '' : 'unread'}">
+                            <div class="inbox-avatar">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                <span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
+                            </div>
+                            <div class="inbox-content">
+                                <div class="inbox-header">
+                                    <span class="inbox-sender">
+                                        <span class="sender-avatar-sm">
+                                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                            <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
+                                        </span>
+                                        ${escapeHTML(msg.sender)}
+                                        ${!isRead ? '<span class="inbox-unread-badge">New</span>' : ''}
+                                    </span>
+                                    <span class="inbox-time"><i class="far fa-clock"></i> ${escapeHTML(msg.date)} at ${escapeHTML(msg.time)}</span>
+                                </div>
+                                <div class="inbox-message">${escapeHTML(msg.message)}</div>
+                            </div>
+                        </div>
+                    `;
+        });
+        container.innerHTML = html;
+    }
+
+    // Mark all as read when inbox is opened
+    markMessagesAsRead();
+    updateNotificationUI();
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeInbox() {
+    const modal = document.getElementById('inboxModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        showToast('Notifications not supported.');
+        return;
+    }
+    if (Notification.permission === 'granted') {
+        showToast('Notifications already enabled.');
+        sendTestNotification();
+        return;
+    }
+    if (Notification.permission === 'denied') {
+        showToast('Notifications blocked. Enable in browser settings.');
+        return;
+    }
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            showToast('✅ Notifications enabled!');
+            document.getElementById('notificationPermissionBtn').textContent = '✅ Enabled';
+            document.getElementById('notificationPermissionBtn').classList.add('granted');
+            sendTestNotification();
+            setTimeout(() => {
+                if (Notification.permission === 'granted') {
+                    new Notification('MyTertiary ZA', {
+                        body: '🎓 New updates for 2027 applications!',
+                        icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
+                    });
+                }
+            }, 10000);
+        } else {
+            showToast('Notifications denied.');
+        }
+    });
+}
+
+function sendTestNotification() {
+    if (Notification.permission === 'granted') {
+        new Notification('MyTertiary ZA', {
+            body: '✅ Notifications working!',
+            icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
+        });
+    }
+}
+
+function updateNotificationUI() {
+    const btn = document.getElementById('notificationPermissionBtn');
+    if (Notification.permission === 'granted') {
+        btn.textContent = '✅ Enabled';
+        btn.classList.add('granted');
+    } else {
+        btn.textContent = 'Enable Notifications';
+        btn.classList.remove('granted');
+    }
+}
 
 // ============================================================
 // COMPARE
@@ -1222,153 +1387,20 @@ function clearCompare() {
 }
 
 // ============================================================
-// NOTIFICATIONS
+// TOAST
 // ============================================================
-function requestNotificationPermission() {
-    if (!('Notification' in window)) {
-        showToast('Notifications not supported.');
-        return;
-    }
-    if (Notification.permission === 'granted') {
-        showToast('Notifications already enabled.');
-        sendTestNotification();
-        return;
-    }
-    if (Notification.permission === 'denied') {
-        showToast('Notifications blocked. Enable in browser settings.');
-        return;
-    }
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            showToast('✅ Notifications enabled!');
-            document.getElementById('notificationPermissionBtn').textContent = '✅ Enabled';
-            document.getElementById('notificationPermissionBtn').classList.add('granted');
-            sendTestNotification();
-            setTimeout(() => {
-                if (Notification.permission === 'granted') {
-                    new Notification('MyTertiary ZA', {
-                        body: '🎓 New updates for 2027 applications!',
-                        icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-                    });
-                }
-            }, 10000);
-        } else {
-            showToast('Notifications denied.');
-        }
-    });
-}
-
-function sendTestNotification() {
-    if (Notification.permission === 'granted') {
-        new Notification('MyTertiary ZA', {
-            body: '✅ Notifications working!',
-            icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-        });
-    }
-}
-
-function updateNotificationUI() {
-    const btn = document.getElementById('notificationPermissionBtn');
-    if (Notification.permission === 'granted') {
-        btn.textContent = '✅ Enabled';
-        btn.classList.add('granted');
-    } else {
-        btn.textContent = 'Enable Notifications';
-        btn.classList.remove('granted');
-    }
-}
-
-// ============================================================
-// INBOX – FIXED
-// ============================================================
-const adminMessages = [
-    { id: 1, sender: "Admin Sia13", date: "2026-09-04", time: "",
-        message: "Good morning! Don't forget to check the new university requirements for 2027." },
-    { id: 2, sender: "Admin Sia13", date: "2026-09-04", time: "",
-        message: "Reminder: The APS calculator has been updated with the latest guidelines." },
-    { id: 3, sender: "Admin Sia13", date: "2026-09-03", time: "",
-        message: "Welcome to MyTertiary! Start by exploring the 'What Can I Study?' section." },
-    { id: 4, sender: "Admin Sia13", date: "2026-09-04", time: "",
-        message: "University applications for 2027 are opening soon. Get your documents ready!" }
-];
-
-function getUnreadCount() {
-    const lastRead = getLastReadDate();
-    const today = new Date().toISOString().slice(0, 10);
-    const todayMessages = adminMessages.filter(msg => msg.date === today);
-    if (!lastRead || lastRead !== today) return todayMessages.length;
-    return 0;
-}
-
-function updateMessageBadge() {
-    const count = getUnreadCount();
-    const badge = document.getElementById('messageBadge');
-    if (badge) {
-        if (count > 0) { badge.textContent = count;
-            badge.style.display = 'flex'; } else { badge.style.display = 'none'; }
-    }
-}
-
-function markMessagesAsRead() {
-    const today = new Date().toISOString().slice(0, 10);
-    setLastReadDate(today);
-    updateMessageBadge();
-}
-
-function openInbox() {
-    const container = document.getElementById('inboxModalContent');
-    const modal = document.getElementById('inboxModal');
-    if (!container || !modal) {
-        console.error('Inbox elements not found!');
-        return;
-    }
-
-    markMessagesAsRead();
-
-    const today = new Date().toISOString().slice(0, 10);
-    const todaysMessages = adminMessages.filter(msg => msg.date === today);
-
-    if (todaysMessages.length === 0) {
-        container.innerHTML = `<div class="dashboard-empty">📭 No new messages from Admin today. Check back later!</div>`;
-    } else {
-        let html = '';
-        todaysMessages.forEach(msg => {
-            html += `
-                <div class="inbox-item">
-                    <div class="inbox-avatar">
-                        <img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                    </div>
-                    <div class="inbox-content">
-                        <div class="inbox-header">
-                            <span class="inbox-sender">
-                                <span class="sender-avatar-sm">
-                                    <img src="Sia13.jpeg" alt="Admin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                    <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                                </span>
-                                ${escapeHTML(msg.sender)}
-                            </span>
-                            <span class="inbox-time"><i class="far fa-clock"></i> ${escapeHTML(msg.time)}</span>
-                        </div>
-                        <div class="inbox-message">${escapeHTML(msg.message)}</div>
-                    </div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    updateNotificationUI();
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-}
-
-function closeInbox() {
-    const modal = document.getElementById('inboxModal');
-    if (modal) {
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-    }
+function showToast(msg) {
+    const existing = document.querySelector('.toast-msg');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'toast-msg';
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => {
+        div.style.opacity = '0';
+        div.style.transition = 'opacity 0.3s';
+        setTimeout(() => div.remove(), 400);
+    }, 2500);
 }
 
 // ============================================================
@@ -1428,25 +1460,25 @@ function renderCards(list) {
         const isSaved = savedIds.includes(inst.id);
         const isCompared = compareIds.includes(inst.id);
         return `
-                <article class="institution-card" data-id="${inst.id}">
-                    <div class="card-logo">${generateLogoHTML(inst, false)}</div>
-                    <h3 class="card-title">${escapeHTML(inst.name)}</h3>
-                    <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
-                    <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                    <p class="card-description">${escapeHTML(inst.description)}</p>
-                    ${renderPeriodStatus(inst)}
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-                        <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
-                        <a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
-                    </div>
-                    <div class="card-actions-row">
-                        <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
-                        <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
-                        <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
-                        <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
-                    </div>
-                </article>
-                `;
+                        <article class="institution-card" data-id="${inst.id}">
+                            <div class="card-logo">${generateLogoHTML(inst, false)}</div>
+                            <h3 class="card-title">${escapeHTML(inst.name)}</h3>
+                            <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
+                            <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+                            <p class="card-description">${escapeHTML(inst.description)}</p>
+                            ${renderPeriodStatus(inst)}
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                                <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
+                                <a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
+                            </div>
+                            <div class="card-actions-row">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
+                                <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
+                                <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
+                                <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
+                            </div>
+                        </article>
+                        `;
     }).join("");
     resultCount.textContent = `${list.length} institution${list.length === 1 ? "" : "s"}`;
 
@@ -1516,24 +1548,6 @@ function renderCards(list) {
     });
 }
 
-function showToast(msg) {
-    const existing = document.querySelector('.toast-msg');
-    if (existing) existing.remove();
-    const div = document.createElement('div');
-    div.className = 'toast-msg';
-    div.style.cssText =
-        `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gray-900);color:white;padding:8px 16px;border-radius:30px;font-size:0.8rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:3000;max-width:90%;text-align:center;animation:fadeInUp 0.3s ease;`;
-    div.textContent = msg;
-    document.body.appendChild(div);
-    setTimeout(() => { div.style.opacity = '0';
-        div.style.transition = 'opacity 0.3s';
-        setTimeout(() => div.remove(), 400); }, 2500);
-}
-const toastStyle = document.createElement("style");
-toastStyle.textContent =
-    `@keyframes fadeInUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`;
-document.head.appendChild(toastStyle);
-
 function filterInstitutions() {
     const search = searchInput.value.toLowerCase().trim();
     const province = provinceFilter.value;
@@ -1563,8 +1577,10 @@ searchInput.addEventListener("input", filterInstitutions);
 searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInstitutions(); });
 provinceFilter.addEventListener("change", filterInstitutions);
 
-document.getElementById('exploreUniBtn').addEventListener('click', function(e) { e.preventDefault();
-    setTab('all'); });
+document.getElementById('exploreUniBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    setTab('all');
+});
 
 // ============================================================
 // MODAL
@@ -1572,25 +1588,25 @@ document.getElementById('exploreUniBtn').addEventListener('click', function(e) {
 function openModal(inst) {
     const admissionHTML = renderAdmissionCard(inst);
     modalContent.innerHTML = `
-                <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
-                <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
-                <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                <p class="modal-description">${escapeHTML(inst.description)}</p>
-                ${admissionHTML}
-                <div style="margin-top:14px;">
-                    <div class="detail-list">
-                        <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank">Official Website</a></div>
-                        <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank">Official Application Portal</a></div>
-                        <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank">Prospectus</a></div>
-                        <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
-                        <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
-                        <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
-                        <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
-                    </div>
-                </div>
-                <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
-                <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
-            `;
+                        <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
+                        <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
+                        <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+                        <p class="modal-description">${escapeHTML(inst.description)}</p>
+                        ${admissionHTML}
+                        <div style="margin-top:14px;">
+                            <div class="detail-list">
+                                <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank">Official Website</a></div>
+                                <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank">Official Application Portal</a></div>
+                                <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank">Prospectus</a></div>
+                                <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
+                                <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
+                                <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
+                                <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
+                            </div>
+                        </div>
+                        <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
+                        <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
+                    `;
     modal.classList.add("show");
     modal.setAttribute("aria-hidden", "false");
     document.getElementById("modalCancel").addEventListener("click", closeModal);
@@ -1684,30 +1700,30 @@ const slideStep = 160;
 function renderStudyFields() {
     const allTabs = [...studyFields, ...studyFields];
     studyTabsTrack.innerHTML = allTabs.map((field, idx) => `
-                <button class="study-field-tab ${field.id === activeFieldId && idx < studyFields.length ? 'active' : ''}" data-field="${field.id}" data-index="${idx}" type="button">
-                    <i class="fas ${field.icon}"></i> ${field.label}
-                </button>
-            `).join('');
+                        <button class="study-field-tab ${field.id === activeFieldId && idx < studyFields.length ? 'active' : ''}" data-field="${field.id}" data-index="${idx}" type="button">
+                            <i class="fas ${field.icon}"></i> ${field.label}
+                        </button>
+                    `).join('');
 
     studyContentContainer.innerHTML = studyFields.map((field, idx) => `
-                <div class="study-field-content ${field.id === activeFieldId ? 'active' : ''}" data-field="${field.id}">
-                    <div class="field-intro">
-                        <h3><i class="fas ${field.icon}" style="color:var(--gold-dark);margin-right:8px;"></i>${field.label}</h3>
-                        <p>${escapeHTML(field.description)}</p>
-                        <div class="suitable"><strong>Suitable for:</strong> ${escapeHTML(field.suitable)}</div>
-                        <div class="suitable" style="margin-top:4px;"><strong>Recommended school subjects:</strong> ${escapeHTML(field.subjects)}</div>
-                    </div>
-                    <div class="qual-grid">
-                        ${field.qualifications.map((q, qi) => `
-                            <div class="qual-item" data-field="${field.id}" data-index="${qi}">
-                                <i class="fas fa-graduation-cap"></i>
-                                ${escapeHTML(q.name)}
-                                <span class="qual-badge">${q.careers.split(',').length} careers</span>
+                        <div class="study-field-content ${field.id === activeFieldId ? 'active' : ''}" data-field="${field.id}">
+                            <div class="field-intro">
+                                <h3><i class="fas ${field.icon}" style="color:var(--gold-dark);margin-right:8px;"></i>${field.label}</h3>
+                                <p>${escapeHTML(field.description)}</p>
+                                <div class="suitable"><strong>Suitable for:</strong> ${escapeHTML(field.suitable)}</div>
+                                <div class="suitable" style="margin-top:4px;"><strong>Recommended school subjects:</strong> ${escapeHTML(field.subjects)}</div>
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+                            <div class="qual-grid">
+                                ${field.qualifications.map((q, qi) => `
+                                    <div class="qual-item" data-field="${field.id}" data-index="${qi}">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        ${escapeHTML(q.name)}
+                                        <span class="qual-badge">${q.careers.split(',').length} careers</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
 
     studyTabsTrack.querySelectorAll('.study-field-tab').forEach(tab => {
         tab.addEventListener('click', function() {
@@ -1785,15 +1801,15 @@ function openQualModal(field, index) {
     let reqHTML = '';
     if (req) {
         reqHTML = `<div class="qual-requirements-card">
-                    <div class="req-row"><span class="req-label">Typical overall average</span><span class="req-value">${escapeHTML(req.typicalAverage)}</span></div>
-                    <div class="req-row"><span class="req-label">Mathematics</span><span class="req-value">${escapeHTML(req.maths)}</span></div>
-                    <div class="req-row"><span class="req-label">Physical Sciences</span><span class="req-value">${escapeHTML(req.physSci)}</span></div>
-                    <div class="req-row"><span class="req-label">Life Sciences</span><span class="req-value">${escapeHTML(req.lifeSci)}</span></div>
-                    <div class="req-row"><span class="req-label">English</span><span class="req-value">${escapeHTML(req.english)}</span></div>
-                    <div class="req-row"><span class="req-label">Typical APS range</span><span class="req-value"><span class="highlight">${escapeHTML(req.aps)}</span></span></div>
-                    ${req.additional ? `<div class="req-row"><span class="req-label">Additional requirements</span><span class="req-value">${escapeHTML(req.additional)}</span></div>` : ''}
-                    <div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Requirements shown are typical / estimated guidelines.</strong> They vary by university and programme. Meeting these does not guarantee admission. Always check official university requirements.</div></div>
-                </div>`;
+                            <div class="req-row"><span class="req-label">Typical overall average</span><span class="req-value">${escapeHTML(req.typicalAverage)}</span></div>
+                            <div class="req-row"><span class="req-label">Mathematics</span><span class="req-value">${escapeHTML(req.maths)}</span></div>
+                            <div class="req-row"><span class="req-label">Physical Sciences</span><span class="req-value">${escapeHTML(req.physSci)}</span></div>
+                            <div class="req-row"><span class="req-label">Life Sciences</span><span class="req-value">${escapeHTML(req.lifeSci)}</span></div>
+                            <div class="req-row"><span class="req-label">English</span><span class="req-value">${escapeHTML(req.english)}</span></div>
+                            <div class="req-row"><span class="req-label">Typical APS range</span><span class="req-value"><span class="highlight">${escapeHTML(req.aps)}</span></span></div>
+                            ${req.additional ? `<div class="req-row"><span class="req-label">Additional requirements</span><span class="req-value">${escapeHTML(req.additional)}</span></div>` : ''}
+                            <div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Requirements shown are typical / estimated guidelines.</strong> They vary by university and programme. Meeting these does not guarantee admission. Always check official university requirements.</div></div>
+                        </div>`;
     } else {
         reqHTML =
             `<div class="qual-requirements-card"><p style="color:var(--gray-500);font-size:0.9rem;"><i class="fas fa-info-circle"></i> Typical requirements for this qualification are not yet available. Please check the individual university websites for specific requirements.</p></div>`;
@@ -1805,25 +1821,25 @@ function openQualModal(field, index) {
         return keywords.some(k => desc.includes(k.toLowerCase()) || name.includes(k.toLowerCase()));
     }).slice(0, 6);
     qualModalContent.innerHTML = `
-                <h2 id="qualModalTitle">${escapeHTML(q.name)}</h2>
-                <div class="modal-subtitle" style="text-align:left;color:var(--gold-dark);"><i class="fas ${field.icon}"></i> ${escapeHTML(field.label)}</div>
-                <div class="qual-detail-section"><h4><i class="fas fa-graduation-cap" style="color:var(--gold-dark);"></i> What is this qualification?</h4><p>${escapeHTML(q.name)} is a qualification in the field of ${escapeHTML(field.label)}. It prepares students for careers such as ${careersList.slice(0,3).join(', ')} and many others.</p></div>
-                <div class="qual-detail-section"><h4><i class="fas fa-brain" style="color:var(--gold-dark);"></i> What will I learn?</h4><ul>${learnList.map(l => `<li>${escapeHTML(l)}</li>`).join('')}</ul></div>
-                <div class="qual-detail-section"><h4><i class="fas fa-briefcase" style="color:var(--gold-dark);"></i> Possible careers</h4><ul>${careersList.map(c => `<li>${escapeHTML(c)}</li>`).join('')}</ul></div>
-                <div class="qual-detail-section"><h4><i class="fas fa-school" style="color:var(--gold-dark);"></i> Recommended school subjects</h4><p>${escapeHTML(field.subjects)}</p><p style="font-size:0.8rem;color:var(--gray-500);margin-top:4px;"><i class="fas fa-info-circle"></i> These subjects are commonly required or recommended. Check each institution's specific requirements.</p></div>
-                <div class="qual-detail-section"><h4><i class="fas fa-clipboard-list" style="color:var(--gold-dark);"></i> Typical / Estimated Requirements</h4>${reqHTML}</div>
-                <div class="qual-detail-section"><h4><i class="fas fa-university" style="color:var(--gold-dark);"></i> Where can I study?</h4>
-                    ${matchingInsts.length > 0 ? `<div class="qual-institutions">${matchingInsts.map(inst => `
-                        <div class="qual-institution-item">
-                            <div class="inst-name">${escapeHTML(inst.name)} (${escapeHTML(inst.abbr)})</div>
-                            <div class="inst-req"><span class="aps-badge">APS varies by programme</span> <span style="margin-left:8px;">${escapeHTML(inst.province)}</span></div>
-                            <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
+                        <h2 id="qualModalTitle">${escapeHTML(q.name)}</h2>
+                        <div class="modal-subtitle" style="text-align:left;color:var(--gold-dark);"><i class="fas ${field.icon}"></i> ${escapeHTML(field.label)}</div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-graduation-cap" style="color:var(--gold-dark);"></i> What is this qualification?</h4><p>${escapeHTML(q.name)} is a qualification in the field of ${escapeHTML(field.label)}. It prepares students for careers such as ${careersList.slice(0,3).join(', ')} and many others.</p></div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-brain" style="color:var(--gold-dark);"></i> What will I learn?</h4><ul>${learnList.map(l => `<li>${escapeHTML(l)}</li>`).join('')}</ul></div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-briefcase" style="color:var(--gold-dark);"></i> Possible careers</h4><ul>${careersList.map(c => `<li>${escapeHTML(c)}</li>`).join('')}</ul></div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-school" style="color:var(--gold-dark);"></i> Recommended school subjects</h4><p>${escapeHTML(field.subjects)}</p><p style="font-size:0.8rem;color:var(--gray-500);margin-top:4px;"><i class="fas fa-info-circle"></i> These subjects are commonly required or recommended. Check each institution's specific requirements.</p></div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-clipboard-list" style="color:var(--gold-dark);"></i> Typical / Estimated Requirements</h4>${reqHTML}</div>
+                        <div class="qual-detail-section"><h4><i class="fas fa-university" style="color:var(--gold-dark);"></i> Where can I study?</h4>
+                            ${matchingInsts.length > 0 ? `<div class="qual-institutions">${matchingInsts.map(inst => `
+                                <div class="qual-institution-item">
+                                    <div class="inst-name">${escapeHTML(inst.name)} (${escapeHTML(inst.abbr)})</div>
+                                    <div class="inst-req"><span class="aps-badge">APS varies by programme</span> <span style="margin-left:8px;">${escapeHTML(inst.province)}</span></div>
+                                    <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
+                                </div>
+                            `).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
                         </div>
-                    `).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
-                </div>
-                <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
-                <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>
-            `;
+                        <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
+                        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>
+                    `;
     qualModal.classList.add("show");
     qualModal.setAttribute("aria-hidden", "false");
     document.getElementById("qualModalCancel").addEventListener("click", closeQualModal);
@@ -1874,18 +1890,18 @@ let selectedInterests = [];
 
 function renderFinder() {
     finderStepsContainer.innerHTML = `
-                <div class="finder-step">
-                    <div class="step-label"><i class="fas fa-star"></i> Step 1</div>
-                    <h4>What type of work interests you?</h4>
-                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:10px;">Select all that apply — this helps us recommend study fields.</p>
-                    <div class="finder-options" id="interestOptions">
-                        ${interestCategories.map(cat => `<button class="finder-option" data-interest="${cat.id}" type="button"><i class="fas ${cat.icon}"></i> ${cat.label}</button>`).join('')}
-                    </div>
-                </div>
-                <div style="text-align:right;margin-top:10px;">
-                    <button class="btn btn-apply" id="getRecommendationsBtn" style="padding:10px 32px;border-radius:40px;"><i class="fas fa-compass"></i> Get Recommendations</button>
-                </div>
-            `;
+                        <div class="finder-step">
+                            <div class="step-label"><i class="fas fa-star"></i> Step 1</div>
+                            <h4>What type of work interests you?</h4>
+                            <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:10px;">Select all that apply — this helps us recommend study fields.</p>
+                            <div class="finder-options" id="interestOptions">
+                                ${interestCategories.map(cat => `<button class="finder-option" data-interest="${cat.id}" type="button"><i class="fas ${cat.icon}"></i> ${cat.label}</button>`).join('')}
+                            </div>
+                        </div>
+                        <div style="text-align:right;margin-top:10px;">
+                            <button class="btn btn-apply" id="getRecommendationsBtn" style="padding:10px 32px;border-radius:40px;"><i class="fas fa-compass"></i> Get Recommendations</button>
+                        </div>
+                    `;
     document.querySelectorAll('.finder-option').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.dataset.interest;
@@ -1917,13 +1933,13 @@ function showRecommendations() {
         return;
     }
     finderResults.innerHTML = `
-                <h4><i class="fas fa-compass" style="color:var(--gold-dark);"></i> Based on your interests, you may want to explore:</h4>
-                <div style="margin-top:10px;">
-                    ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--gold-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--gold);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
-                </div>
-                <p style="color:var(--gray-500);font-size:0.85rem;margin-top:14px;"><i class="fas fa-info-circle"></i> This is guidance, not a definitive career test. Explore the fields above to learn more about qualifications and careers.</p>
-                <div style="margin-top:12px;"><a href="#whatCanIStudy" class="btn btn-apply" style="padding:8px 24px;border-radius:40px;display:inline-flex;gap:8px;" onclick="document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});">Explore These Study Fields <i class="fas fa-arrow-right"></i></a></div>
-            `;
+                        <h4><i class="fas fa-compass" style="color:var(--gold-dark);"></i> Based on your interests, you may want to explore:</h4>
+                        <div style="margin-top:10px;">
+                            ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--gold-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--gold);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
+                        </div>
+                        <p style="color:var(--gray-500);font-size:0.85rem;margin-top:14px;"><i class="fas fa-info-circle"></i> This is guidance, not a definitive career test. Explore the fields above to learn more about qualifications and careers.</p>
+                        <div style="margin-top:12px;"><a href="#whatCanIStudy" class="btn btn-apply" style="padding:8px 24px;border-radius:40px;display:inline-flex;gap:8px;" onclick="document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});">Explore These Study Fields <i class="fas fa-arrow-right"></i></a></div>
+                    `;
 }
 renderFinder();
 
@@ -1945,11 +1961,11 @@ function createSubjectEntry(name = '', percentage = '', isFixed = false) {
     const div = document.createElement('div');
     div.className = 'subject-entry' + (isFixed ? ' fixed' : '');
     div.innerHTML = `
-                <input type="text" placeholder="Subject name" value="${escapeHTML(name)}" class="subject-name" ${isFixed ? 'readonly' : ''} />
-                <input type="number" placeholder="%" min="0" max="100" value="${percentage}" class="subject-percentage" />
-                ${isFixed ? '<span class="fixed-badge"><i class="fas fa-lock"></i> Fixed</span>' : ''}
-                <button type="button" class="remove-subject" title="Remove subject"><i class="fas fa-trash-can"></i></button>
-            `;
+                        <input type="text" placeholder="Subject name" value="${escapeHTML(name)}" class="subject-name" ${isFixed ? 'readonly' : ''} />
+                        <input type="number" placeholder="%" min="0" max="100" value="${percentage}" class="subject-percentage" />
+                        ${isFixed ? '<span class="fixed-badge"><i class="fas fa-lock"></i> Fixed</span>' : ''}
+                        <button type="button" class="remove-subject" title="Remove subject"><i class="fas fa-trash-can"></i></button>
+                    `;
     if (isFixed) div.querySelector('.remove-subject').style.display = 'none';
     const removeBtn = div.querySelector('.remove-subject');
     if (!isFixed) {
@@ -1984,7 +2000,7 @@ addSubjectBtn.addEventListener('click', () => {
     const total = document.querySelectorAll('.subject-entry').length;
     if (total < MAX_SUBJECTS) { subjectEntriesContainer.appendChild(createSubjectEntry('', '', false));
         updateAddButton(); } else alert(
-        `You can add up to ${MAX_SUBJECTS} subjects total (including Life Orientation).`);
+            `You can add up to ${MAX_SUBJECTS} subjects total (including Life Orientation).`);
 });
 
 function getPoints(percentage) {
@@ -2028,19 +2044,19 @@ function calculateAPS() {
     let guidanceHTML = '';
     if (totalAPS >= 40)
         guidanceHTML =
-        `<strong>Excellent! </strong>You are likely eligible for admission to most universities and competitive programmes. Consider institutions like UCT, Wits, Stellenbosch, UP and others.`;
+            `<strong>Excellent! </strong>You are likely eligible for admission to most universities and competitive programmes. Consider institutions like UCT, Wits, Stellenbosch, UP and others.`;
     else if (totalAPS >= 35)
         guidanceHTML =
-        `<strong>Good! </strong>You qualify for many programmes at universities such as UJ, NWU, UKZN, UWC. Check specific faculty requirements.`;
+            `<strong>Good! </strong>You qualify for many programmes at universities such as UJ, NWU, UKZN, UWC. Check specific faculty requirements.`;
     else if (totalAPS >= 30)
         guidanceHTML =
-        `<strong>Average. </strong>You may be eligible for some programmes at universities and most universities of technology. Consider CPUT, DUT, TUT, VUT and others.`;
+            `<strong>Average. </strong>You may be eligible for some programmes at universities and most universities of technology. Consider CPUT, DUT, TUT, VUT and others.`;
     else if (totalAPS >= 25)
         guidanceHTML =
-        `<strong>Below average. </strong>You may not meet the minimum APS for many university programmes, but universities of technology and some foundation programmes may be options. Check with institutions directly.`;
+            `<strong>Below average. </strong>You may not meet the minimum APS for many university programmes, but universities of technology and some foundation programmes may be options. Check with institutions directly.`;
     else
         guidanceHTML =
-        `<strong>Low APS. </strong>You may not qualify for most degree programmes. Consider universities of technology, bridging courses, or improving your results. Speak to a career counsellor.`;
+            `<strong>Low APS. </strong>You may not qualify for most degree programmes. Consider universities of technology, bridging courses, or improving your results. Speak to a career counsellor.`;
     apsGuidance.innerHTML = guidanceHTML;
     apsResult.style.display = 'block';
 }
@@ -2073,11 +2089,11 @@ const checklistItems = [
 function renderChecklist() {
     const container = document.getElementById('decision-checklist');
     container.innerHTML = checklistItems.map((item, idx) => `
-                <div class="checklist-item" data-idx="${idx}">
-                    <span class="check-icon"><i class="fas fa-check"></i></span>
-                    <span>${escapeHTML(item)}</span>
-                </div>
-            `).join('');
+                        <div class="checklist-item" data-idx="${idx}">
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                            <span>${escapeHTML(item)}</span>
+                        </div>
+                    `).join('');
     container.querySelectorAll('.checklist-item').forEach(el => {
         el.addEventListener('click', () => el.classList.toggle('checked'));
     });
@@ -2095,12 +2111,12 @@ const resourceGrid = document.getElementById('resourceGrid');
 
 function renderResources() {
     resourceGrid.innerHTML = resources.map(r => `
-                <div class="resource-card" onclick="this.scrollIntoView({behavior:'smooth'});">
-                    <div class="res-icon"><i class="fas ${r.icon}"></i></div>
-                    <h4>${escapeHTML(r.title)}</h4>
-                    <p>${escapeHTML(r.desc)}</p>
-                </div>
-            `).join('');
+                        <div class="resource-card" onclick="this.scrollIntoView({behavior:'smooth'});">
+                            <div class="res-icon"><i class="fas ${r.icon}"></i></div>
+                            <h4>${escapeHTML(r.title)}</h4>
+                            <p>${escapeHTML(r.desc)}</p>
+                        </div>
+                    `).join('');
 }
 renderResources();
 
@@ -2280,4 +2296,4 @@ if (Notification.permission === 'granted') {
     document.getElementById('notificationPermissionBtn').classList.add('granted');
 }
 
-console.log('✅ MyTertiary ZA — All features functional, inbox fixed.');
+console.log('✅ MyTertiary ZA — All features functional, inbox working.');
