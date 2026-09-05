@@ -1,6 +1,3 @@
-/* =========================================================
-   RESET & VARIABLES
-   ========================================================= */
 :root {
     --gold: #f5c842;
     --gold-dark: #dcae1f;
@@ -47,19 +44,23 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: "Merriweather", Georgia, "Times New Roman", serif;
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.2;
 }
-button, input, select {
+button,
+input,
+select {
     font-family: "Inter", sans-serif;
 }
 
-/* =========================================================
-   LAYOUT
-   ========================================================= */
 .app-wrapper {
     display: flex;
     flex-direction: column;
@@ -159,20 +160,24 @@ button, input, select {
 }
 .top-bar .user-actions .icon-btn .badge {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -2px;
+    right: -2px;
     background: var(--red);
     color: white;
     font-size: 0.5rem;
     font-weight: 700;
     border-radius: 50%;
-    min-width: 16px;
-    height: 16px;
+    min-width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0 4px;
     border: 2px solid var(--white);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.top-bar .user-actions .icon-btn .badge.hidden {
+    display: none;
 }
 .top-bar .user-actions .avatar {
     width: 32px;
@@ -1605,6 +1610,14 @@ footer {
     padding-right: 10px;
     border-radius: 8px;
 }
+.inbox-item.unread {
+    background: var(--gold-light);
+    margin: 0 -10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+}
 .inbox-avatar {
     border-radius: 50%;
     width: 36px;
@@ -1689,6 +1702,15 @@ footer {
     font-size: 0.85rem;
     color: var(--gray-700);
     margin-top: 2px;
+}
+.inbox-unread-badge {
+    background: var(--gold);
+    color: var(--gray-900);
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 12px;
+    margin-left: 6px;
 }
 
 .notification-permission-box {
