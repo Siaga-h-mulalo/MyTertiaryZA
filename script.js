@@ -1113,57 +1113,6 @@ function getCompareIds() { try { return JSON.parse(localStorage.getItem(STORAGE_
 function setCompareIds(ids) { localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(ids)); }
 
 // ============================================================
-// NOTIFICATIONS (BELL)
-// ============================================================
-function updateNotificationBadge() {
-    const badge = document.getElementById('notifBadge');
-    if (!badge) return;
-    if (!('Notification' in window)) {
-        badge.classList.add('hidden');
-        return;
-    }
-    if (Notification.permission === 'granted') {
-        badge.classList.add('hidden');
-    } else {
-        badge.classList.remove('hidden');
-        badge.textContent = '!';
-    }
-}
-
-function requestNotificationPermission() {
-    if (!('Notification' in window)) {
-        showToast('Notifications are not supported by your browser.');
-        return;
-    }
-    if (Notification.permission === 'granted') {
-        showToast('✅ Notifications already enabled.');
-        new Notification('MyTertiary ZA', {
-            body: 'You will now receive updates!',
-            icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-        });
-        updateNotificationBadge();
-        return;
-    }
-    if (Notification.permission === 'denied') {
-        showToast('❌ Notifications blocked. Please enable them in your browser settings.');
-        return;
-    }
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            showToast('✅ Notifications enabled!');
-            updateNotificationBadge();
-            new Notification('MyTertiary ZA', {
-                body: '🎓 You will now receive important updates!',
-                icon: 'https://ui-avatars.com/api/?name=MT&background=f5c842&color=fff&size=64&rounded=true'
-            });
-        } else {
-            showToast('Notifications denied.');
-            updateNotificationBadge();
-        }
-    });
-}
-
-// ============================================================
 // COMPARE
 // ============================================================
 let compareIds = getCompareIds();
@@ -2126,11 +2075,6 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && doc
         .classList.contains('show')) closeCompareModal(); });
 
 // ============================================================
-// NOTIFICATION BELL EVENT
-// ============================================================
-document.getElementById('notifBtn')?.addEventListener('click', requestNotificationPermission);
-
-// ============================================================
 // LEFT SIDEBAR NAV
 // ============================================================
 const leftNavItems = document.querySelectorAll('.left-sidebar .nav-item');
@@ -2169,6 +2113,5 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // ============================================================
 setTab('all');
 updateCompareBadge();
-updateNotificationBadge();
 
-console.log('✅ MyTertiary ZA — Inbox removed, Notification Bell added.');
+console.log('✅ MyTertiary ZA — Notification/message icon completely removed.');
