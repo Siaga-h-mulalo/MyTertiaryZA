@@ -1,3 +1,5 @@
+
+
 :root {
     --gold: #f5c842;
     --gold-dark: #dcae1f;
@@ -27,7 +29,6 @@
     --sidebar-width: 240px;
     --right-sidebar-width: 280px;
 }
-
 * {
     margin: 0;
     padding: 0;
@@ -60,13 +61,11 @@ input,
 select {
     font-family: "Inter", sans-serif;
 }
-
 .app-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
-
 .top-bar {
     position: sticky;
     top: 0;
@@ -158,27 +157,6 @@ select {
     background: var(--gray-100);
     color: var(--gray-900);
 }
-.top-bar .user-actions .icon-btn .badge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background: var(--red);
-    color: white;
-    font-size: 0.5rem;
-    font-weight: 700;
-    border-radius: 50%;
-    min-width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-    border: 2px solid var(--white);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-}
-.top-bar .user-actions .icon-btn .badge.hidden {
-    display: none;
-}
 .top-bar .user-actions .avatar {
     width: 32px;
     height: 32px;
@@ -198,18 +176,6 @@ select {
     object-fit: cover;
     display: block;
 }
-.top-bar .user-actions .avatar .avatar-fallback {
-    font-weight: 700;
-    color: var(--gold-dark);
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background: var(--gold-light);
-}
-
 .top-bar-word {
     font-size: 0.7rem;
     color: var(--gray-600);
@@ -256,18 +222,6 @@ select {
     object-fit: cover;
     display: block;
 }
-.top-bar-word .admin .admin-avatar-sm .fallback {
-    font-size: 0.4rem;
-    font-weight: 700;
-    color: var(--gold-dark);
-    background: var(--gold-light);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .body-layout {
     display: flex;
     flex: 1;
@@ -277,7 +231,6 @@ select {
     gap: 16px;
     width: 100%;
 }
-
 .left-sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;
@@ -374,7 +327,6 @@ select {
     padding: 1px 8px;
     border-radius: 12px;
 }
-
 .main-content {
     flex: 1;
     min-width: 0;
@@ -421,7 +373,6 @@ select {
     font-size: 0.8rem;
     margin: 0;
 }
-
 .right-sidebar {
     width: var(--right-sidebar-width);
     flex-shrink: 0;
@@ -498,17 +449,6 @@ select {
     object-fit: cover;
     display: block;
 }
-.right-sidebar .widget .daily-word .admin-tag .admin-avatar-sm .fallback {
-    font-size: 0.4rem;
-    font-weight: 700;
-    color: var(--gold-dark);
-    background: var(--gold-light);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 .right-sidebar .widget .stat-item {
     display: flex;
     justify-content: space-between;
@@ -526,7 +466,6 @@ select {
     font-weight: 700;
     color: var(--gray-900);
 }
-
 .study-field-tabs-wrapper {
     position: relative;
     overflow: hidden;
@@ -594,7 +533,6 @@ select {
 .study-field-arrow.right {
     right: 4px;
 }
-
 .floating-home-btn {
     position: fixed;
     bottom: 20px;
@@ -627,7 +565,6 @@ select {
     transform: scale(1.08);
     box-shadow: 0 8px 30px rgba(245, 200, 66, 0.45);
 }
-
 .institution-card {
     background: var(--white);
     border: 1px solid var(--gray-200);
@@ -674,9 +611,6 @@ select {
 .card-actions-row .action-btn.liked {
     color: var(--blue);
 }
-.card-actions-row .action-btn.liked i {
-    font-weight: 900;
-}
 .card-actions-row .action-btn.saved i {
     color: var(--gold-dark);
 }
@@ -688,7 +622,6 @@ select {
 .card-actions-row .action-btn i {
     font-size: 0.85rem;
 }
-
 .tabs {
     display: flex;
     gap: 4px;
@@ -719,7 +652,6 @@ select {
     color: var(--gray-900);
     box-shadow: 0 2px 8px rgba(245, 200, 66, 0.25);
 }
-
 .filter-bar {
     display: flex;
     align-items: center;
@@ -753,13 +685,11 @@ select {
     color: var(--gray-500);
     font-size: 0.75rem;
 }
-
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 12px;
 }
-
 .card-logo {
     width: 72px;
     height: 72px;
@@ -809,7 +739,6 @@ select {
     margin-bottom: 10px;
     line-height: 1.5;
 }
-
 .application-period {
     display: flex;
     flex-wrap: wrap;
@@ -846,7 +775,6 @@ select {
     background: var(--gray-100);
     color: var(--gray-500);
 }
-
 .btn {
     border: none;
     padding: 6px 12px;
@@ -875,17 +803,6 @@ select {
 .btn-apply:hover {
     background: var(--gold-dark);
 }
-.btn-notification {
-    background: var(--blue);
-    color: white;
-}
-.btn-notification:hover {
-    background: var(--blue-dark);
-}
-.btn-notification.granted {
-    background: var(--green);
-}
-
 .modal {
     position: fixed;
     inset: 0;
@@ -992,7 +909,6 @@ select {
 .modal-actions .btn {
     flex: 1;
 }
-
 .admission-card {
     background: var(--gray-50);
     padding: 10px;
@@ -1035,7 +951,6 @@ select {
     flex: 1;
     min-width: 100px;
 }
-
 .study-field-content {
     display: none;
 }
@@ -1091,7 +1006,6 @@ select {
     font-size: 0.55rem;
     color: var(--gray-600);
 }
-
 .qual-requirements-card {
     background: var(--gray-50);
     padding: 10px;
@@ -1160,7 +1074,6 @@ select {
     font-size: 0.75rem;
     margin: 10px 0;
 }
-
 .subject-entry {
     display: flex;
     gap: 6px;
@@ -1253,7 +1166,6 @@ select {
     font-weight: 600;
     text-align: right;
 }
-
 .finder-steps {
     display: flex;
     flex-direction: column;
@@ -1305,7 +1217,6 @@ select {
     border: 1px solid var(--gray-200);
     margin-top: 10px;
 }
-
 #decision-checklist {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1350,7 +1261,6 @@ select {
     gap: 12px;
     margin-top: 10px;
 }
-
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1383,7 +1293,6 @@ select {
     font-size: 0.7rem;
     color: var(--gray-500);
 }
-
 .notice {
     background: var(--gold-light);
     border-left: 4px solid var(--gold);
@@ -1401,7 +1310,6 @@ select {
     margin: 10px 0;
     border: 1px solid var(--gray-200);
 }
-
 footer {
     background: var(--white);
     border-top: 1px solid var(--gray-200);
@@ -1429,7 +1337,6 @@ footer {
 .footer-links a:hover {
     color: var(--gray-900);
 }
-
 .carousel-wrapper {
     position: relative;
     overflow: hidden;
@@ -1520,7 +1427,6 @@ footer {
     width: 16px;
     border-radius: 10px;
 }
-
 .dashboard-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1591,7 +1497,6 @@ footer {
     gap: 10px;
     flex-wrap: wrap;
 }
-
 .compare-table-wrap {
     overflow-x: auto;
     margin-top: 10px;
@@ -1647,7 +1552,96 @@ footer {
     gap: 10px;
     margin-top: 12px;
 }
-
+.dashboard-compare-card {
+    background: var(--gray-50);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--gray-200);
+    margin-top: 12px;
+}
+.dashboard-compare-card .compare-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dashboard-compare-card .compare-header h4 {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dashboard-compare-card .compare-header .badge-compare {
+    background: var(--gold);
+    color: var(--gray-900);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 10px;
+    border-radius: 20px;
+}
+.dashboard-compare-card .compare-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 10px;
+}
+.dashboard-compare-card .compare-pills .pill {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 30px;
+    padding: 2px 10px 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.dashboard-compare-card .compare-pills .pill .remove-pill {
+    cursor: pointer;
+    color: var(--gray-400);
+    font-size: 0.6rem;
+    transition: var(--transition);
+}
+.dashboard-compare-card .compare-pills .pill .remove-pill:hover {
+    color: var(--red);
+}
+.dashboard-compare-card .compare-pills .empty-pill {
+    color: var(--gray-400);
+    font-size: 0.75rem;
+    font-style: italic;
+}
+.dashboard-compare-card .compare-actions-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.btn-sm {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+.toast-msg {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gray-900);
+    color: var(--white);
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 3000;
+    max-width: 90%;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
 @media (min-width: 768px) {
     .top-bar .search-box {
         flex: 0 1 320px;
@@ -1695,7 +1689,6 @@ footer {
         padding: 24px;
     }
 }
-
 @media (min-width: 1024px) {
     .left-sidebar {
         width: var(--sidebar-width);
@@ -1721,7 +1714,6 @@ footer {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
-
 @media (max-width: 480px) {
     .top-bar .search-box {
         flex: 0 1 140px;
