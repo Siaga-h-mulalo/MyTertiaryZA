@@ -1,5 +1,5 @@
 // ============================================================
-// DATA
+// DATA (full dataset)
 // ============================================================
 const institutions = [{
     id: 1,
@@ -527,557 +527,209 @@ const fallbackColours = {
 };
 
 const admissionData = {
-    UCT: {
-        general: "NSC with at least four subjects at achievement level 4 (50–59%) or better. Life Orientation is excluded from the admission score calculation.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UCT calculates a Faculty-specific Admission Score (FAS) using six subjects excluding Life Orientation, with required subjects included where applicable.",
-        important: "Each faculty and programme has its own subject requirements and minimum achievement levels. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme. Health Sciences and Engineering require Physical Sciences and Mathematics at specific levels.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require the National Benchmark Tests (NBTs), portfolios (e.g., Architecture, Fine Art), or interviews.",
-        source: "https://www.uct.ac.za/students/prospective-students/undergraduate-prospectus",
-        verified: "2026-09-02"
-    },
-    Wits: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. Wits uses its own APS calculation (excluding Life Orientation) with a maximum of 48 points across six subjects. Required APS depends on the chosen programme.",
-        important: "Programme-specific APS scores and subject requirements apply. Some programmes also require the National Benchmark Tests (NBTs) and/or interviews.",
-        subjects: "English (Home Language or First Additional Language) is required for all programmes. Mathematics and/or Physical Sciences are required for many programmes, especially in Science, Engineering, and Health Sciences.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "NBTs are required for most undergraduate programmes. Portfolios or auditions are required for programmes in the Arts.",
-        source: "https://www.wits.ac.za/applications/",
-        verified: "2026-09-02"
-    },
-    UP: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UP uses a programme-specific APS calculation. Some programmes require APS 28, while Engineering-related programmes can require APS 30–33 or higher, together with specific Mathematics and Physical Sciences requirements.",
-        important: "Each faculty and programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, Physical Sciences, Life Sciences, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.up.ac.za/",
-        verified: "2026-09-02"
-    },
-    SU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. Stellenbosch uses programme/faculty-specific requirements and selection criteria. Individual programmes can have substantially higher requirements than the general admission threshold.",
-        important: "Programme-specific admission scores and subject requirements apply. Selection is based on academic performance and, where applicable, additional criteria.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme. Health Sciences, Engineering, and Science programmes have specific Mathematics and Physical Sciences requirements.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "NBTs are required for most programmes. Portfolios, auditions, or interviews are required for some programmes.",
-        source: "https://www.sun.ac.za/",
-        verified: "2026-09-02"
-    },
-    UJ: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UJ uses qualification-specific APS and subject requirements. Programmes can have different APS scores and subject combinations.",
-        important: "Each qualification has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme. Engineering and Science programmes require Mathematics and Physical Sciences.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.uj.ac.za/",
-        verified: "2026-09-02"
-    },
-    UKZN: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UKZN uses programme-specific selection information. Meeting minimum requirements does not automatically guarantee a place.",
-        important: "Programme requirements and selection criteria vary. Meeting the minimum does not guarantee admission, as selection is competitive.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme. Health Sciences, Engineering, and Science programmes have specific subject requirements.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://ukzn.ac.za/",
-        verified: "2026-09-02"
-    },
-    UWC: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UWC uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.uwc.ac.za/",
-        verified: "2026-09-02"
-    },
-    UFS: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UFS uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.ufs.ac.za/",
-        verified: "2026-09-02"
-    },
-    NWU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. NWU uses qualification-specific APS and subject requirements. APS and subject requirements can differ between qualifications.",
-        important: "Each qualification has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.nwu.ac.za/",
-        verified: "2026-09-02"
-    },
-    UNISA: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's / Diploma / Higher Certificate depending on the qualification",
-        aps: "Varies by qualification. UNISA uses qualification-specific APS/AS requirements. For example, some Bachelor of Arts qualifications have APS/AS 20, while other qualifications have different requirements and subject requirements.",
-        important: "Each qualification has its own APS/AS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language) is required for all qualifications. Other subjects depend on the qualification.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "UNISA has a continuous application process for some qualifications. Check the official website for specific dates.",
-        source: "https://www.unisa.ac.za/",
-        verified: "2026-09-02"
-    },
-    UL: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UL uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.ul.ac.za/",
-        verified: "2026-09-02"
-    },
-    UNIVEN: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Minimum 26 for bachelor's degree admission (Life Orientation excluded from APS, subjects below 40% not included in APS calculation). Individual programmes may require additional/higher requirements.",
-        important: "This is a general bachelor's admission threshold. Individual programmes may have additional or higher requirements. Meeting the minimum does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.univen.ac.za/",
-        verified: "2026-09-02"
-    },
-    UNIZULU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UNIZULU uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.unizulu.ac.za/",
-        verified: "2026-09-02"
-    },
-    UFH: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UFH uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.ufh.ac.za/",
-        verified: "2026-09-02"
-    },
-    WSU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's / Diploma / Higher Certificate depending on the qualification",
-        aps: "Varies by programme. WSU uses qualification-specific APS and subject requirements.",
-        important: "Each qualification has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.wsu.ac.za/",
-        verified: "2026-09-02"
-    },
-    NMU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. NMU uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.mandela.ac.za/",
-        verified: "2026-09-02"
-    },
-    RU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. Rhodes uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.ru.ac.za/",
-        verified: "2026-09-02"
-    },
-    UMP: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. UMP uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.ump.ac.za/",
-        verified: "2026-09-02"
-    },
-    SPU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. SPU uses programme-specific APS and subject requirements.",
-        important: "Each programme has its own APS, subject, and achievement level requirements. Meeting the general admission requirement does not guarantee admission.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, and other subjects depending on the programme.",
-        warning: "Admission requirements vary by programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require NBTs, portfolios, or interviews.",
-        source: "https://www.spu.ac.za/",
-        verified: "2026-09-02"
-    },
-    SMU: {
-        general: "NSC Bachelor's qualification with at least four subjects at achievement level 4 (50–59%) or better. Health sciences programmes have substantially higher requirements.",
-        qualification: "NSC Bachelor's qualification",
-        aps: "Varies by programme. Health sciences, medicine, and related programmes have substantially higher APS and subject requirements.",
-        important: "Health sciences programmes are highly competitive and have significantly higher requirements than the general admission threshold.",
-        subjects: "English (Home Language or First Additional Language), Mathematics, Physical Sciences, Life Sciences. Specific subjects and achievement levels depend on the programme.",
-        warning: "Admission requirements vary by programme. Health sciences programmes have substantially higher requirements. Always check the requirements for the specific qualification before applying.",
-        extra: "NBTs are required. Some programmes require interviews and additional selection tests.",
-        source: "https://www.smu.ac.za/",
-        verified: "2026-09-02"
-    },
-    CPUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes, especially in Engineering and Science.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.cput.ac.za/",
-        verified: "2026-09-02"
-    },
-    DUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.dut.ac.za/",
-        verified: "2026-09-02"
-    },
-    TUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.tut.ac.za/",
-        verified: "2026-09-02"
-    },
-    VUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.vut.ac.za/",
-        verified: "2026-09-02"
-    },
-    CUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.cut.ac.za/",
-        verified: "2026-09-02"
-    },
-    MUT: {
-        general: "NSC with appropriate achievement levels for the qualification level (Higher Certificate, Diploma, or Bachelor's degree).",
-        qualification: "Higher Certificate, Diploma, or Bachelor's degree depending on the programme",
-        aps: "Varies by qualification and programme. Higher Certificate: minimum 18–20 APS. Diploma: minimum 22–26 APS. Bachelor's degree: minimum 26–30 APS (programme-specific).",
-        important: "Each qualification and programme has its own APS, subject, and achievement level requirements.",
-        subjects: "English (Home Language or First Additional Language) is required. Mathematics and/or Physical Sciences are required for many programmes.",
-        warning: "Admission requirements vary by qualification and programme. Always check the requirements for the specific qualification before applying.",
-        extra: "Some programmes require portfolios, interviews, or practical tests.",
-        source: "https://www.mut.ac.za/",
-        verified: "2026-09-02"
-    }
+    UCT: { general: "NSC with at least four subjects at level 4 or better. LO excluded.", qualification: "NSC Bachelor's", aps: "Varies by programme (Faculty-specific FAS)", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.uct.ac.za/", verified: "2026-09-02" },
+    Wits: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Varies by programme (max 48, LO excluded)", important: "Programme-specific APS and subject requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific programme requirements.", extra: "NBTs required for most programmes.", source: "https://www.wits.ac.za/", verified: "2026-09-02" },
+    UP: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Varies by programme (e.g. 28–33+ for Engineering)", important: "Programme-specific APS and subject requirements.", subjects: "English, Mathematics, Physical Sciences, Life Sciences.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.up.ac.za/", verified: "2026-09-02" },
+    SU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme/faculty-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, and others per programme.", warning: "Check specific programme requirements.", extra: "NBTs required for most programmes.", source: "https://www.sun.ac.za/", verified: "2026-09-02" },
+    UJ: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific APS and subject requirements.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.uj.ac.za/", verified: "2026-09-02" },
+    UKZN: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://ukzn.ac.za/", verified: "2026-09-02" },
+    UWC: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.uwc.ac.za/", verified: "2026-09-02" },
+    UFS: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.ufs.ac.za/", verified: "2026-09-02" },
+    NWU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.nwu.ac.za/", verified: "2026-09-02" },
+    UNISA: { general: "NSC Bachelor's/Diploma/Higher Certificate depending on qualification.", qualification: "Varies", aps: "Qualification-specific (e.g. 20 for BA)", important: "Qualification-specific requirements apply.", subjects: "English required; others per qualification.", warning: "Check specific qualification requirements.", extra: "Continuous application for some qualifications.", source: "https://www.unisa.ac.za/", verified: "2026-09-02" },
+    UL: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.ul.ac.za/", verified: "2026-09-02" },
+    UNIVEN: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Minimum 26 (LO excluded, subjects <40% excluded)", important: "Programme-specific requirements may be higher.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.univen.ac.za/", verified: "2026-09-02" },
+    UNIZULU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.unizulu.ac.za/", verified: "2026-09-02" },
+    UFH: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.ufh.ac.za/", verified: "2026-09-02" },
+    WSU: { general: "NSC Bachelor's/Diploma/Higher Certificate depending on qualification.", qualification: "Varies", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.wsu.ac.za/", verified: "2026-09-02" },
+    NMU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.mandela.ac.za/", verified: "2026-09-02" },
+    RU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.ru.ac.za/", verified: "2026-09-02" },
+    UMP: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.ump.ac.za/", verified: "2026-09-02" },
+    SPU: { general: "NSC Bachelor's with at least four subjects at level 4 or better.", qualification: "NSC Bachelor's", aps: "Programme-specific", important: "Programme-specific requirements apply.", subjects: "English, Mathematics, others per programme.", warning: "Check specific programme requirements.", extra: "NBTs, portfolios, or interviews may be required.", source: "https://www.spu.ac.za/", verified: "2026-09-02" },
+    SMU: { general: "NSC Bachelor's with at least four subjects at level 4 or better. Health sciences have higher requirements.", qualification: "NSC Bachelor's", aps: "Programme-specific (health sciences significantly higher)", important: "Health sciences are highly competitive.", subjects: "English, Mathematics, Physical Sciences, Life Sciences.", warning: "Check specific programme requirements.", extra: "NBTs required; interviews and selection tests may apply.", source: "https://www.smu.ac.za/", verified: "2026-09-02" },
+    CPUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.cput.ac.za/", verified: "2026-09-02" },
+    DUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.dut.ac.za/", verified: "2026-09-02" },
+    TUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.tut.ac.za/", verified: "2026-09-02" },
+    VUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.vut.ac.za/", verified: "2026-09-02" },
+    CUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.cut.ac.za/", verified: "2026-09-02" },
+    MUT: { general: "NSC with appropriate levels for qualification (HC/Diploma/Degree).", qualification: "Higher Certificate / Diploma / Degree", aps: "HC 18–20, Diploma 22–26, Degree 26–30 (programme-specific)", important: "Qualification and programme-specific requirements.", subjects: "English required; Maths/PhysSci for many programmes.", warning: "Check specific qualification requirements.", extra: "Portfolios, interviews, or practical tests may be required.", source: "https://www.mut.ac.za/", verified: "2026-09-02" }
 };
 
 const programmeRequirements = {
-    "Medicine (MBChB)": { typicalAverage: "75–80%+", maths: "70%+", physSci: "70%+",
-        lifeSci: "Not usually required, but Life Sciences recommended", english: "65%+", aps: "36–42+",
-        additional: "NBTs, interview, and selection tests often required."
-    },
-    "Engineering": { typicalAverage: "60–65%+", maths: "60–70%+", physSci: "60–70%+", lifeSci: "Not usually required",
-        english: "50–60%+", aps: "30–38+",
-        additional: "NBTs often required. Specific engineering disciplines may have higher requirements."
-    },
-    "Computer Science": { typicalAverage: "55–60%+", maths: "60%+", physSci: "50%+ where required",
-        lifeSci: "Not usually required", english: "50–60%+", aps: "28–35+",
-        additional: "Some universities require NBTs or programming aptitude tests."
-    },
-    "Law (LLB)": { typicalAverage: "55–60%+", maths: "Not compulsory (but recommended)", physSci: "Not required",
-        lifeSci: "Not required", english: "60%+", aps: "30–36+",
-        additional: "NBTs often required. Some universities require additional tests."
-    },
-    "BCom Accounting": { typicalAverage: "55–60%+", maths: "60%+", physSci: "Not required", lifeSci: "Not required",
-        english: "50–60%+", aps: "30–36+", additional: "NBTs may be required."
-    },
-    "Architecture": { typicalAverage: "55–60%+", maths: "50–60%+", physSci: "50%+ where required",
-        lifeSci: "Not required", english: "50–60%+", aps: "28–34+",
-        additional: "Portfolio may be required. NBTs often required."
-    },
-    "Psychology": { typicalAverage: "50–55%+", maths: "Not compulsory", physSci: "Not required",
-        lifeSci: "Not required", english: "50–60%+", aps: "25–32+", additional: "NBTs may be required."
-    },
-    "Nursing": { typicalAverage: "50–60%+", maths: "40–50%+",
-        physSci: "Life Sciences preferred, Physical Sciences not always required", lifeSci: "50%+ (Life Sciences)",
-        english: "50%+", aps: "24–30+", additional: "Some universities require NBTs."
-    },
-    "BA Humanities": { typicalAverage: "45–50%+", maths: "Not compulsory", physSci: "Not required",
-        lifeSci: "Not required", english: "50%+", aps: "20–28+", additional: "NBTs may be required."
-    },
-    "Business Management": { typicalAverage: "45–55%+", maths: "40–50%+", physSci: "Not required",
-        lifeSci: "Not required", english: "50%+", aps: "22–30+",
-        additional: "NBTs may be required by some universities."
-    }
+    "Medicine (MBChB)": { typicalAverage: "75–80%+", maths: "70%+", physSci: "70%+", lifeSci: "Recommended", english: "65%+", aps: "36–42+", additional: "NBTs, interview, selection tests." },
+    "Engineering": { typicalAverage: "60–65%+", maths: "60–70%+", physSci: "60–70%+", lifeSci: "Not required", english: "50–60%+", aps: "30–38+", additional: "NBTs often required." },
+    "Computer Science": { typicalAverage: "55–60%+", maths: "60%+", physSci: "50%+ where required", lifeSci: "Not required", english: "50–60%+", aps: "28–35+", additional: "NBTs or aptitude tests may be required." },
+    "Law (LLB)": { typicalAverage: "55–60%+", maths: "Recommended", physSci: "Not required", lifeSci: "Not required", english: "60%+", aps: "30–36+", additional: "NBTs often required." },
+    "BCom Accounting": { typicalAverage: "55–60%+", maths: "60%+", physSci: "Not required", lifeSci: "Not required", english: "50–60%+", aps: "30–36+", additional: "NBTs may be required." },
+    "Architecture": { typicalAverage: "55–60%+", maths: "50–60%+", physSci: "50%+ where required", lifeSci: "Not required", english: "50–60%+", aps: "28–34+", additional: "Portfolio and NBTs often required." },
+    "Psychology": { typicalAverage: "50–55%+", maths: "Not compulsory", physSci: "Not required", lifeSci: "Not required", english: "50–60%+", aps: "25–32+", additional: "NBTs may be required." },
+    "Nursing": { typicalAverage: "50–60%+", maths: "40–50%+", physSci: "Life Sciences preferred", lifeSci: "50%+", english: "50%+", aps: "24–30+", additional: "NBTs may be required." },
+    "BA Humanities": { typicalAverage: "45–50%+", maths: "Not compulsory", physSci: "Not required", lifeSci: "Not required", english: "50%+", aps: "20–28+", additional: "NBTs may be required." },
+    "Business Management": { typicalAverage: "45–55%+", maths: "40–50%+", physSci: "Not required", lifeSci: "Not required", english: "50%+", aps: "22–30+", additional: "NBTs may be required." }
 };
 
 const studyFields = [{
     id: "health",
     label: "Health Sciences",
     icon: "fa-heart-pulse",
-    description: "Health Sciences focus on the study of the human body, health, disease, and healthcare. This field prepares students for careers in medicine, nursing, pharmacy, therapy, and public health.",
-    suitable: "You enjoy biology, chemistry, helping people, solving problems, and have a strong sense of empathy and attention to detail.",
+    description: "Health Sciences focus on the study of the human body, health, disease, and healthcare.",
+    suitable: "You enjoy biology, chemistry, helping people, and have strong empathy and attention to detail.",
     subjects: "Life Sciences, Physical Sciences, Mathematics, English",
     qualifications: [
-        { name: "Medicine (MBChB)", careers: "Doctor, Surgeon, General Practitioner, Medical Specialist",
-            learn: "Human anatomy, physiology, pathology, pharmacology, clinical skills, surgery, public health" },
-        { name: "Nursing", careers: "Nurse, Nurse Practitioner, Clinical Nurse Specialist, Nurse Educator",
-            learn: "Patient care, anatomy, physiology, pharmacology, nursing ethics, community health" },
-        { name: "Pharmacy", careers: "Pharmacist, Clinical Pharmacist, Pharmaceutical Researcher, Retail Pharmacist",
-            learn: "Medicinal chemistry, pharmacology, pharmaceutics, pharmacy practice, clinical pharmacy" },
-        { name: "Physiotherapy", careers: "Physiotherapist, Sports Physiotherapist, Neurological Physiotherapist",
-            learn: "Anatomy, biomechanics, exercise therapy, manual therapy, rehabilitation" },
-        { name: "Occupational Therapy", careers: "Occupational Therapist, Rehabilitation Specialist, Community Health Worker",
-            learn: "Human development, anatomy, psychology, therapeutic activities, rehabilitation" }
+        { name: "Medicine (MBChB)", careers: "Doctor, Surgeon, General Practitioner", learn: "Anatomy, physiology, pathology, pharmacology, clinical skills" },
+        { name: "Nursing", careers: "Nurse, Nurse Practitioner, Clinical Nurse Specialist", learn: "Patient care, anatomy, physiology, pharmacology, nursing ethics" },
+        { name: "Pharmacy", careers: "Pharmacist, Clinical Pharmacist, Pharmaceutical Researcher", learn: "Medicinal chemistry, pharmacology, pharmaceutics, pharmacy practice" },
+        { name: "Physiotherapy", careers: "Physiotherapist, Sports Physiotherapist", learn: "Anatomy, biomechanics, exercise therapy, manual therapy" },
+        { name: "Occupational Therapy", careers: "Occupational Therapist, Rehabilitation Specialist", learn: "Human development, anatomy, psychology, therapeutic activities" }
     ]
 }, {
     id: "science",
     label: "Science, Mathematics & Computing",
     icon: "fa-flask",
-    description: "This field covers the study of the natural world, mathematical principles, and computing systems. It develops analytical, problem-solving, and technical skills for a wide range of careers.",
-    suitable: "You are curious about how things work, enjoy problem-solving, logic, and have a strong interest in mathematics, technology, or the natural world.",
+    description: "Covers the study of the natural world, mathematical principles, and computing systems.",
+    suitable: "You are curious, enjoy problem-solving, logic, and have strong interest in mathematics, technology, or nature.",
     subjects: "Mathematics, Physical Sciences, Life Sciences, Computer Applications Technology, English",
     qualifications: [
-        { name: "Computer Science", careers: "Software Developer, Systems Analyst, Cybersecurity Specialist, AI Engineer",
-            learn: "Programming, algorithms, data structures, databases, software development, AI, computer systems" },
-        { name: "Information Technology", careers: "IT Manager, Network Engineer, Database Administrator, Cloud Engineer",
-            learn: "Networking, databases, systems administration, cybersecurity, IT project management" },
-        { name: "Data Science", careers: "Data Scientist, Data Analyst, Business Intelligence Analyst, Data Engineer",
-            learn: "Statistics, machine learning, data visualisation, Python, SQL, big data" },
-        { name: "Mathematics", careers: "Mathematician, Actuary, Statistician, Financial Analyst, Teacher",
-            learn: "Calculus, algebra, analysis, differential equations, mathematical modelling" },
-        { name: "Physics", careers: "Physicist, Research Scientist, Geophysicist, Medical Physicist, Teacher",
-            learn: "Mechanics, electromagnetism, thermodynamics, quantum physics, relativity" }
+        { name: "Computer Science", careers: "Software Developer, Systems Analyst, Cybersecurity Specialist", learn: "Programming, algorithms, data structures, databases, AI" },
+        { name: "Information Technology", careers: "IT Manager, Network Engineer, Database Administrator", learn: "Networking, databases, systems administration, cybersecurity" },
+        { name: "Data Science", careers: "Data Scientist, Data Analyst, Business Intelligence Analyst", learn: "Statistics, machine learning, Python, SQL, big data" },
+        { name: "Mathematics", careers: "Mathematician, Actuary, Statistician, Financial Analyst", learn: "Calculus, algebra, analysis, differential equations" },
+        { name: "Physics", careers: "Physicist, Research Scientist, Geophysicist", learn: "Mechanics, electromagnetism, thermodynamics, quantum physics" }
     ]
 }, {
     id: "engineering",
     label: "Engineering & Built Environment",
     icon: "fa-gears",
-    description: "Engineering applies scientific and mathematical principles to design, build, and maintain structures, machines, systems, and processes. The built environment focuses on the design and construction of buildings and infrastructure.",
-    suitable: "You enjoy mathematics and physics, like solving practical problems, designing things, and have a strong attention to detail and creativity.",
+    description: "Applies scientific and mathematical principles to design, build, and maintain structures and systems.",
+    suitable: "You enjoy mathematics and physics, solving practical problems, and designing things.",
     subjects: "Mathematics, Physical Sciences, English, sometimes Geography or Design",
     qualifications: [
-        { name: "Civil Engineering", careers: "Civil Engineer, Structural Engineer, Water Engineer, Construction Manager",
-            learn: "Structural analysis, fluid mechanics, geotechnical engineering, transport engineering, construction" },
-        { name: "Mechanical Engineering", careers: "Mechanical Engineer, Design Engineer, Manufacturing Engineer, Aerospace Engineer",
-            learn: "Thermodynamics, fluid mechanics, mechanics, materials science, manufacturing" },
-        { name: "Electrical Engineering", careers: "Electrical Engineer, Power Engineer, Control Systems Engineer, Electronics Engineer",
-            learn: "Circuits, power systems, control systems, electronics, signal processing, electromagnetics" },
-        { name: "Chemical Engineering", careers: "Chemical Engineer, Process Engineer, Petrochemical Engineer, Environmental Engineer",
-            learn: "Thermodynamics, fluid mechanics, mass transfer, chemical reactions, process design" },
-        { name: "Architecture", careers: "Architect, Urban Designer, Project Manager, Design Consultant",
-            learn: "Architectural design, history, building technology, urban design, construction management" }
+        { name: "Civil Engineering", careers: "Civil Engineer, Structural Engineer, Construction Manager", learn: "Structural analysis, fluid mechanics, geotechnical engineering" },
+        { name: "Mechanical Engineering", careers: "Mechanical Engineer, Design Engineer, Manufacturing Engineer", learn: "Thermodynamics, fluid mechanics, mechanics, materials science" },
+        { name: "Electrical Engineering", careers: "Electrical Engineer, Power Engineer, Electronics Engineer", learn: "Circuits, power systems, control systems, electronics" },
+        { name: "Chemical Engineering", careers: "Chemical Engineer, Process Engineer, Petrochemical Engineer", learn: "Thermodynamics, fluid mechanics, mass transfer, chemical reactions" },
+        { name: "Architecture", careers: "Architect, Urban Designer, Project Manager", learn: "Architectural design, history, building technology, urban design" }
     ]
 }, {
     id: "business",
     label: "Business, Commerce & Management",
     icon: "fa-chart-line",
-    description: "Business and commerce focuses on the study of organisations, markets, finance, and management. It prepares students for careers in corporate, entrepreneurial, and public sectors.",
-    suitable: "You are interested in how businesses work, enjoy working with numbers and people, have strong communication skills, and like taking initiative.",
+    description: "Focuses on organisations, markets, finance, and management.",
+    suitable: "You are interested in how businesses work, enjoy working with numbers and people, and have strong communication skills.",
     subjects: "Mathematics, English, Accounting, Economics, Business Studies",
     qualifications: [
-        { name: "Accounting", careers: "Accountant, Auditor, Tax Consultant, Financial Manager, Controller",
-            learn: "Financial accounting, management accounting, taxation, auditing, corporate finance" },
-        { name: "Economics", careers: "Economist, Policy Analyst, Financial Analyst, Consultant, Researcher",
-            learn: "Microeconomics, macroeconomics, econometrics, economic policy, development economics" },
-        { name: "Finance", careers: "Financial Analyst, Investment Banker, Portfolio Manager, Financial Planner",
-            learn: "Corporate finance, investments, financial markets, risk management, financial modelling" },
-        { name: "Marketing", careers: "Marketing Manager, Brand Manager, Digital Marketer, Market Researcher",
-            learn: "Consumer behaviour, branding, digital marketing, market research, advertising" },
-        { name: "Business Management", careers: "Business Manager, Operations Manager, General Manager",
-            learn: "Organisational behaviour, operations, strategy, marketing, finance, leadership" }
+        { name: "Accounting", careers: "Accountant, Auditor, Tax Consultant, Financial Manager", learn: "Financial accounting, management accounting, taxation, auditing" },
+        { name: "Economics", careers: "Economist, Policy Analyst, Financial Analyst, Consultant", learn: "Microeconomics, macroeconomics, econometrics, economic policy" },
+        { name: "Finance", careers: "Financial Analyst, Investment Banker, Portfolio Manager", learn: "Corporate finance, investments, financial markets, risk management" },
+        { name: "Marketing", careers: "Marketing Manager, Brand Manager, Digital Marketer", learn: "Consumer behaviour, branding, digital marketing, market research" },
+        { name: "Business Management", careers: "Business Manager, Operations Manager, General Manager", learn: "Organisational behaviour, operations, strategy, leadership" }
     ]
 }, {
     id: "law",
     label: "Law & Legal Studies",
     icon: "fa-scale-balanced",
-    description: "Law and legal studies cover the study of legal systems, justice, and the application of law. It prepares students for careers in the legal profession, paralegal work, and related fields.",
-    suitable: "You enjoy debate, critical thinking, reading and analysing texts, have strong reasoning skills, and a sense of justice.",
+    description: "Covers legal systems, justice, and the application of law.",
+    suitable: "You enjoy debate, critical thinking, reading and analysing texts, and have strong reasoning skills.",
     subjects: "English, History, Life Orientation, Languages, Mathematics",
     qualifications: [
-        { name: "LLB (Bachelor of Laws)", careers: "Attorney, Advocate, Legal Advisor, Magistrate, Judge",
-            learn: "Criminal law, civil law, constitutional law, legal practice, ethics" },
-        { name: "BA Law", careers: "Legal Advisor, Paralegal, Law Clerk, Policy Analyst, Researcher",
-            learn: "Legal principles, criminal law, constitutional law, legal writing, legal research" },
-        { name: "BCom Law", careers: "Corporate Legal Advisor, Compliance Officer, Legal Consultant",
-            learn: "Business law, company law, commercial law, legal research, compliance" },
-        { name: "Criminal Justice", careers: "Police Officer, Probation Officer, Correctional Officer",
-            learn: "Criminal law, criminology, justice system, corrections, community safety" },
-        { name: "Paralegal Studies", careers: "Paralegal, Legal Assistant, Legal Secretary, Law Clerk",
-            learn: "Legal systems, legal writing, research, office administration, ethics" }
+        { name: "LLB (Bachelor of Laws)", careers: "Attorney, Advocate, Legal Advisor, Magistrate", learn: "Criminal law, civil law, constitutional law, legal practice" },
+        { name: "BA Law", careers: "Legal Advisor, Paralegal, Law Clerk, Policy Analyst", learn: "Legal principles, criminal law, constitutional law, legal writing" },
+        { name: "BCom Law", careers: "Corporate Legal Advisor, Compliance Officer, Legal Consultant", learn: "Business law, company law, commercial law, compliance" },
+        { name: "Criminal Justice", careers: "Police Officer, Probation Officer, Correctional Officer", learn: "Criminal law, criminology, justice system, corrections" },
+        { name: "Paralegal Studies", careers: "Paralegal, Legal Assistant, Legal Secretary", learn: "Legal systems, legal writing, research, office administration" }
     ]
 }, {
     id: "humanities",
     label: "Humanities & Social Sciences",
     icon: "fa-users",
-    description: "Humanities and social sciences study human society, culture, behaviour, and ideas. It develops critical thinking, communication, and analytical skills for diverse careers.",
-    suitable: "You are curious about people and society, enjoy reading, writing, and thinking deeply about ideas, history, and culture.",
+    description: "Studies human society, culture, behaviour, and ideas.",
+    suitable: "You are curious about people and society, enjoy reading, writing, and thinking deeply about ideas.",
     subjects: "English, History, Languages, Geography, Life Orientation",
     qualifications: [
-        { name: "Bachelor of Arts", careers: "Communications, Public Relations, Teaching, Writing, Researcher",
-            learn: "Humanities, social sciences, critical thinking, writing, research" },
-        { name: "Psychology", careers: "Psychologist, Counsellor, Human Resources, Researcher, Therapist",
-            learn: "Human behaviour, cognition, development, mental health, research methods" },
-        { name: "Sociology", careers: "Sociologist, Researcher, Policy Analyst, Social Worker, Educator",
-            learn: "Social theory, social issues, research methods, sociology of family, education, and work" },
-        { name: "Political Science", careers: "Policy Analyst, Political Advisor, Diplomat, Journalist, Researcher",
-            learn: "Political theory, comparative politics, international relations, policy analysis" },
-        { name: "History", careers: "Historian, Teacher, Researcher, Museum Curator, Archivist",
-            learn: "World history, African history, historical methods, research, historiography" }
+        { name: "Bachelor of Arts", careers: "Communications, Public Relations, Teaching, Writing", learn: "Humanities, social sciences, critical thinking, writing" },
+        { name: "Psychology", careers: "Psychologist, Counsellor, Human Resources, Therapist", learn: "Human behaviour, cognition, development, mental health" },
+        { name: "Sociology", careers: "Sociologist, Researcher, Policy Analyst, Social Worker", learn: "Social theory, social issues, research methods" },
+        { name: "Political Science", careers: "Policy Analyst, Political Advisor, Diplomat, Journalist", learn: "Political theory, comparative politics, international relations" },
+        { name: "History", careers: "Historian, Teacher, Researcher, Museum Curator", learn: "World history, African history, historical methods" }
     ]
 }, {
     id: "arts",
     label: "Arts, Design & Creative Industries",
     icon: "fa-palette",
-    description: "Creative industries encompass art, design, media, and performance. This field develops creative, technical, and visual skills for careers in the cultural and creative economy.",
-    suitable: "You are creative, have a strong visual or performance sense, enjoy expressing yourself, and like working with your hands or digital tools.",
+    description: "Encompasses art, design, media, and performance.",
+    suitable: "You are creative, have a strong visual or performance sense, and enjoy expressing yourself.",
     subjects: "Art, Design, Drama, Music, History, English, Mathematics",
     qualifications: [
-        { name: "Fine Art", careers: "Artist, Gallery Manager, Art Teacher, Illustrator, Visual Artist",
-            learn: "Painting, sculpture, drawing, art history, contemporary practice, installation" },
-        { name: "Graphic Design", careers: "Graphic Designer, Art Director, Illustrator, UX/UI Designer",
-            learn: "Typography, layout, branding, digital design, illustration, design theory" },
-        { name: "Fashion Design", careers: "Fashion Designer, Pattern Cutter, Textile Designer, Buyer",
-            learn: "Fashion illustration, pattern making, garment construction, textiles, fashion business" },
-        { name: "Interior Design", careers: "Interior Designer, Decorator, Exhibition Designer, Design Consultant",
-            learn: "Space planning, materials, lighting, furniture design, history, CAD" },
-        { name: "Animation", careers: "Animator, Motion Designer, Visual Effects Artist, Game Artist",
-            learn: "2D animation, 3D animation, character design, storyboard, motion graphics" }
+        { name: "Fine Art", careers: "Artist, Gallery Manager, Art Teacher, Illustrator", learn: "Painting, sculpture, drawing, art history, contemporary practice" },
+        { name: "Graphic Design", careers: "Graphic Designer, Art Director, UX/UI Designer", learn: "Typography, layout, branding, digital design, design theory" },
+        { name: "Fashion Design", careers: "Fashion Designer, Pattern Cutter, Textile Designer", learn: "Fashion illustration, pattern making, garment construction" },
+        { name: "Interior Design", careers: "Interior Designer, Decorator, Exhibition Designer", learn: "Space planning, materials, lighting, furniture design" },
+        { name: "Animation", careers: "Animator, Motion Designer, Visual Effects Artist", learn: "2D animation, 3D animation, character design, storyboard" }
     ]
 }, {
     id: "education",
     label: "Education",
     icon: "fa-chalkboard-user",
-    description: "Education prepares students for teaching and education-related careers. It covers educational theory, curriculum development, and practical teaching skills across various phases and subjects.",
+    description: "Prepares students for teaching and education-related careers.",
     suitable: "You enjoy helping others learn, have patience, strong communication skills, and a passion for shaping young minds.",
     subjects: "English, Mathematics, Life Orientation, subject specialisations",
     qualifications: [
-        { name: "Bachelor of Education", careers: "Teacher, Education Specialist, Curriculum Developer",
-            learn: "Educational theory, pedagogy, curriculum studies, subject didactics, assessment" },
-        { name: "Foundation Phase Education", careers: "Foundation Phase Teacher, Early Childhood Educator",
-            learn: "Child development, early literacy, numeracy, creative arts, physical education" },
-        { name: "Intermediate Phase Education", careers: "Intermediate Phase Teacher, Subject Specialist",
-            learn: "Curriculum, assessment, subject-specific methodology, child development" },
-        { name: "Senior Phase Education", careers: "Senior Phase Teacher, Subject Specialist, Head of Department",
-            learn: "Subject didactics, curriculum, assessment, adolescent development" },
-        { name: "Mathematics Education", careers: "Mathematics Teacher, Maths Specialist, Curriculum Advisor",
-            learn: "Mathematics pedagogy, curriculum, assessment, advanced mathematical knowledge" }
+        { name: "Bachelor of Education", careers: "Teacher, Education Specialist, Curriculum Developer", learn: "Educational theory, pedagogy, curriculum studies, assessment" },
+        { name: "Foundation Phase Education", careers: "Foundation Phase Teacher, Early Childhood Educator", learn: "Child development, early literacy, numeracy, creative arts" },
+        { name: "Intermediate Phase Education", careers: "Intermediate Phase Teacher, Subject Specialist", learn: "Curriculum, assessment, subject-specific methodology" },
+        { name: "Senior Phase Education", careers: "Senior Phase Teacher, Subject Specialist, Head of Department", learn: "Subject didactics, curriculum, assessment, adolescent development" },
+        { name: "Mathematics Education", careers: "Mathematics Teacher, Maths Specialist, Curriculum Advisor", learn: "Mathematics pedagogy, curriculum, assessment, advanced maths" }
     ]
 }, {
     id: "agriculture",
     label: "Agriculture, Environment & Natural Resources",
     icon: "fa-seedling",
-    description: "This field covers the study of food production, environmental management, and the sustainable use of natural resources. It combines science, technology, and practical skills.",
-    suitable: "You enjoy the outdoors, are passionate about nature and sustainability, and have an interest in farming, conservation, or environmental management.",
+    description: "Covers food production, environmental management, and sustainable use of natural resources.",
+    suitable: "You enjoy the outdoors, are passionate about nature and sustainability, and have an interest in farming or conservation.",
     subjects: "Life Sciences, Mathematics, Physical Sciences, Geography, Agricultural Sciences",
     qualifications: [
-        { name: "Agriculture", careers: "Farm Manager, Agricultural Consultant, Agri-business Manager",
-            learn: "Crop production, animal production, farm management, agricultural economics, sustainability" },
-        { name: "Environmental Science", careers: "Environmental Scientist, Ecologist, Conservationist, Consultant",
-            learn: "Ecology, conservation, environmental chemistry, pollution control, sustainability" },
-        { name: "Wildlife Management", careers: "Wildlife Manager, Conservationist, Park Ranger, Ecologist",
-            learn: "Wildlife ecology, conservation, animal behaviour, habitat management, policy" },
-        { name: "Forestry", careers: "Forester, Timber Manager, Conservationist, Forestry Consultant",
-            learn: "Forest ecology, silviculture, timber harvesting, forest management, conservation" },
-        { name: "Horticulture", careers: "Horticulturist, Plant Scientist, Nursery Manager, Landscape Designer",
-            learn: "Plant cultivation, propagation, nursery management, landscaping, pest control" }
+        { name: "Agriculture", careers: "Farm Manager, Agricultural Consultant, Agri-business Manager", learn: "Crop production, animal production, farm management, sustainability" },
+        { name: "Environmental Science", careers: "Environmental Scientist, Ecologist, Conservationist", learn: "Ecology, conservation, environmental chemistry, pollution control" },
+        { name: "Wildlife Management", careers: "Wildlife Manager, Conservationist, Park Ranger", learn: "Wildlife ecology, conservation, animal behaviour, habitat management" },
+        { name: "Forestry", careers: "Forester, Timber Manager, Conservationist", learn: "Forest ecology, silviculture, timber harvesting, forest management" },
+        { name: "Horticulture", careers: "Horticulturist, Plant Scientist, Nursery Manager", learn: "Plant cultivation, propagation, nursery management, landscaping" }
     ]
 }, {
     id: "hospitality",
     label: "Hospitality, Tourism, Sport & Recreation",
     icon: "fa-utensils",
-    description: "This field covers the management of hospitality, tourism, sport, and leisure services. It combines business skills with hands-on experience in service industries.",
+    description: "Covers the management of hospitality, tourism, sport, and leisure services.",
     suitable: "You enjoy working with people, have strong organisational skills, and are interested in travel, food, events, or sport.",
     subjects: "English, Mathematics, Geography, Life Orientation, Business Studies",
     qualifications: [
-        { name: "Hospitality Management", careers: "Hotel Manager, Restaurant Manager, Event Manager, Hospitality Consultant",
-            learn: "Hotel operations, food and beverage, event management, hospitality law, revenue management" },
-        { name: "Tourism Management", careers: "Tourism Manager, Travel Consultant, Destination Manager, Tour Operator",
-            learn: "Tourism marketing, destination management, travel operations, sustainable tourism" },
-        { name: "Event Management", careers: "Event Manager, Wedding Planner, Conference Organiser, Festival Manager",
-            learn: "Event planning, logistics, catering, entertainment, marketing, budgeting" },
-        { name: "Sport Management", careers: "Sports Manager, Athletic Director, Event Coordinator, Sports Marketing",
-            learn: "Sports business, marketing, event management, facilities management, law" },
-        { name: "Culinary Arts", careers: "Chef, Pastry Chef, Food Stylist, Restaurant Manager, Food Writer",
-            learn: "Cooking techniques, baking, food safety, kitchen management, menu planning" }
+        { name: "Hospitality Management", careers: "Hotel Manager, Restaurant Manager, Event Manager", learn: "Hotel operations, food and beverage, event management" },
+        { name: "Tourism Management", careers: "Tourism Manager, Travel Consultant, Destination Manager", learn: "Tourism marketing, destination management, sustainable tourism" },
+        { name: "Event Management", careers: "Event Manager, Wedding Planner, Conference Organiser", learn: "Event planning, logistics, catering, marketing, budgeting" },
+        { name: "Sport Management", careers: "Sports Manager, Athletic Director, Event Coordinator", learn: "Sports business, marketing, event management, facilities management" },
+        { name: "Culinary Arts", careers: "Chef, Pastry Chef, Food Stylist, Restaurant Manager", learn: "Cooking techniques, baking, food safety, kitchen management" }
     ]
 }];
 
 const resources = [
-    { icon: "fa-calculator", title: "How APS Works",
-        desc: "Understand how the Admission Point Score is calculated and used by universities." },
-    { icon: "fa-file-pen", title: "How to Apply to University",
-        desc: "A step-by-step guide to applying for undergraduate study in South Africa." },
-    { icon: "fa-compass", title: "How to Choose a Degree",
-        desc: "Tips and strategies to help you choose the right qualification for your future." },
-    { icon: "fa-building-columns", title: "University vs TVET College",
-        desc: "Compare universities, universities of technology, and TVET colleges." },
+    { icon: "fa-calculator", title: "How APS Works", desc: "Understand how the Admission Point Score is calculated." },
+    { icon: "fa-file-pen", title: "How to Apply to University", desc: "A step-by-step guide to applying for undergraduate study." },
+    { icon: "fa-compass", title: "How to Choose a Degree", desc: "Tips and strategies to help you choose the right qualification." },
+    { icon: "fa-building-columns", title: "University vs TVET College", desc: "Compare universities, UoTs, and TVET colleges." },
     { icon: "fa-landmark", title: "NSFAS Information", desc: "Find out about NSFAS funding and how to apply." },
-    { icon: "fa-hand-holding-dollar", title: "Bursaries",
-        desc: "Explore bursary opportunities for South African students." },
-    { icon: "fa-calendar", title: "Application Deadlines",
-        desc: "Stay on top of university application deadlines and key dates." },
-    { icon: "fa-house", title: "Residence Applications",
-        desc: "Learn about university residence options and how to apply." }
+    { icon: "fa-hand-holding-dollar", title: "Bursaries", desc: "Explore bursary opportunities for South African students." },
+    { icon: "fa-calendar", title: "Application Deadlines", desc: "Stay on top of application deadlines and key dates." },
+    { icon: "fa-house", title: "Residence Applications", desc: "Learn about residence options and how to apply." }
 ];
 
 // ============================================================
 // HELPERS
 // ============================================================
-function escapeHTML(value) {
-    return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g,
-            "&quot;").replace(/'/g, "&#039;");
-}
+function escapeHTML(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
-function displayValue(value) {
-    return value && String(value).trim() ? escapeHTML(value) : "Not currently listed";
-}
+function displayValue(v) { return v && String(v).trim() ? escapeHTML(v) : "Not currently listed"; }
 
-function generateLogoHTML(inst, modalSize = false) {
+function generateLogoHTML(inst, modalSize) {
     const abbr = encodeURIComponent(inst.abbr);
     const colour = (fallbackColours[inst.abbr] || "123c63").replace("#", "");
     const size = modalSize ? 140 : 80;
@@ -1100,13 +752,10 @@ function getViewedIds() { try { return JSON.parse(localStorage.getItem(STORAGE_K
 
 function setViewedIds(ids) { localStorage.setItem(STORAGE_KEYS.VIEWED, JSON.stringify(ids)); }
 
-function addViewed(id) {
-    let viewed = getViewedIds();
+function addViewed(id) { let viewed = getViewedIds();
     viewed = viewed.filter(v => v !== id);
-    viewed.unshift(id);
-    if (viewed.length > 10) viewed = viewed.slice(0, 10);
-    setViewedIds(viewed);
-}
+    viewed.unshift(id); if (viewed.length > 10) viewed = viewed.slice(0, 10);
+    setViewedIds(viewed); }
 
 function getCompareIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.COMPARE)) || []; } catch { return []; } }
 
@@ -1124,15 +773,8 @@ function updateCompareBadge() {
 
 function toggleCompare(instId) {
     const idx = compareIds.indexOf(instId);
-    if (idx > -1) {
-        compareIds.splice(idx, 1);
-    } else {
-        if (compareIds.length >= 4) {
-            showToast('You can compare up to 4 universities.');
-            return;
-        }
-        compareIds.push(instId);
-    }
+    if (idx > -1) { compareIds.splice(idx, 1); } else { if (compareIds.length >= 4) { showToast(
+                'You can compare up to 4 universities.'); return; } compareIds.push(instId); }
     setCompareIds(compareIds);
     updateCompareBadge();
     document.querySelectorAll('.compare-btn').forEach(btn => {
@@ -1140,11 +782,11 @@ function toggleCompare(instId) {
         if (id === instId) {
             const isSelected = compareIds.includes(id);
             btn.classList.toggle('compare-selected', isSelected);
-            btn.querySelector('i').className =
-                `fas ${isSelected ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}`;
+            btn.querySelector('i').className = `fas ${isSelected ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}`;
             btn.querySelector('span').textContent = isSelected ? 'Selected' : 'Compare';
         }
     });
+    if (document.getElementById('dashboardModal').classList.contains('show')) renderDashboard();
     showToast(compareIds.includes(instId) ? 'Added to compare' : 'Removed from compare');
 }
 
@@ -1171,7 +813,8 @@ function openCompareModal() {
                 { key: 'city', label: 'City' },
                 { key: 'description', label: 'Description' },
                 { key: 'website', label: 'Website', render: (v) => `<a href="${v}" target="_blank">${v}</a>` },
-                { key: 'appUrl', label: 'Application Portal', render: (v) => `<a href="${v}" target="_blank">Apply</a>` },
+                { key: 'appUrl', label: 'Application Portal', render: (v) =>
+                        `<a href="${v}" target="_blank">Apply</a>` },
                 { key: 'appPeriodOpen', label: 'Applications Open' },
                 { key: 'appPeriodClose', label: 'Applications Close' },
                 { key: 'appFee', label: 'Application Fee' }
@@ -1193,9 +836,7 @@ function openCompareModal() {
                     const subjects = data.subjects ? data.subjects : 'N/A';
                     tableHTML +=
                         `<td><div><strong>APS:</strong> ${escapeHTML(aps)}</div><div style="font-size:0.7rem;margin-top:4px;"><strong>Subjects:</strong> ${escapeHTML(subjects)}</div></td>`;
-                } else {
-                    tableHTML += `<td>N/A</td>`;
-                }
+                } else { tableHTML += `<td>N/A</td>`; }
             });
             tableHTML += `</tr>`;
             tableHTML += `</tbody></table></div>`;
@@ -1222,6 +863,7 @@ function clearCompare() {
         btn.querySelector('i').className = 'fas fa-arrow-right-arrow-left';
         btn.querySelector('span').textContent = 'Compare';
     });
+    if (document.getElementById('dashboardModal').classList.contains('show')) renderDashboard();
     showToast('Compare list cleared');
     if (document.getElementById('compareModal').classList.contains('show')) openCompareModal();
 }
@@ -1236,11 +878,9 @@ function showToast(msg) {
     div.className = 'toast-msg';
     div.textContent = msg;
     document.body.appendChild(div);
-    setTimeout(() => {
-        div.style.opacity = '0';
+    setTimeout(() => { div.style.opacity = '0';
         div.style.transition = 'opacity 0.3s';
-        setTimeout(() => div.remove(), 400);
-    }, 2500);
+        setTimeout(() => div.remove(), 400); }, 2500);
 }
 
 // ============================================================
@@ -1257,10 +897,7 @@ const tabs = document.querySelectorAll(".tab");
 let activeTab = "all";
 const likedState = {};
 
-function getPeriodStatus(inst) {
-    if (inst.appPeriodOpen && inst.appPeriodClose) return "open";
-    return "unknown";
-}
+function getPeriodStatus(inst) { if (inst.appPeriodOpen && inst.appPeriodClose) return "open"; return "unknown"; }
 
 function renderPeriodStatus(inst) {
     const open = inst.appPeriodOpen || 'Unknown';
@@ -1300,25 +937,25 @@ function renderCards(list) {
         const isSaved = savedIds.includes(inst.id);
         const isCompared = compareIds.includes(inst.id);
         return `
-                        <article class="institution-card" data-id="${inst.id}">
-                            <div class="card-logo">${generateLogoHTML(inst, false)}</div>
-                            <h3 class="card-title">${escapeHTML(inst.name)}</h3>
-                            <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
-                            <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                            <p class="card-description">${escapeHTML(inst.description)}</p>
-                            ${renderPeriodStatus(inst)}
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-                                <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
-                                <a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
-                            </div>
-                            <div class="card-actions-row">
-                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
-                                <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
-                                <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
-                                <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
-                            </div>
-                        </article>
-                        `;
+                    <article class="institution-card" data-id="${inst.id}">
+                        <div class="card-logo">${generateLogoHTML(inst, false)}</div>
+                        <h3 class="card-title">${escapeHTML(inst.name)}</h3>
+                        <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
+                        <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+                        <p class="card-description">${escapeHTML(inst.description)}</p>
+                        ${renderPeriodStatus(inst)}
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                            <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
+                            <a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
+                        </div>
+                        <div class="card-actions-row">
+                            <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
+                            <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
+                            <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
+                            <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
+                        </div>
+                    </article>
+                    `;
     }).join("");
     resultCount.textContent = `${list.length} institution${list.length === 1 ? "" : "s"}`;
 
@@ -1330,7 +967,6 @@ function renderCards(list) {
                 openModal(institution); }
         });
     });
-
     document.querySelectorAll('.like-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1343,7 +979,6 @@ function renderCards(list) {
             if (isLiked) showToast('❤️ You liked ' + institutions.find(i => i.id === id)?.name);
         });
     });
-
     document.querySelectorAll('.save-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1358,27 +993,23 @@ function renderCards(list) {
             this.classList.toggle('saved', isSaved);
             this.querySelector('i').className = `fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}`;
             this.querySelector('span').textContent = isSaved ? 'Saved' : 'Save';
+            if (document.getElementById('dashboardModal').classList.contains('show')) renderDashboard();
         });
     });
-
     document.querySelectorAll('.share-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             const id = Number(this.dataset.id);
             const inst = institutions.find(i => i.id === id);
             if (navigator.share) {
-                navigator.share({
-                    title: inst.name,
-                    text: `Check out ${inst.name} – ${inst.description}`,
-                    url: inst.website
-                }).catch(() => {});
+                navigator.share({ title: inst.name, text: `Check out ${inst.name} – ${inst.description}`,
+                        url: inst.website }).catch(() => {});
             } else {
                 navigator.clipboard?.writeText(inst.website).then(() => showToast('🔗 Link copied!'))
                     .catch(() => showToast('🔗 Share: ' + inst.website));
             }
         });
     });
-
     document.querySelectorAll('.compare-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1409,7 +1040,11 @@ function setTab(tab) {
     tabs.forEach(button => button.classList.toggle("active", button.dataset.tab === tab));
     filterInstitutions();
     const dirSection = document.getElementById('directory');
-    if (dirSection) setTimeout(() => dirSection.scrollIntoView({ behavior: 'smooth' }), 50);
+    if (dirSection) {
+        const offset = 80;
+        const top = dirSection.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+    }
 }
 
 tabs.forEach(button => button.addEventListener("click", () => setTab(button.dataset.tab)));
@@ -1428,25 +1063,25 @@ document.getElementById('exploreUniBtn').addEventListener('click', function(e) {
 function openModal(inst) {
     const admissionHTML = renderAdmissionCard(inst);
     modalContent.innerHTML = `
-                        <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
-                        <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
-                        <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                        <p class="modal-description">${escapeHTML(inst.description)}</p>
-                        ${admissionHTML}
-                        <div style="margin-top:14px;">
-                            <div class="detail-list">
-                                <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank">Official Website</a></div>
-                                <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank">Official Application Portal</a></div>
-                                <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank">Prospectus</a></div>
-                                <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
-                                <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
-                                <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
-                                <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
-                            </div>
+                    <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
+                    <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
+                    <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+                    <p class="modal-description">${escapeHTML(inst.description)}</p>
+                    ${admissionHTML}
+                    <div style="margin-top:14px;">
+                        <div class="detail-list">
+                            <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank">Official Website</a></div>
+                            <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank">Official Application Portal</a></div>
+                            <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank">Prospectus</a></div>
+                            <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
+                            <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
+                            <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
+                            <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
                         </div>
-                        <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
-                        <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
-                    `;
+                    </div>
+                    <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
+                    <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
+                `;
     modal.classList.add("show");
     modal.setAttribute("aria-hidden", "false");
     document.getElementById("modalCancel").addEventListener("click", closeModal);
@@ -1477,9 +1112,11 @@ function buildCarousel() {
         slide.className = 'carousel-slide';
         slide.innerHTML =
             `${generateLogoHTML(inst, false)}<div class="carousel-name">${escapeHTML(inst.name)}</div><div class="carousel-abbr">${escapeHTML(inst.abbr)}</div>`;
-        slide.addEventListener('click', () => { document.getElementById('directory').scrollIntoView({ behavior: 'smooth' });
+        slide.addEventListener('click', () => {
+            document.getElementById('directory').scrollIntoView({ behavior: 'smooth' });
             searchInput.value = inst.name;
-            filterInstitutions(); });
+            filterInstitutions();
+        });
         carouselTrack.appendChild(slide);
         const dot = document.createElement('span');
         if (idx === 0) dot.classList.add('active');
@@ -1840,7 +1477,7 @@ addSubjectBtn.addEventListener('click', () => {
     const total = document.querySelectorAll('.subject-entry').length;
     if (total < MAX_SUBJECTS) { subjectEntriesContainer.appendChild(createSubjectEntry('', '', false));
         updateAddButton(); } else alert(
-            `You can add up to ${MAX_SUBJECTS} subjects total (including Life Orientation).`);
+        `You can add up to ${MAX_SUBJECTS} subjects total (including Life Orientation).`);
 });
 
 function getPoints(percentage) {
@@ -1884,19 +1521,19 @@ function calculateAPS() {
     let guidanceHTML = '';
     if (totalAPS >= 40)
         guidanceHTML =
-            `<strong>Excellent! </strong>You are likely eligible for admission to most universities and competitive programmes. Consider institutions like UCT, Wits, Stellenbosch, UP and others.`;
+        `<strong>Excellent! </strong>You are likely eligible for admission to most universities and competitive programmes. Consider institutions like UCT, Wits, Stellenbosch, UP and others.`;
     else if (totalAPS >= 35)
         guidanceHTML =
-            `<strong>Good! </strong>You qualify for many programmes at universities such as UJ, NWU, UKZN, UWC. Check specific faculty requirements.`;
+        `<strong>Good! </strong>You qualify for many programmes at universities such as UJ, NWU, UKZN, UWC. Check specific faculty requirements.`;
     else if (totalAPS >= 30)
         guidanceHTML =
-            `<strong>Average. </strong>You may be eligible for some programmes at universities and most universities of technology. Consider CPUT, DUT, TUT, VUT and others.`;
+        `<strong>Average. </strong>You may be eligible for some programmes at universities and most universities of technology. Consider CPUT, DUT, TUT, VUT and others.`;
     else if (totalAPS >= 25)
         guidanceHTML =
-            `<strong>Below average. </strong>You may not meet the minimum APS for many university programmes, but universities of technology and some foundation programmes may be options. Check with institutions directly.`;
+        `<strong>Below average. </strong>You may not meet the minimum APS for many university programmes, but universities of technology and some foundation programmes may be options. Check with institutions directly.`;
     else
         guidanceHTML =
-            `<strong>Low APS. </strong>You may not qualify for most degree programmes. Consider universities of technology, bridging courses, or improving your results. Speak to a career counsellor.`;
+        `<strong>Low APS. </strong>You may not qualify for most degree programmes. Consider universities of technology, bridging courses, or improving your results. Speak to a career counsellor.`;
     apsGuidance.innerHTML = guidanceHTML;
     apsResult.style.display = 'block';
 }
@@ -1969,14 +1606,17 @@ const dailyMessages = [
     { title: "Courage", message: "Fortune Favours The Brave!",
         extra: "Take the next step. Your future starts with the decisions you make today." },
     { title: "Focus", message: "Keep your eyes on the goal.", extra: "Stay focused. Stay consistent." },
-    { title: "Persistence", message: "Don't give up now.", extra: "Your hard work will pay off. Keep pushing forward." },
-    { title: "Progress", message: "Small steps every day.", extra: "Progress is still progress. Your effort matters." },
+    { title: "Persistence", message: "Don't give up now.",
+        extra: "Your hard work will pay off. Keep pushing forward." },
+    { title: "Progress", message: "Small steps every day.",
+        extra: "Progress is still progress. Your effort matters." },
     { title: "Hope", message: "Your future is still being written.",
         extra: "Keep your head up. Your story is not over." },
     { title: "Strength", message: "Keep Your Head Up, You're Very Close.",
         extra: "Difficult roads often lead to beautiful destinations." },
     { title: "Believe", message: "Believe that you can.", extra: "You are capable of more than you think." },
-    { title: "Courage", message: "Do it scared. Do it anyway.", extra: "Your dreams are bigger than your doubts." },
+    { title: "Courage", message: "Do it scared. Do it anyway.",
+        extra: "Your dreams are bigger than your doubts." },
     { title: "Focus", message: "Stay focused. Stay consistent.", extra: "Your goals are worth the effort." }
 ];
 
@@ -2008,7 +1648,7 @@ window.addEventListener('scroll', () => {
 floatingHomeBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
 // ============================================================
-// DASHBOARD
+// DASHBOARD (with Compare section)
 // ============================================================
 function renderDashboard() {
     const container = document.getElementById('dashboardModalContent');
@@ -2016,9 +1656,33 @@ function renderDashboard() {
     const viewed = getViewedIds();
     const savedInsts = saved.map(id => institutions.find(i => i.id === id)).filter(Boolean);
     const viewedInsts = viewed.map(id => institutions.find(i => i.id === id)).filter(Boolean);
+    const compareInsts = compareIds.map(id => institutions.find(i => i.id === id)).filter(Boolean);
 
     let html =
         `<div class="dashboard-stats"><div class="dashboard-stat-card"><span class="stat-number">${saved.length}</span><span class="stat-label"><i class="fas fa-bookmark"></i> Saved</span></div><div class="dashboard-stat-card"><span class="stat-number">${viewed.length}</span><span class="stat-label"><i class="fas fa-eye"></i> Viewed</span></div><div class="dashboard-stat-card"><span class="stat-number">${institutions.length}</span><span class="stat-label"><i class="fas fa-university"></i> Total</span></div></div>`;
+
+    html += `<div class="dashboard-compare-card">`;
+    html +=
+        `<div class="compare-header"><h4><i class="fas fa-arrow-right-arrow-left" style="color:var(--gold-dark);"></i> Compare <span class="badge-compare">${compareInsts.length} / 4</span></h4>`;
+    html +=
+        `<button class="btn btn-apply btn-sm" onclick="closeDashboard();openCompareModal();" style="padding:4px 14px;font-size:0.7rem;"><i class="fas fa-expand"></i> Open Compare</button>`;
+    html += `</div>`;
+    html += `<div class="compare-pills">`;
+    if (compareInsts.length === 0) {
+        html += `<span class="empty-pill">No universities selected. Click "Compare" on any university card.</span>`;
+    } else {
+        compareInsts.forEach(inst => {
+            html +=
+                `<span class="pill">${escapeHTML(inst.abbr)} <span class="remove-pill" onclick="toggleCompare(${inst.id});renderDashboard();" title="Remove"><i class="fas fa-times-circle"></i></span></span>`;
+        });
+    }
+    html += `</div>`;
+    html +=
+        `<div class="compare-actions-row">${compareInsts.length > 0 ? `<button class="btn btn-details btn-sm" onclick="closeDashboard();clearCompare();renderDashboard();"><i class="fas fa-trash"></i> Clear</button>` : ''}`;
+    html +=
+        `<button class="btn btn-details btn-sm" onclick="closeDashboard();document.getElementById('directory').scrollIntoView({behavior:'smooth'});"><i class="fas fa-plus"></i> Add More</button>`;
+    html += `</div></div>`;
+
     html +=
         `<h4 style="margin-top:16px;font-weight:700;font-size:1rem;"><i class="fas fa-bookmark" style="color:var(--gold-dark);"></i> Saved Universities</h4>`;
     if (savedInsts.length === 0) {
@@ -2114,4 +1778,4 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 setTab('all');
 updateCompareBadge();
 
-console.log('✅ MyTertiary ZA — Notification/message icon completely removed.');
+console.log('✅ MyTertiary ZA — Explore Universities button fixed; Compare added to Dashboard for mobile; Facebook, Twitter, Instagram removed.');
