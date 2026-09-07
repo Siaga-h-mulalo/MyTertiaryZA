@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
 
-<head>
-
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-20P5R1D9R0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -13,7 +11,7 @@
 
     gtag('config', 'G-20P5R1D9R0');
   </script>
-    
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>MyTertiary ZA | Your University Journey Starts Here!</title>
@@ -370,9 +368,14 @@
                 </div>
             </div>
             <div style="max-width:1400px;margin:0 auto;padding:12px 0 0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid var(--gray-200);font-size:0.75rem;color:var(--gray-500);">
-                <div><i class="fas fa-envelope"></i> Email: <a href="mailto:mytertiaryza@gmail.com" style="color:var(--gold-dark);text-decoration:none;">mytertiaryza@gmail.com</a></div>
+                <div><i class="fas fa-envelope"></i> Email: <a href="mailto:mytertiary@gmail.com" style="color:var(--gold-dark);text-decoration:none;">mytertiary@gmail.com</a></div>
                 <div><i class="fab fa-tiktok"></i> TikTok: <a href="https://www.tiktok.com/@mytertiaryza" target="_blank" style="color:var(--gold-dark);text-decoration:none;">@MyTertiary ZA</a></div>
                 <div><i class="fas fa-circle-exclamation"></i> Disclaimer: Independent platform. Verify all details with institutions.</div>
+            </div>
+            <!-- NEW: Copyright & developer credit -->
+            <div style="max-width:1400px;margin:8px auto 0;padding-top:8px;border-top:1px solid var(--gray-200);text-align:center;font-size:0.75rem;color:var(--gray-500);">
+                © 2026 MyTertiaryZA · Designed &amp; Developed by 
+                <a href="#" id="developerLink" style="color:var(--gold-dark);font-weight:600;text-decoration:none;cursor:pointer;">Siaga Mulalo</a>
             </div>
         </footer>
 
@@ -411,6 +414,27 @@
             <button class="modal-close" id="compareModalClose"><i class="fas fa-times"></i></button>
             <h2 style="text-align:left;"><i class="fas fa-arrow-right-arrow-left" style="color:var(--gold-dark);"></i> Compare Universities</h2>
             <div id="compareModalContent"></div>
+        </div>
+    </div>
+
+    <!-- NEW: Developer Info Modal -->
+    <div class="modal" id="developerModal" aria-hidden="true">
+        <div class="modal-box" style="max-width:400px;">
+            <button class="modal-close" id="developerModalClose"><i class="fas fa-times"></i></button>
+            <h2 style="text-align:center;font-size:1.2rem;"><i class="fas fa-code" style="color:var(--gold-dark);"></i> Siaga Mulalo</h2>
+            <p style="text-align:center;color:var(--gray-600);margin:6px 0;">Designer &amp; Developer of MyTertiaryZA</p>
+            <div style="display:flex;justify-content:center;gap:16px;margin:16px 0;">
+                <a href="https://www.tiktok.com/@siagamulalo13?_r=1&_t=ZS-99WT25k6Pq9" target="_blank" style="background:var(--gray-100);padding:8px 16px;border-radius:30px;font-size:0.85rem;color:var(--gray-700);text-decoration:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--gray-200);transition:var(--transition);">
+                    <i class="fab fa-tiktok" style="color:var(--gray-800);"></i> TikTok
+                </a>
+                <a href="https://www.linkedin.com/in/mulalo-siaga-14181b3a0?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" style="background:var(--gray-100);padding:8px 16px;border-radius:30px;font-size:0.85rem;color:var(--gray-700);text-decoration:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--gray-200);transition:var(--transition);">
+                    <i class="fab fa-linkedin-in" style="color:#0a66c2;"></i> LinkedIn
+                </a>
+            </div>
+            <div style="text-align:center;font-size:0.7rem;color:var(--gray-400);">Click the links above to connect</div>
+            <div style="margin-top:12px;text-align:center;">
+                <button class="btn btn-details" id="developerModalCancel" style="padding:6px 24px;">Close</button>
+            </div>
         </div>
     </div>
 
