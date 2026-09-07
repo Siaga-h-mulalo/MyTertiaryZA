@@ -1773,9 +1773,45 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ============================================================
+// DEVELOPER MODAL
+// ============================================================
+const developerLink = document.getElementById('developerLink');
+const developerModal = document.getElementById('developerModal');
+const developerModalClose = document.getElementById('developerModalClose');
+const developerModalCancel = document.getElementById('developerModalCancel');
+
+function openDeveloperModal() {
+    developerModal.classList.add('show');
+    developerModal.setAttribute('aria-hidden', 'false');
+}
+
+function closeDeveloperModal() {
+    developerModal.classList.remove('show');
+    developerModal.setAttribute('aria-hidden', 'true');
+}
+
+developerLink?.addEventListener('click', function(e) {
+    e.preventDefault();
+    openDeveloperModal();
+});
+
+developerModalClose?.addEventListener('click', closeDeveloperModal);
+developerModalCancel?.addEventListener('click', closeDeveloperModal);
+
+developerModal?.addEventListener('click', function(e) {
+    if (e.target === this) closeDeveloperModal();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && developerModal?.classList.contains('show')) {
+        closeDeveloperModal();
+    }
+});
+
+// ============================================================
 // INIT
 // ============================================================
 setTab('all');
 updateCompareBadge();
 
-console.log('✅ MyTertiary ZA — Explore Universities button fixed; Compare added to Dashboard for mobile; Facebook, Twitter, Instagram removed.');
+console.log('✅ MyTertiary ZA — Explore Universities button fixed; Compare added to Dashboard for mobile; Facebook, Twitter, Instagram removed; Developer modal added.');
