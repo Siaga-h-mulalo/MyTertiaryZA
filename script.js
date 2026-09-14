@@ -722,6 +722,54 @@ const resources = [
 ];
 
 // ============================================================
+// STUDENT SERVICES DATA
+// ============================================================
+const studentServices = [
+    {
+        icon: "🎓",
+        title: "Apply for NSFAS",
+        description: "Apply for financial assistance to support your tertiary education.",
+        buttonText: "Apply for NSFAS",
+        link: "https://my.nsfas.org.za/"
+    },
+    {
+        icon: "🔍",
+        title: "Check NSFAS Status",
+        description: "Log in to your myNSFAS account to check your application and funding status.",
+        buttonText: "Check Status",
+        link: "https://my.nsfas.org.za/"
+    },
+    {
+        icon: "🏛️",
+        title: "NSFAS Information",
+        description: "Get the latest information about NSFAS funding, eligibility, applications, and student support.",
+        buttonText: "Visit NSFAS",
+        link: "https://www.nsfas.org.za/"
+    },
+    {
+        icon: "📝",
+        title: "How to Apply for NSFAS",
+        description: "Learn how to apply for NSFAS funding and understand the application process.",
+        buttonText: "How to Apply",
+        link: "https://www.nsfas.org.za/content/how-to-apply.html"
+    },
+    {
+        icon: "📄",
+        title: "View Your Matric Results",
+        description: "Access information and official resources for checking your National Senior Certificate examination results.",
+        buttonText: "View Results",
+        link: "https://www.education.gov.za/"
+    },
+    {
+        icon: "🇿🇦",
+        title: "Matric Results Information",
+        description: "Find official information from the South African Government about checking your matric examination results.",
+        buttonText: "Learn More",
+        link: "https://www.gov.za/services/services-residents/education-and-training/basic-education/check-matric-results"
+    }
+];
+
+// ============================================================
 // HELPERS
 // ============================================================
 function escapeHTML(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -769,6 +817,9 @@ let compareIds = getCompareIds();
 function updateCompareBadge() {
     const badge = document.getElementById('compareBadge');
     if (badge) badge.textContent = compareIds.length;
+    // Also update the mobile drawer badge
+    const mobileBadge = document.getElementById('mobileCompareBadge');
+    if (mobileBadge) mobileBadge.textContent = compareIds.length;
 }
 
 function toggleCompare(instId) {
@@ -812,9 +863,9 @@ function openCompareModal() {
                 { key: 'province', label: 'Province' },
                 { key: 'city', label: 'City' },
                 { key: 'description', label: 'Description' },
-                { key: 'website', label: 'Website', render: (v) => `<a href="${v}" target="_blank">${v}</a>` },
+                { key: 'website', label: 'Website', render: (v) => `<a href="${v}" target="_blank" rel="noopener noreferrer">${v}</a>` },
                 { key: 'appUrl', label: 'Application Portal', render: (v) =>
-                        `<a href="${v}" target="_blank">Apply</a>` },
+                        `<a href="${v}" target="_blank" rel="noopener noreferrer">Apply</a>` },
                 { key: 'appPeriodOpen', label: 'Applications Open' },
                 { key: 'appPeriodClose', label: 'Applications Close' },
                 { key: 'appFee', label: 'Application Fee' }
@@ -921,7 +972,7 @@ function renderAdmissionCard(inst) {
         qualLevels =
             `<div style="margin-top:4px;font-size:0.82rem;color:var(--gray-600);"><span style="color:var(--gold-dark);font-weight:600;">Qualification levels:</span> ${escapeHTML(data.qualification)}</div>`;
     }
-    return `<div class="admission-card"><div class="req-block"><div class="req-label"><i class="fas fa-university"></i> GENERAL ADMISSION</div><div class="req-value">${escapeHTML(data.general)}</div>${qualLevels}</div><div class="req-block"><div class="req-label"><i class="fas fa-calculator"></i> APS</div><div class="req-value">${apsLine}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-book"></i> SUBJECT REQUIREMENTS</div><div class="req-value">${escapeHTML(data.subjects)}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-circle-check"></i> SELECTION</div><div class="req-value">${escapeHTML(data.extra)}</div></div><div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Important:</strong> ${escapeHTML(data.important)}<br><span style="font-size:0.75rem;color:var(--gray-500);">${escapeHTML(data.warning)}</span></div></div><div class="req-actions"><a class="btn btn-details" href="${data.source || inst.prospectusLink || inst.website}" target="_blank"><i class="fas fa-eye"></i> View Programme Requirements</a><a class="btn btn-apply" href="${inst.appUrl}" target="_blank"><i class="fas fa-paper-plane"></i> Apply at Official University</a></div><div style="margin-top:6px;font-size:0.7rem;color:var(--gray-500);"><i class="fas fa-check-circle" style="color:var(--gold-dark);"></i> Last verified: ${escapeHTML(data.verified || '2026-09-02')}</div></div>`;
+    return `<div class="admission-card"><div class="req-block"><div class="req-label"><i class="fas fa-university"></i> GENERAL ADMISSION</div><div class="req-value">${escapeHTML(data.general)}</div>${qualLevels}</div><div class="req-block"><div class="req-label"><i class="fas fa-calculator"></i> APS</div><div class="req-value">${apsLine}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-book"></i> SUBJECT REQUIREMENTS</div><div class="req-value">${escapeHTML(data.subjects)}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-circle-check"></i> SELECTION</div><div class="req-value">${escapeHTML(data.extra)}</div></div><div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Important:</strong> ${escapeHTML(data.important)}<br><span style="font-size:0.75rem;color:var(--gray-500);">${escapeHTML(data.warning)}</span></div></div><div class="req-actions"><a class="btn btn-details" href="${data.source || inst.prospectusLink || inst.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-eye"></i> View Programme Requirements</a><a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-paper-plane"></i> Apply at Official University</a></div><div style="margin-top:6px;font-size:0.7rem;color:var(--gray-500);"><i class="fas fa-check-circle" style="color:var(--gold-dark);"></i> Last verified: ${escapeHTML(data.verified || '2026-09-02')}</div></div>`;
 }
 
 function renderCards(list) {
@@ -946,7 +997,7 @@ function renderCards(list) {
                         ${renderPeriodStatus(inst)}
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
                             <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
-                            <a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
+                            <a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
                         </div>
                         <div class="card-actions-row">
                             <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
@@ -1052,10 +1103,23 @@ searchInput.addEventListener("input", filterInstitutions);
 searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInstitutions(); });
 provinceFilter.addEventListener("change", filterInstitutions);
 
-document.getElementById('exploreUniBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    setTab('all');
-});
+// ============================================================
+// EXPLORE UNIVERSITIES BUTTON — smooth scroll to #directory
+// ============================================================
+const exploreUniBtn = document.getElementById('exploreUniBtn');
+if (exploreUniBtn) {
+    exploreUniBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        activeTab = 'all';
+        tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'all'));
+        filterInstitutions();
+        const directorySection = document.getElementById('directory');
+        if (directorySection) {
+            directorySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
 
 // ============================================================
 // MODAL
@@ -1070,9 +1134,9 @@ function openModal(inst) {
                     ${admissionHTML}
                     <div style="margin-top:14px;">
                         <div class="detail-list">
-                            <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank">Official Website</a></div>
-                            <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank">Official Application Portal</a></div>
-                            <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank">Prospectus</a></div>
+                            <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank" rel="noopener noreferrer">Official Website</a></div>
+                            <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Official Application Portal</a></div>
+                            <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer">Prospectus</a></div>
                             <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
                             <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
                             <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
@@ -1080,7 +1144,7 @@ function openModal(inst) {
                         </div>
                     </div>
                     <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
-                    <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
+                    <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
                 `;
     modal.classList.add("show");
     modal.setAttribute("aria-hidden", "false");
@@ -1310,7 +1374,7 @@ function openQualModal(field, index) {
                                 <div class="qual-institution-item">
                                     <div class="inst-name">${escapeHTML(inst.name)} (${escapeHTML(inst.abbr)})</div>
                                     <div class="inst-req"><span class="aps-badge">APS varies by programme</span> <span style="margin-left:8px;">${escapeHTML(inst.province)}</span></div>
-                                    <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
+                                    <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
                                 </div>
                             `).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
                         </div>
@@ -1598,6 +1662,23 @@ function renderResources() {
 renderResources();
 
 // ============================================================
+// STUDENT SERVICES
+// ============================================================
+function renderStudentServices() {
+    const grid = document.getElementById('servicesGrid');
+    if (!grid) return;
+    grid.innerHTML = studentServices.map(service => `
+        <div class="service-card">
+            <div class="service-icon">${service.icon}</div>
+            <h4>${escapeHTML(service.title)}</h4>
+            <p>${escapeHTML(service.description)}</p>
+            <a href="${service.link}" target="_blank" rel="noopener noreferrer" class="btn btn-apply">${escapeHTML(service.buttonText)} <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
+        </div>
+    `).join('');
+}
+renderStudentServices();
+
+// ============================================================
 // DAILY WORD
 // ============================================================
 const dailyMessages = [
@@ -1739,7 +1820,7 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && doc
         .classList.contains('show')) closeCompareModal(); });
 
 // ============================================================
-// LEFT SIDEBAR NAV
+// LEFT SIDEBAR NAV (desktop)
 // ============================================================
 const leftNavItems = document.querySelectorAll('.left-sidebar .nav-item');
 const sections = document.querySelectorAll('.feed-card, #home');
@@ -1762,13 +1843,13 @@ window.addEventListener('scroll', updateActiveNav);
 window.addEventListener('load', updateActiveNav);
 
 // ============================================================
-// SMOOTH SCROLL
+// SMOOTH SCROLL (generic anchor links)
 // ============================================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         const target = document.querySelector(this.getAttribute('href'));
         if (target) { e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth' }); }
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
 });
 
@@ -1809,9 +1890,145 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================================
+// MOBILE BOTTOM NAV + DRAWER
+// ============================================================
+(function initMobileNav() {
+    const bottomNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item[data-target]');
+    const drawer = document.getElementById('mobileDrawer');
+    const drawerOverlay = document.getElementById('mobileDrawerOverlay');
+    const drawerClose = document.getElementById('mobileDrawerClose');
+    const mobileNavMore = document.getElementById('mobileNavMore');
+    const drawerItems = document.querySelectorAll('.mobile-drawer-nav .mobile-drawer-item');
+
+    if (!drawer || !bottomNavItems.length) return;
+
+    // --- Bottom nav: smooth scroll to sections ---
+    bottomNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            const targetId = this.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Immediately highlight this item
+            bottomNavItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // --- Open / Close drawer ---
+    function openDrawer() {
+        drawer.classList.add('show');
+        drawerOverlay.classList.add('show');
+        drawer.setAttribute('aria-hidden', 'false');
+        drawerOverlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('mobile-drawer-open');
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('show');
+        drawerOverlay.classList.remove('show');
+        drawer.setAttribute('aria-hidden', 'true');
+        drawerOverlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('mobile-drawer-open');
+    }
+
+    mobileNavMore?.addEventListener('click', openDrawer);
+    drawerClose?.addEventListener('click', closeDrawer);
+    drawerOverlay?.addEventListener('click', closeDrawer);
+
+    // --- Drawer items: smooth scroll + close ---
+    drawerItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            const targetId = this.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            closeDrawer();
+            if (targetSection) {
+                setTimeout(() => {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 200);
+            }
+        });
+    });
+
+    // --- Dashboard shortcut inside drawer ---
+    document.getElementById('mobileDashboardBtn')?.addEventListener('click', () => {
+        closeDrawer();
+        setTimeout(() => openDashboard(), 180);
+    });
+
+    // --- Compare shortcut inside drawer ---
+    document.getElementById('mobileCompareBtn')?.addEventListener('click', () => {
+        closeDrawer();
+        setTimeout(() => openCompareModal(), 180);
+    });
+
+    // --- Update active state based on scroll position ---
+    function updateActiveMobileNav() {
+        const scrollPos = window.scrollY + 130;
+        let current = 'home';
+        const allSections = document.querySelectorAll('.feed-card, #home');
+        allSections.forEach(section => {
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
+            if (scrollPos >= top && scrollPos < bottom) {
+                current = section.id;
+            }
+        });
+
+        // Update bottom nav items
+        bottomNavItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.target === current);
+        });
+
+        // Update drawer items
+        drawerItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.target === current);
+        });
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateActiveMobileNav();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+
+    updateActiveMobileNav();
+
+    // --- Close drawer on Escape ---
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('show')) {
+            closeDrawer();
+        }
+    });
+
+    // --- Sync compare badge count ---
+    function syncMobileCompareBadge() {
+        const badge = document.getElementById('mobileCompareBadge');
+        if (badge) badge.textContent = compareIds.length;
+    }
+    // Observe the main badge for changes
+    const mainBadge = document.getElementById('compareBadge');
+    if (mainBadge && window.MutationObserver) {
+        const observer = new MutationObserver(syncMobileCompareBadge);
+        observer.observe(mainBadge, { childList: true, characterData: true, subtree: true });
+    }
+    syncMobileCompareBadge();
+})();
+
+// ============================================================
 // INIT
 // ============================================================
 setTab('all');
 updateCompareBadge();
 
-console.log('✅ MyTertiary ZA — Explore Universities button fixed; Compare added to Dashboard for mobile; Facebook, Twitter, Instagram removed; Developer modal added.');
+console.log('✅ MyTertiary ZA — Mobile nav bar + drawer added; Explore Universities fixed; Student Services preserved.');
