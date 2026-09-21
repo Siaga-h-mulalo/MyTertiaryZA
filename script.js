@@ -1,7 +1,8 @@
 // ============================================================
-// DATA (full dataset)
+// DATA (full dataset) — STATIC FALLBACK
+// Firestore will override this at runtime via data-layer.js
 // ============================================================
-const institutions = [{
+const STATIC_INSTITUTIONS = [{
     id: 1,
     name: "University of Cape Town",
     abbr: "UCT",
@@ -497,33 +498,120 @@ const institutions = [{
     status: "open"
 }];
 
+// ============================================================
+// LIVE DATA BRIDGE — Firestore overrides STATIC_INSTITUTIONS
+// ============================================================
+let institutions = [...STATIC_INSTITUTIONS];
+window.STATIC_INSTITUTIONS = STATIC_INSTITUTIONS;
+
+const STATUS_STYLES = {
+    "open":         { label: "Applications Open",       emoji: "🟢", cls: "period-status open" },
+    "closing-soon": { label: "Closing Soon",            emoji: "🟠", cls: "period-status closing" },
+    "closed":       { label: "Applications Closed",     emoji: "🔴", cls: "period-status closed" },
+    "not-yet-open": { label: "Not Yet Open",            emoji: "⚪", cls: "period-status notopen" },
+    "coming-soon":  { label: "Information Coming Soon", emoji: "🔵", cls: "period-status coming" }
+};
+
+function renderStatusBadge(inst) {
+    const s = STATUS_STYLES[inst.status] || STATUS_STYLES["coming-soon"];
+    return `<span class="${s.cls}">${s.emoji} ${s.label}</span>`;
+}
+
+function applyFirestoreData(payload) {
+    console.log("[MyTertiary] Firestore payload received:", payload);
+
+    const live = (payload.universities || []).filter(u => u && u.name && String(u.name).trim());
+    console.log("[MyTertiary] Live universities found:", live.length);
+
+    if (live.length > 0) {
+        institutions = live.map((u, idx) => ({
+            id: idx + 1,
+            _id: u._id,
+            name: String(u.name || ""),
+            abbr: u.abbreviation || u.abbr || "",
+            type: u.type || "University",
+            province: u.province || "",
+            city: u.city || "",
+            description: u.description || "",
+            logo: u.logo || "",
+            website: u.websiteUrl || u.website || "",
+            appUrl: u.applicationUrl || u.appUrl || "",
+            prospectusLink: u.prospectusUrl || u.prospectusLink || "",
+            prospectusYear: u.prospectusYear || "",
+            appOpenDate: u.applicationOpeningDate || u.appOpenDate || "",
+            appCloseDate: u.applicationClosingDate || u.appCloseDate || "",
+            appFee: u.applicationFee || u.appFee || "",
+            appPeriodOpen: u.appPeriodOpen || "",
+            appPeriodClose: u.appPeriodClose || "",
+            status: u.applicationStatus || u.status || "coming-soon",
+            featured: !!u.featured,
+            lastUpdated: u.lastUpdated || null
+        }));
+        console.log("[MyTertiary] institutions after Firestore override:", institutions.length);
+    } else {
+        console.warn("[MyTertiary] Firestore returned 0 valid universities — keeping STATIC fallback (" + institutions.length + " items)");
+    }
+
+    if (!institutions || institutions.length === 0) {
+        console.error("[MyTertiary] CRITICAL: institutions empty! Restoring static data.");
+        institutions = [...STATIC_INSTITUTIONS];
+    }
+
+    if (typeof filterInstitutions === "function")  filterInstitutions();
+    if (typeof buildCarousel === "function")       buildCarousel();
+    if (typeof renderAnnouncements === "function") renderAnnouncements(payload.announcements || []);
+    if (typeof applySettings === "function")       applySettings(payload.settings || {});
+}
+
+window.addEventListener("mytertiary:data-ready", e => applyFirestoreData(e.detail));
+
+// ============================================================
+// ANNOUNCEMENTS + SETTINGS RENDERERS
+// ============================================================
+function renderAnnouncements(list = []) {
+    const host = document.getElementById("announcementsBar");
+    if (!host) return;
+    if (!list.length) { host.innerHTML = ""; return; }
+    host.innerHTML = list
+        .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+        .map(a => `
+            <div class="announcement ${a.featured ? "featured" : ""}"
+                 style="background:${a.featured ? "var(--gold-light)" : "var(--gray-50)"};
+                        border-left:4px solid var(--gold);
+                        padding:10px 14px;border-radius:8px;margin-bottom:10px;
+                        font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
+                <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
+                <div>
+                    <strong>${escapeHTML(a.title || "")}</strong>
+                    <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
+                </div>
+            </div>`).join("");
+}
+
+function applySettings(s = {}) {
+    if (!s) return;
+    if (s.currentCycle) {
+        document.querySelectorAll("[data-cycle]").forEach(el => el.textContent = s.currentCycle);
+    }
+    if (s.contactEmail) {
+        document.querySelectorAll("[data-contact-email]").forEach(el => el.textContent = s.contactEmail);
+    }
+    if (s.importantNotice) {
+        const bar = document.getElementById("importantNoticeBar");
+        if (bar) { bar.textContent = s.importantNotice; bar.style.display = "block"; }
+    }
+}
+
+// ============================================================
+// REST OF THE ORIGINAL APP
+// ============================================================
+
 const fallbackColours = {
-    UCT: "1a4b77",
-    Wits: "b31b1b",
-    SU: "006b3f",
-    UP: "003057",
-    UJ: "f7941e",
-    UKZN: "003d6c",
-    UWC: "e31b23",
-    UFS: "1a4b77",
-    NWU: "8b1a4a",
-    UNISA: "005a9c",
-    UL: "00843d",
-    UNIVEN: "7c3f00",
-    UNIZULU: "d4a017",
-    UFH: "1a4b77",
-    RU: "8b1a4a",
-    NMU: "003057",
-    UMP: "d4a017",
-    SPU: "005a9c",
-    SMU: "b31b1b",
-    WSU: "1a4b77",
-    TUT: "005a9c",
-    CPUT: "b31b1b",
-    DUT: "003d6c",
-    MUT: "00843d",
-    CUT: "8b1a4a",
-    VUT: "f7941e"
+    UCT: "1a4b77", Wits: "b31b1b", SU: "006b3f", UP: "003057", UJ: "f7941e",
+    UKZN: "003d6c", UWC: "e31b23", UFS: "1a4b77", NWU: "8b1a4a", UNISA: "005a9c",
+    UL: "00843d", UNIVEN: "7c3f00", UNIZULU: "d4a017", UFH: "1a4b77", RU: "8b1a4a",
+    NMU: "003057", UMP: "d4a017", SPU: "005a9c", SMU: "b31b1b", WSU: "1a4b77",
+    TUT: "005a9c", CPUT: "b31b1b", DUT: "003d6c", MUT: "00843d", CUT: "8b1a4a", VUT: "f7941e"
 };
 
 const admissionData = {
@@ -569,9 +657,7 @@ const programmeRequirements = {
 };
 
 const studyFields = [{
-    id: "health",
-    label: "Health Sciences",
-    icon: "fa-heart-pulse",
+    id: "health", label: "Health Sciences", icon: "fa-heart-pulse",
     description: "Health Sciences focus on the study of the human body, health, disease, and healthcare.",
     suitable: "You enjoy biology, chemistry, helping people, and have strong empathy and attention to detail.",
     subjects: "Life Sciences, Physical Sciences, Mathematics, English",
@@ -583,9 +669,7 @@ const studyFields = [{
         { name: "Occupational Therapy", careers: "Occupational Therapist, Rehabilitation Specialist", learn: "Human development, anatomy, psychology, therapeutic activities" }
     ]
 }, {
-    id: "science",
-    label: "Science, Mathematics & Computing",
-    icon: "fa-flask",
+    id: "science", label: "Science, Mathematics & Computing", icon: "fa-flask",
     description: "Covers the study of the natural world, mathematical principles, and computing systems.",
     suitable: "You are curious, enjoy problem-solving, logic, and have strong interest in mathematics, technology, or nature.",
     subjects: "Mathematics, Physical Sciences, Life Sciences, Computer Applications Technology, English",
@@ -597,9 +681,7 @@ const studyFields = [{
         { name: "Physics", careers: "Physicist, Research Scientist, Geophysicist", learn: "Mechanics, electromagnetism, thermodynamics, quantum physics" }
     ]
 }, {
-    id: "engineering",
-    label: "Engineering & Built Environment",
-    icon: "fa-gears",
+    id: "engineering", label: "Engineering & Built Environment", icon: "fa-gears",
     description: "Applies scientific and mathematical principles to design, build, and maintain structures and systems.",
     suitable: "You enjoy mathematics and physics, solving practical problems, and designing things.",
     subjects: "Mathematics, Physical Sciences, English, sometimes Geography or Design",
@@ -611,9 +693,7 @@ const studyFields = [{
         { name: "Architecture", careers: "Architect, Urban Designer, Project Manager", learn: "Architectural design, history, building technology, urban design" }
     ]
 }, {
-    id: "business",
-    label: "Business, Commerce & Management",
-    icon: "fa-chart-line",
+    id: "business", label: "Business, Commerce & Management", icon: "fa-chart-line",
     description: "Focuses on organisations, markets, finance, and management.",
     suitable: "You are interested in how businesses work, enjoy working with numbers and people, and have strong communication skills.",
     subjects: "Mathematics, English, Accounting, Economics, Business Studies",
@@ -625,9 +705,7 @@ const studyFields = [{
         { name: "Business Management", careers: "Business Manager, Operations Manager, General Manager", learn: "Organisational behaviour, operations, strategy, leadership" }
     ]
 }, {
-    id: "law",
-    label: "Law & Legal Studies",
-    icon: "fa-scale-balanced",
+    id: "law", label: "Law & Legal Studies", icon: "fa-scale-balanced",
     description: "Covers legal systems, justice, and the application of law.",
     suitable: "You enjoy debate, critical thinking, reading and analysing texts, and have strong reasoning skills.",
     subjects: "English, History, Life Orientation, Languages, Mathematics",
@@ -639,9 +717,7 @@ const studyFields = [{
         { name: "Paralegal Studies", careers: "Paralegal, Legal Assistant, Legal Secretary", learn: "Legal systems, legal writing, research, office administration" }
     ]
 }, {
-    id: "humanities",
-    label: "Humanities & Social Sciences",
-    icon: "fa-users",
+    id: "humanities", label: "Humanities & Social Sciences", icon: "fa-users",
     description: "Studies human society, culture, behaviour, and ideas.",
     suitable: "You are curious about people and society, enjoy reading, writing, and thinking deeply about ideas.",
     subjects: "English, History, Languages, Geography, Life Orientation",
@@ -653,9 +729,7 @@ const studyFields = [{
         { name: "History", careers: "Historian, Teacher, Researcher, Museum Curator", learn: "World history, African history, historical methods" }
     ]
 }, {
-    id: "arts",
-    label: "Arts, Design & Creative Industries",
-    icon: "fa-palette",
+    id: "arts", label: "Arts, Design & Creative Industries", icon: "fa-palette",
     description: "Encompasses art, design, media, and performance.",
     suitable: "You are creative, have a strong visual or performance sense, and enjoy expressing yourself.",
     subjects: "Art, Design, Drama, Music, History, English, Mathematics",
@@ -667,9 +741,7 @@ const studyFields = [{
         { name: "Animation", careers: "Animator, Motion Designer, Visual Effects Artist", learn: "2D animation, 3D animation, character design, storyboard" }
     ]
 }, {
-    id: "education",
-    label: "Education",
-    icon: "fa-chalkboard-user",
+    id: "education", label: "Education", icon: "fa-chalkboard-user",
     description: "Prepares students for teaching and education-related careers.",
     suitable: "You enjoy helping others learn, have patience, strong communication skills, and a passion for shaping young minds.",
     subjects: "English, Mathematics, Life Orientation, subject specialisations",
@@ -681,9 +753,7 @@ const studyFields = [{
         { name: "Mathematics Education", careers: "Mathematics Teacher, Maths Specialist, Curriculum Advisor", learn: "Mathematics pedagogy, curriculum, assessment, advanced maths" }
     ]
 }, {
-    id: "agriculture",
-    label: "Agriculture, Environment & Natural Resources",
-    icon: "fa-seedling",
+    id: "agriculture", label: "Agriculture, Environment & Natural Resources", icon: "fa-seedling",
     description: "Covers food production, environmental management, and sustainable use of natural resources.",
     suitable: "You enjoy the outdoors, are passionate about nature and sustainability, and have an interest in farming or conservation.",
     subjects: "Life Sciences, Mathematics, Physical Sciences, Geography, Agricultural Sciences",
@@ -695,9 +765,7 @@ const studyFields = [{
         { name: "Horticulture", careers: "Horticulturist, Plant Scientist, Nursery Manager", learn: "Plant cultivation, propagation, nursery management, landscaping" }
     ]
 }, {
-    id: "hospitality",
-    label: "Hospitality, Tourism, Sport & Recreation",
-    icon: "fa-utensils",
+    id: "hospitality", label: "Hospitality, Tourism, Sport & Recreation", icon: "fa-utensils",
     description: "Covers the management of hospitality, tourism, sport, and leisure services.",
     suitable: "You enjoy working with people, have strong organisational skills, and are interested in travel, food, events, or sport.",
     subjects: "English, Mathematics, Geography, Life Orientation, Business Studies",
@@ -721,57 +789,15 @@ const resources = [
     { icon: "fa-house", title: "Residence Applications", desc: "Learn about residence options and how to apply." }
 ];
 
-// ============================================================
-// STUDENT SERVICES DATA
-// ============================================================
 const studentServices = [
-    {
-        icon: "🎓",
-        title: "Apply for NSFAS",
-        description: "Apply for financial assistance to support your tertiary education.",
-        buttonText: "Apply for NSFAS",
-        link: "https://my.nsfas.org.za/"
-    },
-    {
-        icon: "🔍",
-        title: "Check NSFAS Status",
-        description: "Log in to your myNSFAS account to check your application and funding status.",
-        buttonText: "Check Status",
-        link: "https://my.nsfas.org.za/"
-    },
-    {
-        icon: "🏛️",
-        title: "NSFAS Information",
-        description: "Get the latest information about NSFAS funding, eligibility, applications, and student support.",
-        buttonText: "Visit NSFAS",
-        link: "https://www.nsfas.org.za/"
-    },
-    {
-        icon: "📝",
-        title: "How to Apply for NSFAS",
-        description: "Learn how to apply for NSFAS funding and understand the application process.",
-        buttonText: "How to Apply",
-        link: "https://www.nsfas.org.za/content/how-to-apply.html"
-    },
-    {
-        icon: "📄",
-        title: "View Your Matric Results",
-        description: "Access information and official resources for checking your National Senior Certificate examination results.",
-        buttonText: "View Results",
-        link: "https://www.education.gov.za/"
-    },
-    {
-        icon: "🇿🇦",
-        title: "Matric Results Information",
-        description: "Find official information from the South African Government about checking your matric examination results.",
-        buttonText: "Learn More",
-        link: "https://www.gov.za/services/services-residents/education-and-training/basic-education/check-matric-results"
-    }
+    { icon: "🎓", title: "Apply for NSFAS", description: "Apply for financial assistance to support your tertiary education.", buttonText: "Apply for NSFAS", link: "https://my.nsfas.org.za/" },
+    { icon: "🔍", title: "Check NSFAS Status", description: "Log in to your myNSFAS account to check your application and funding status.", buttonText: "Check Status", link: "https://my.nsfas.org.za/" },
+    { icon: "🏛️", title: "NSFAS Information", description: "Get the latest information about NSFAS funding, eligibility, applications, and student support.", buttonText: "Visit NSFAS", link: "https://www.nsfas.org.za/" },
+    { icon: "📝", title: "How to Apply for NSFAS", description: "Learn how to apply for NSFAS funding and understand the application process.", buttonText: "How to Apply", link: "https://www.nsfas.org.za/content/how-to-apply.html" },
+    { icon: "📄", title: "View Your Matric Results", description: "Access information and official resources for checking your National Senior Certificate examination results.", buttonText: "View Results", link: "https://www.education.gov.za/" },
+    { icon: "🇿🇦", title: "Matric Results Information", description: "Find official information from the South African Government about checking your matric examination results.", buttonText: "Learn More", link: "https://www.gov.za/services/services-residents/education-and-training/basic-education/check-matric-results" }
 ];
 
-// ============================================================
-// HELPERS
-// ============================================================
 function escapeHTML(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
@@ -781,51 +807,33 @@ function generateLogoHTML(inst, modalSize) {
     const abbr = encodeURIComponent(inst.abbr);
     const colour = (fallbackColours[inst.abbr] || "123c63").replace("#", "");
     const size = modalSize ? 140 : 80;
-    const avatarSrc =
-        `https://ui-avatars.com/api/?name=${abbr}&background=${colour}&color=fff&size=${size}&rounded=true&font-size=0.45&bold=true`;
+    const avatarSrc = `https://ui-avatars.com/api/?name=${abbr}&background=${colour}&color=fff&size=${size}&rounded=true&font-size=0.45&bold=true`;
     const src = (inst.logo && inst.logo.trim() !== "") ? inst.logo : avatarSrc;
     return `<img src="${src}" alt="${escapeHTML(inst.name)} logo" loading="lazy" onerror="this.onerror=null; this.src='${avatarSrc}';" style="width:100%;height:100%;object-fit:contain;padding:4px;">`;
 }
 
-// ============================================================
-// STORAGE
-// ============================================================
 const STORAGE_KEYS = { SAVED: 'mytertiary_saved', VIEWED: 'mytertiary_viewed', COMPARE: 'mytertiary_compare' };
-
 function getSavedIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.SAVED)) || []; } catch { return []; } }
-
 function setSavedIds(ids) { localStorage.setItem(STORAGE_KEYS.SAVED, JSON.stringify(ids)); }
-
 function getViewedIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.VIEWED)) || []; } catch { return []; } }
-
 function setViewedIds(ids) { localStorage.setItem(STORAGE_KEYS.VIEWED, JSON.stringify(ids)); }
-
-function addViewed(id) { let viewed = getViewedIds();
-    viewed = viewed.filter(v => v !== id);
-    viewed.unshift(id); if (viewed.length > 10) viewed = viewed.slice(0, 10);
-    setViewedIds(viewed); }
-
+function addViewed(id) { let viewed = getViewedIds(); viewed = viewed.filter(v => v !== id);
+    viewed.unshift(id); if (viewed.length > 10) viewed = viewed.slice(0, 10); setViewedIds(viewed); }
 function getCompareIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.COMPARE)) || []; } catch { return []; } }
-
 function setCompareIds(ids) { localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(ids)); }
 
-// ============================================================
-// COMPARE
-// ============================================================
 let compareIds = getCompareIds();
 
 function updateCompareBadge() {
     const badge = document.getElementById('compareBadge');
     if (badge) badge.textContent = compareIds.length;
-    // Also update the mobile drawer badge
     const mobileBadge = document.getElementById('mobileCompareBadge');
     if (mobileBadge) mobileBadge.textContent = compareIds.length;
 }
 
 function toggleCompare(instId) {
     const idx = compareIds.indexOf(instId);
-    if (idx > -1) { compareIds.splice(idx, 1); } else { if (compareIds.length >= 4) { showToast(
-                'You can compare up to 4 universities.'); return; } compareIds.push(instId); }
+    if (idx > -1) { compareIds.splice(idx, 1); } else { if (compareIds.length >= 4) { showToast('You can compare up to 4 universities.'); return; } compareIds.push(instId); }
     setCompareIds(compareIds);
     updateCompareBadge();
     document.querySelectorAll('.compare-btn').forEach(btn => {
@@ -844,30 +852,23 @@ function toggleCompare(instId) {
 function openCompareModal() {
     const container = document.getElementById('compareModalContent');
     if (compareIds.length === 0) {
-        container.innerHTML =
-            `<div class="compare-empty"><i class="fas fa-arrow-right-arrow-left" style="font-size:2rem;color:var(--gray-300);"></i><p style="margin-top:12px;">No universities selected.</p><p style="font-size:0.85rem;color:var(--gray-500);">Go to <a href="#directory" style="color:var(--gold-dark);font-weight:600;" onclick="closeCompareModal();">Universities</a> and click "Compare".</p></div>`;
+        container.innerHTML = `<div class="compare-empty"><i class="fas fa-arrow-right-arrow-left" style="font-size:2rem;color:var(--gray-300);"></i><p style="margin-top:12px;">No universities selected.</p><p style="font-size:0.85rem;color:var(--gray-500);">Go to <a href="#directory" style="color:var(--gold-dark);font-weight:600;" onclick="closeCompareModal();">Universities</a> and click "Compare".</p></div>`;
     } else {
         const selectedInsts = compareIds.map(id => institutions.find(i => i.id === id)).filter(Boolean);
         if (selectedInsts.length === 0) {
             container.innerHTML = `<div class="compare-empty"><p>Selected universities not found.</p></div>`;
         } else {
-            let tableHTML =
-                `<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Attribute</th>`;
+            let tableHTML = `<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Attribute</th>`;
             selectedInsts.forEach(inst => {
-                tableHTML +=
-                    `<th style="text-align:center;"><div class="univ-logo">${generateLogoHTML(inst, false)}</div><div style="font-weight:800;font-size:0.85rem;">${escapeHTML(inst.name)}</div><div style="font-size:0.65rem;color:var(--gray-500);">${escapeHTML(inst.abbr)}</div></th>`;
+                tableHTML += `<th style="text-align:center;"><div class="univ-logo">${generateLogoHTML(inst, false)}</div><div style="font-weight:800;font-size:0.85rem;">${escapeHTML(inst.name)}</div><div style="font-size:0.65rem;color:var(--gray-500);">${escapeHTML(inst.abbr)}</div></th>`;
             });
             tableHTML += `</tr></thead><tbody>`;
             const attributes = [
-                { key: 'type', label: 'Type' },
-                { key: 'province', label: 'Province' },
-                { key: 'city', label: 'City' },
+                { key: 'type', label: 'Type' }, { key: 'province', label: 'Province' }, { key: 'city', label: 'City' },
                 { key: 'description', label: 'Description' },
                 { key: 'website', label: 'Website', render: (v) => `<a href="${v}" target="_blank" rel="noopener noreferrer">${v}</a>` },
-                { key: 'appUrl', label: 'Application Portal', render: (v) =>
-                        `<a href="${v}" target="_blank" rel="noopener noreferrer">Apply</a>` },
-                { key: 'appPeriodOpen', label: 'Applications Open' },
-                { key: 'appPeriodClose', label: 'Applications Close' },
+                { key: 'appUrl', label: 'Application Portal', render: (v) => `<a href="${v}" target="_blank" rel="noopener noreferrer">Apply</a>` },
+                { key: 'appPeriodOpen', label: 'Applications Open' }, { key: 'appPeriodClose', label: 'Applications Close' },
                 { key: 'appFee', label: 'Application Fee' }
             ];
             attributes.forEach(attr => {
@@ -885,14 +886,11 @@ function openCompareModal() {
                 if (data) {
                     const aps = data.aps ? data.aps : 'N/A';
                     const subjects = data.subjects ? data.subjects : 'N/A';
-                    tableHTML +=
-                        `<td><div><strong>APS:</strong> ${escapeHTML(aps)}</div><div style="font-size:0.7rem;margin-top:4px;"><strong>Subjects:</strong> ${escapeHTML(subjects)}</div></td>`;
+                    tableHTML += `<td><div><strong>APS:</strong> ${escapeHTML(aps)}</div><div style="font-size:0.7rem;margin-top:4px;"><strong>Subjects:</strong> ${escapeHTML(subjects)}</div></td>`;
                 } else { tableHTML += `<td>N/A</td>`; }
             });
-            tableHTML += `</tr>`;
-            tableHTML += `</tbody></table></div>`;
-            tableHTML +=
-                `<div class="compare-actions"><button class="btn btn-details" onclick="clearCompare();"><i class="fas fa-trash"></i> Clear All</button><div><button class="btn btn-apply" onclick="closeCompareModal();">Close</button></div></div>`;
+            tableHTML += `</tr></tbody></table></div>`;
+            tableHTML += `<div class="compare-actions"><button class="btn btn-details" onclick="clearCompare();"><i class="fas fa-trash"></i> Clear All</button><div><button class="btn btn-apply" onclick="closeCompareModal();">Close</button></div></div>`;
             container.innerHTML = tableHTML;
         }
     }
@@ -919,9 +917,6 @@ function clearCompare() {
     if (document.getElementById('compareModal').classList.contains('show')) openCompareModal();
 }
 
-// ============================================================
-// TOAST
-// ============================================================
 function showToast(msg) {
     const existing = document.querySelector('.toast-msg');
     if (existing) existing.remove();
@@ -929,14 +924,9 @@ function showToast(msg) {
     div.className = 'toast-msg';
     div.textContent = msg;
     document.body.appendChild(div);
-    setTimeout(() => { div.style.opacity = '0';
-        div.style.transition = 'opacity 0.3s';
-        setTimeout(() => div.remove(), 400); }, 2500);
+    setTimeout(() => { div.style.opacity = '0'; div.style.transition = 'opacity 0.3s'; setTimeout(() => div.remove(), 400); }, 2500);
 }
 
-// ============================================================
-// DIRECTORY / UNIVERSITY CARDS
-// ============================================================
 const grid = document.getElementById("cardGrid");
 const searchInput = document.getElementById("topSearch");
 const provinceFilter = document.getElementById("provinceFilter");
@@ -948,37 +938,32 @@ const tabs = document.querySelectorAll(".tab");
 let activeTab = "all";
 const likedState = {};
 
-function getPeriodStatus(inst) { if (inst.appPeriodOpen && inst.appPeriodClose) return "open"; return "unknown"; }
-
 function renderPeriodStatus(inst) {
-    const open = inst.appPeriodOpen || 'Unknown';
-    const close = inst.appPeriodClose || 'Unknown';
-    const status = getPeriodStatus(inst);
-    let statusClass = 'unknown',
-        statusText = 'Typical Period';
-    if (status === 'open') { statusClass = 'open';
-        statusText = 'Application Period'; }
-    return `<div class="application-period"><span class="period-label"><i class="fas fa-calendar-alt"></i> Application Period</span><span class="period-dates">Opens: <strong>${escapeHTML(open)}</strong> <span class="sep">•</span> Closes: <strong>${escapeHTML(close)}</strong></span><span class="period-status ${statusClass}">${statusText}</span></div>`;
+    const open  = inst.appOpenDate  || inst.appPeriodOpen  || '—';
+    const close = inst.appCloseDate || inst.appPeriodClose || '—';
+    return `
+      <div class="application-period">
+        <span class="period-label"><i class="fas fa-calendar-alt"></i> Application Period</span>
+        <span class="period-dates">Opens: <strong>${escapeHTML(open)}</strong>
+          <span class="sep">•</span> Closes: <strong>${escapeHTML(close)}</strong></span>
+        ${renderStatusBadge(inst)}
+      </div>`;
 }
 
 function renderAdmissionCard(inst) {
     const data = admissionData[inst.abbr];
     if (!data) return '';
-    let apsLine = data.aps.includes('Varies') ?
-        `<span class="highlight-gold">${escapeHTML(data.aps)}</span>` : escapeHTML(data.aps);
+    let apsLine = data.aps.includes('Varies') ? `<span class="highlight-gold">${escapeHTML(data.aps)}</span>` : escapeHTML(data.aps);
     let qualLevels = '';
-    if (data.qualification && (data.qualification.includes('Higher Certificate') || inst.type ===
-            'University of Technology')) {
-        qualLevels =
-            `<div style="margin-top:4px;font-size:0.82rem;color:var(--gray-600);"><span style="color:var(--gold-dark);font-weight:600;">Qualification levels:</span> ${escapeHTML(data.qualification)}</div>`;
+    if (data.qualification && (data.qualification.includes('Higher Certificate') || inst.type === 'University of Technology')) {
+        qualLevels = `<div style="margin-top:4px;font-size:0.82rem;color:var(--gray-600);"><span style="color:var(--gold-dark);font-weight:600;">Qualification levels:</span> ${escapeHTML(data.qualification)}</div>`;
     }
     return `<div class="admission-card"><div class="req-block"><div class="req-label"><i class="fas fa-university"></i> GENERAL ADMISSION</div><div class="req-value">${escapeHTML(data.general)}</div>${qualLevels}</div><div class="req-block"><div class="req-label"><i class="fas fa-calculator"></i> APS</div><div class="req-value">${apsLine}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-book"></i> SUBJECT REQUIREMENTS</div><div class="req-value">${escapeHTML(data.subjects)}</div></div><div class="req-block"><div class="req-label"><i class="fas fa-circle-check"></i> SELECTION</div><div class="req-value">${escapeHTML(data.extra)}</div></div><div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Important:</strong> ${escapeHTML(data.important)}<br><span style="font-size:0.75rem;color:var(--gray-500);">${escapeHTML(data.warning)}</span></div></div><div class="req-actions"><a class="btn btn-details" href="${data.source || inst.prospectusLink || inst.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-eye"></i> View Programme Requirements</a><a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-paper-plane"></i> Apply at Official University</a></div><div style="margin-top:6px;font-size:0.7rem;color:var(--gray-500);"><i class="fas fa-check-circle" style="color:var(--gold-dark);"></i> Last verified: ${escapeHTML(data.verified || '2026-09-02')}</div></div>`;
 }
 
 function renderCards(list) {
     if (!list.length) {
-        grid.innerHTML =
-            `<div class="empty-state"><i class="fas fa-magnifying-glass"></i><h3>No universities found</h3><p>Try another search term or province.</p></div>`;
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-magnifying-glass"></i><h3>No universities found</h3><p>Try another search term or province.</p></div>`;
         resultCount.textContent = "0 institutions";
         return;
     }
@@ -988,25 +973,24 @@ function renderCards(list) {
         const isSaved = savedIds.includes(inst.id);
         const isCompared = compareIds.includes(inst.id);
         return `
-                    <article class="institution-card" data-id="${inst.id}">
-                        <div class="card-logo">${generateLogoHTML(inst, false)}</div>
-                        <h3 class="card-title">${escapeHTML(inst.name)}</h3>
-                        <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
-                        <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                        <p class="card-description">${escapeHTML(inst.description)}</p>
-                        ${renderPeriodStatus(inst)}
-                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-                            <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
-                            <a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
-                        </div>
-                        <div class="card-actions-row">
-                            <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
-                            <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
-                            <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
-                            <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
-                        </div>
-                    </article>
-                    `;
+            <article class="institution-card" data-id="${inst.id}">
+                <div class="card-logo">${generateLogoHTML(inst, false)}</div>
+                <h3 class="card-title">${escapeHTML(inst.name)}</h3>
+                <div class="card-abbr">${escapeHTML(inst.abbr)} · ${escapeHTML(inst.type)}</div>
+                <div class="location"><i class="fas fa-location-dot"></i> ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+                <p class="card-description">${escapeHTML(inst.description)}</p>
+                ${renderPeriodStatus(inst)}
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <button class="btn btn-details detail-btn" type="button" data-id="${inst.id}"><i class="fas fa-eye"></i> Details</button>
+                    <a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Apply Now <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
+                </div>
+                <div class="card-actions-row">
+                    <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-id="${inst.id}" title="Like"><i class="fas fa-thumbs-up"></i> <span>${isLiked ? 'Liked' : 'Like'}</span></button>
+                    <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" data-id="${inst.id}" title="Save"><i class="fas fa-bookmark"></i> <span>${isSaved ? 'Saved' : 'Save'}</span></button>
+                    <button class="action-btn share-btn" data-id="${inst.id}" title="Share"><i class="fas fa-share-alt"></i> <span>Share</span></button>
+                    <button class="action-btn compare-btn ${isCompared ? 'compare-selected' : ''}" data-id="${inst.id}" title="Compare"><i class="fas ${isCompared ? 'fa-check-circle' : 'fa-arrow-right-arrow-left'}"></i> <span>${isCompared ? 'Selected' : 'Compare'}</span></button>
+                </div>
+            </article>`;
     }).join("");
     resultCount.textContent = `${list.length} institution${list.length === 1 ? "" : "s"}`;
 
@@ -1014,8 +998,7 @@ function renderCards(list) {
         btn.addEventListener('click', function() {
             const id = Number(this.dataset.id);
             const institution = institutions.find(item => item.id === id);
-            if (institution) { addViewed(id);
-                openModal(institution); }
+            if (institution) { addViewed(id); openModal(institution); }
         });
     });
     document.querySelectorAll('.like-btn').forEach(btn => {
@@ -1025,7 +1008,6 @@ function renderCards(list) {
             likedState[id] = !likedState[id];
             const isLiked = likedState[id];
             this.classList.toggle('liked', isLiked);
-            this.querySelector('i').className = `fas ${isLiked ? 'fa-thumbs-up' : 'fa-thumbs-up'}`;
             this.querySelector('span').textContent = isLiked ? 'Liked' : 'Like';
             if (isLiked) showToast('❤️ You liked ' + institutions.find(i => i.id === id)?.name);
         });
@@ -1036,13 +1018,10 @@ function renderCards(list) {
             const id = Number(this.dataset.id);
             let saved = getSavedIds();
             const idx = saved.indexOf(id);
-            if (idx > -1) { saved.splice(idx, 1);
-                showToast('Removed from saved'); } else { saved.push(id);
-                showToast('📌 Saved ' + institutions.find(i => i.id === id)?.name); }
+            if (idx > -1) { saved.splice(idx, 1); showToast('Removed from saved'); } else { saved.push(id); showToast('📌 Saved ' + institutions.find(i => i.id === id)?.name); }
             setSavedIds(saved);
             const isSaved = saved.includes(id);
             this.classList.toggle('saved', isSaved);
-            this.querySelector('i').className = `fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark'}`;
             this.querySelector('span').textContent = isSaved ? 'Saved' : 'Save';
             if (document.getElementById('dashboardModal').classList.contains('show')) renderDashboard();
         });
@@ -1052,21 +1031,12 @@ function renderCards(list) {
             e.stopPropagation();
             const id = Number(this.dataset.id);
             const inst = institutions.find(i => i.id === id);
-            if (navigator.share) {
-                navigator.share({ title: inst.name, text: `Check out ${inst.name} – ${inst.description}`,
-                        url: inst.website }).catch(() => {});
-            } else {
-                navigator.clipboard?.writeText(inst.website).then(() => showToast('🔗 Link copied!'))
-                    .catch(() => showToast('🔗 Share: ' + inst.website));
-            }
+            if (navigator.share) { navigator.share({ title: inst.name, text: `Check out ${inst.name} – ${inst.description}`, url: inst.website }).catch(() => {}); }
+            else { navigator.clipboard?.writeText(inst.website).then(() => showToast('🔗 Link copied!')).catch(() => showToast('🔗 Share: ' + inst.website)); }
         });
     });
     document.querySelectorAll('.compare-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const id = Number(this.dataset.id);
-            toggleCompare(id);
-        });
+        btn.addEventListener('click', function(e) { e.stopPropagation(); toggleCompare(Number(this.dataset.id)); });
     });
 }
 
@@ -1077,8 +1047,7 @@ function filterInstitutions() {
         let tabMatch = true;
         if (activeTab === "university") tabMatch = inst.type === "University";
         else if (activeTab === "tech") tabMatch = inst.type === "University of Technology";
-        const searchableText = [inst.name, inst.abbr, inst.province, inst.city, inst.type, inst.description]
-            .join(" ").toLowerCase();
+        const searchableText = [inst.name, inst.abbr, inst.province, inst.city, inst.type, inst.description].join(" ").toLowerCase();
         const searchMatch = !search || searchableText.includes(search);
         const provinceMatch = !province || inst.province === province;
         return tabMatch && searchMatch && provinceMatch;
@@ -1086,15 +1055,17 @@ function filterInstitutions() {
     renderCards(filtered);
 }
 
-function setTab(tab) {
+function setTab(tab, scroll = true) {
     activeTab = tab;
     tabs.forEach(button => button.classList.toggle("active", button.dataset.tab === tab));
     filterInstitutions();
-    const dirSection = document.getElementById('directory');
-    if (dirSection) {
-        const offset = 80;
-        const top = dirSection.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
+    if (scroll) {
+        const dirSection = document.getElementById('directory');
+        if (dirSection) {
+            const offset = 80;
+            const top = dirSection.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
     }
 }
 
@@ -1103,79 +1074,70 @@ searchInput.addEventListener("input", filterInstitutions);
 searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInstitutions(); });
 provinceFilter.addEventListener("change", filterInstitutions);
 
-// ============================================================
-// EXPLORE UNIVERSITIES BUTTON — smooth scroll to #directory
-// ============================================================
-const exploreUniBtn = document.getElementById('exploreUniBtn');
-if (exploreUniBtn) {
-    exploreUniBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
+function goToDirectory(reset) {
+    if (reset) {
+        if (searchInput)    searchInput.value    = '';
+        if (provinceFilter) provinceFilter.value = '';
         activeTab = 'all';
         tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'all'));
-        filterInstitutions();
-        const directorySection = document.getElementById('directory');
-        if (directorySection) {
-            directorySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
+    }
+    filterInstitutions();
+    const dir = document.getElementById('directory');
+    if (!dir) return;
+    const top = dir.getBoundingClientRect().top + window.pageYOffset - 70;
+    window.scrollTo({ top, behavior: 'smooth' });
 }
 
-// ============================================================
-// MODAL
-// ============================================================
+const exploreUniBtn = document.getElementById('exploreUniBtn');
+if (exploreUniBtn) {
+    exploreUniBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopImmediatePropagation(); goToDirectory(true); });
+}
+
 function openModal(inst) {
     const admissionHTML = renderAdmissionCard(inst);
     modalContent.innerHTML = `
-                    <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
-                    <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
-                    <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
-                    <p class="modal-description">${escapeHTML(inst.description)}</p>
-                    ${admissionHTML}
-                    <div style="margin-top:14px;">
-                        <div class="detail-list">
-                            <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank" rel="noopener noreferrer">Official Website</a></div>
-                            <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Official Application Portal</a></div>
-                            <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer">Prospectus</a></div>
-                            <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
-                            <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
-                            <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
-                            <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
-                        </div>
-                    </div>
-                    <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
-                    <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>
-                `;
+        <div class="modal-logo">${generateLogoHTML(inst, true)}</div>
+        <h2 id="modalTitle">${escapeHTML(inst.name)}</h2>
+        <div class="modal-subtitle"><strong>${escapeHTML(inst.abbr)}</strong> · ${escapeHTML(inst.type)} · ${escapeHTML(inst.city)}, ${escapeHTML(inst.province)}</div>
+        <p class="modal-description">${escapeHTML(inst.description)}</p>
+        ${admissionHTML}
+        <div style="margin-top:14px;">
+            <div class="detail-list">
+                <div class="detail-row"><i class="fas fa-globe"></i><a href="${inst.website}" target="_blank" rel="noopener noreferrer">Official Website</a></div>
+                <div class="detail-row"><i class="fas fa-file-signature"></i><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Official Application Portal</a></div>
+                <div class="detail-row"><i class="fas fa-book-open"></i><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer">Prospectus</a></div>
+                <div class="detail-row"><i class="fas fa-calendar"></i><span>Prospectus: ${displayValue(inst.prospectusYear)}</span></div>
+                <div class="detail-row"><i class="fas fa-calendar-plus"></i><span>Application Opens: ${displayValue(inst.appOpenDate)}</span></div>
+                <div class="detail-row"><i class="fas fa-calendar-xmark"></i><span>Application Closes: ${displayValue(inst.appCloseDate)}</span></div>
+                <div class="detail-row"><i class="fas fa-money-bill"></i><span>Application Fee: ${displayValue(inst.appFee)}</span></div>
+            </div>
+        </div>
+        <div class="modal-notice"><i class="fas fa-shield-halved"></i> You are being redirected to the institution's official website or application portal. Admission requirements can change. The information provided by MyTertiary ZA is intended as a guide. Always verify the latest requirements with the official university before applying.</div>
+        <div class="modal-actions"><button class="btn btn-details" type="button" id="modalCancel">Close</button><a class="btn btn-apply" href="${inst.appUrl}" target="_blank" rel="noopener noreferrer">Continue to Apply <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;"></i></a></div>`;
     modal.classList.add("show");
     modal.setAttribute("aria-hidden", "false");
     document.getElementById("modalCancel").addEventListener("click", closeModal);
 }
 
-function closeModal() { modal.classList.remove("show");
-    modal.setAttribute("aria-hidden", "true"); }
+function closeModal() { modal.classList.remove("show"); modal.setAttribute("aria-hidden", "true"); }
 modalClose.addEventListener("click", closeModal);
 modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
-document.addEventListener("keydown", event => { if (event.key === "Escape" && modal.classList.contains("show"))
-        closeModal(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && modal.classList.contains("show")) closeModal(); });
 
-// ============================================================
-// CAROUSEL
-// ============================================================
 const carouselTrack = document.getElementById('carouselTrack');
 const carouselDots = document.getElementById('carouselDots');
 const prevBtn = document.getElementById('carouselPrev');
 const nextBtn = document.getElementById('carouselNext');
-let carouselIndex = 0,
-    autoSlideInterval;
+let carouselIndex = 0, autoSlideInterval;
 
 function buildCarousel() {
+    if (!carouselTrack) return;
     carouselTrack.innerHTML = '';
     carouselDots.innerHTML = '';
     institutions.forEach((inst, idx) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
-        slide.innerHTML =
-            `${generateLogoHTML(inst, false)}<div class="carousel-name">${escapeHTML(inst.name)}</div><div class="carousel-abbr">${escapeHTML(inst.abbr)}</div>`;
+        slide.innerHTML = `${generateLogoHTML(inst, false)}<div class="carousel-name">${escapeHTML(inst.name)}</div><div class="carousel-abbr">${escapeHTML(inst.abbr)}</div>`;
         slide.addEventListener('click', () => {
             document.getElementById('directory').scrollIntoView({ behavior: 'smooth' });
             searchInput.value = inst.name;
@@ -1191,6 +1153,7 @@ function buildCarousel() {
 }
 
 function updateCarousel() {
+    if (!carouselTrack) return;
     const slides = carouselTrack.querySelectorAll('.carousel-slide');
     const slideWidth = slides[0]?.offsetWidth + 16 || 176;
     carouselTrack.style.transform = `translateX(-${carouselIndex * slideWidth}px)`;
@@ -1207,64 +1170,50 @@ function goToSlide(index) {
 }
 
 function nextSlide() { goToSlide(carouselIndex + 1); }
-
 function prevSlide() { goToSlide(carouselIndex - 1); }
-prevBtn.addEventListener('click', () => { clearInterval(autoSlideInterval);
-    prevSlide();
-    startAutoSlide(); });
-nextBtn.addEventListener('click', () => { clearInterval(autoSlideInterval);
-    nextSlide();
-    startAutoSlide(); });
+prevBtn?.addEventListener('click', () => { clearInterval(autoSlideInterval); prevSlide(); startAutoSlide(); });
+nextBtn?.addEventListener('click', () => { clearInterval(autoSlideInterval); nextSlide(); startAutoSlide(); });
 
-function startAutoSlide() { if (autoSlideInterval) clearInterval(autoSlideInterval);
-    autoSlideInterval = setInterval(nextSlide, 3000); }
+function startAutoSlide() { if (autoSlideInterval) clearInterval(autoSlideInterval); autoSlideInterval = setInterval(nextSlide, 3000); }
 buildCarousel();
-setTimeout(() => { updateCarousel();
-    startAutoSlide(); }, 100);
+setTimeout(() => { updateCarousel(); startAutoSlide(); }, 100);
 let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateCarousel, 100); });
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(updateCarousel, 100); });
 
-// ============================================================
-// STUDY FIELDS
-// ============================================================
 const studyTabsTrack = document.getElementById('studyTabsTrack');
 const studyContentContainer = document.getElementById('studyFieldContent');
 const qualModal = document.getElementById('qualModal');
 const qualModalContent = document.getElementById('qualModalContent');
 const qualModalClose = document.getElementById('qualModalClose');
 let activeFieldId = studyFields[0]?.id || '';
-let slideTimer = null,
-    currentScrollOffset = 0;
+let slideTimer = null, currentScrollOffset = 0;
 const slideStep = 160;
 
 function renderStudyFields() {
+    if (!studyTabsTrack) return;
     const allTabs = [...studyFields, ...studyFields];
     studyTabsTrack.innerHTML = allTabs.map((field, idx) => `
-                        <button class="study-field-tab ${field.id === activeFieldId && idx < studyFields.length ? 'active' : ''}" data-field="${field.id}" data-index="${idx}" type="button">
-                            <i class="fas ${field.icon}"></i> ${field.label}
-                        </button>
-                    `).join('');
+        <button class="study-field-tab ${field.id === activeFieldId && idx < studyFields.length ? 'active' : ''}" data-field="${field.id}" data-index="${idx}" type="button">
+            <i class="fas ${field.icon}"></i> ${field.label}
+        </button>`).join('');
 
-    studyContentContainer.innerHTML = studyFields.map((field, idx) => `
-                        <div class="study-field-content ${field.id === activeFieldId ? 'active' : ''}" data-field="${field.id}">
-                            <div class="field-intro">
-                                <h3><i class="fas ${field.icon}" style="color:var(--gold-dark);margin-right:8px;"></i>${field.label}</h3>
-                                <p>${escapeHTML(field.description)}</p>
-                                <div class="suitable"><strong>Suitable for:</strong> ${escapeHTML(field.suitable)}</div>
-                                <div class="suitable" style="margin-top:4px;"><strong>Recommended school subjects:</strong> ${escapeHTML(field.subjects)}</div>
-                            </div>
-                            <div class="qual-grid">
-                                ${field.qualifications.map((q, qi) => `
-                                    <div class="qual-item" data-field="${field.id}" data-index="${qi}">
-                                        <i class="fas fa-graduation-cap"></i>
-                                        ${escapeHTML(q.name)}
-                                        <span class="qual-badge">${q.careers.split(',').length} careers</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('');
+    studyContentContainer.innerHTML = studyFields.map((field) => `
+        <div class="study-field-content ${field.id === activeFieldId ? 'active' : ''}" data-field="${field.id}">
+            <div class="field-intro">
+                <h3><i class="fas ${field.icon}" style="color:var(--gold-dark);margin-right:8px;"></i>${field.label}</h3>
+                <p>${escapeHTML(field.description)}</p>
+                <div class="suitable"><strong>Suitable for:</strong> ${escapeHTML(field.suitable)}</div>
+                <div class="suitable" style="margin-top:4px;"><strong>Recommended school subjects:</strong> ${escapeHTML(field.subjects)}</div>
+            </div>
+            <div class="qual-grid">
+                ${field.qualifications.map((q, qi) => `
+                    <div class="qual-item" data-field="${field.id}" data-index="${qi}">
+                        <i class="fas fa-graduation-cap"></i>
+                        ${escapeHTML(q.name)}
+                        <span class="qual-badge">${q.careers.split(',').length} careers</span>
+                    </div>`).join('')}
+            </div>
+        </div>`).join('');
 
     studyTabsTrack.querySelectorAll('.study-field-tab').forEach(tab => {
         tab.addEventListener('click', function() {
@@ -1290,12 +1239,12 @@ function renderStudyFields() {
         });
     });
 
-    document.getElementById('studyArrowLeft').addEventListener('click', () => {
+    document.getElementById('studyArrowLeft')?.addEventListener('click', () => {
         currentScrollOffset = Math.max(0, currentScrollOffset - slideStep);
         studyTabsTrack.style.transform = `translateX(-${currentScrollOffset}px)`;
         studyTabsTrack.style.transition = 'transform 0.4s ease';
     });
-    document.getElementById('studyArrowRight').addEventListener('click', () => {
+    document.getElementById('studyArrowRight')?.addEventListener('click', () => {
         const maxScroll = studyTabsTrack.scrollWidth - studyTabsTrack.parentElement.offsetWidth + 40;
         currentScrollOffset = Math.min(maxScroll, currentScrollOffset + slideStep);
         studyTabsTrack.style.transform = `translateX(-${currentScrollOffset}px)`;
@@ -1308,21 +1257,20 @@ function renderStudyFields() {
 function setActiveField(fieldId) {
     activeFieldId = fieldId;
     document.querySelectorAll('.study-field-tab').forEach(t => t.classList.remove('active'));
-    studyTabsTrack.querySelectorAll(`.study-field-tab[data-field="${fieldId}"]`).forEach(t => t.classList.add(
-        'active'));
+    studyTabsTrack.querySelectorAll(`.study-field-tab[data-field="${fieldId}"]`).forEach(t => t.classList.add('active'));
     document.querySelectorAll('.study-field-content').forEach(c => c.classList.remove('active'));
-    document.querySelector(`.study-field-content[data-field="${fieldId}"]`).classList.add('active');
+    document.querySelector(`.study-field-content[data-field="${fieldId}"]`)?.classList.add('active');
 }
 
 function startSliding() {
     if (slideTimer) clearInterval(slideTimer);
     const wrapper = document.getElementById('studyTabsWrapper');
     const track = studyTabsTrack;
+    if (!wrapper || !track) return;
     let interval = setInterval(() => {
         if (document.hidden) return;
         if (!track.dataset.paused) {
-            let current = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)',
-                '')) || 0;
+            let current = parseFloat(track.style.transform.replace('translateX(-', '').replace('px)', '')) || 0;
             current += 0.5;
             const maxScroll = track.scrollWidth - track.parentElement.offsetWidth + 40;
             if (current >= maxScroll) current = 0;
@@ -1342,18 +1290,17 @@ function openQualModal(field, index) {
     let reqHTML = '';
     if (req) {
         reqHTML = `<div class="qual-requirements-card">
-                            <div class="req-row"><span class="req-label">Typical overall average</span><span class="req-value">${escapeHTML(req.typicalAverage)}</span></div>
-                            <div class="req-row"><span class="req-label">Mathematics</span><span class="req-value">${escapeHTML(req.maths)}</span></div>
-                            <div class="req-row"><span class="req-label">Physical Sciences</span><span class="req-value">${escapeHTML(req.physSci)}</span></div>
-                            <div class="req-row"><span class="req-label">Life Sciences</span><span class="req-value">${escapeHTML(req.lifeSci)}</span></div>
-                            <div class="req-row"><span class="req-label">English</span><span class="req-value">${escapeHTML(req.english)}</span></div>
-                            <div class="req-row"><span class="req-label">Typical APS range</span><span class="req-value"><span class="highlight">${escapeHTML(req.aps)}</span></span></div>
-                            ${req.additional ? `<div class="req-row"><span class="req-label">Additional requirements</span><span class="req-value">${escapeHTML(req.additional)}</span></div>` : ''}
-                            <div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Requirements shown are typical / estimated guidelines.</strong> They vary by university and programme. Meeting these does not guarantee admission. Always check official university requirements.</div></div>
-                        </div>`;
+            <div class="req-row"><span class="req-label">Typical overall average</span><span class="req-value">${escapeHTML(req.typicalAverage)}</span></div>
+            <div class="req-row"><span class="req-label">Mathematics</span><span class="req-value">${escapeHTML(req.maths)}</span></div>
+            <div class="req-row"><span class="req-label">Physical Sciences</span><span class="req-value">${escapeHTML(req.physSci)}</span></div>
+            <div class="req-row"><span class="req-label">Life Sciences</span><span class="req-value">${escapeHTML(req.lifeSci)}</span></div>
+            <div class="req-row"><span class="req-label">English</span><span class="req-value">${escapeHTML(req.english)}</span></div>
+            <div class="req-row"><span class="req-label">Typical APS range</span><span class="req-value"><span class="highlight">${escapeHTML(req.aps)}</span></span></div>
+            ${req.additional ? `<div class="req-row"><span class="req-label">Additional requirements</span><span class="req-value">${escapeHTML(req.additional)}</span></div>` : ''}
+            <div class="req-warning"><i class="fas fa-triangle-exclamation"></i><div><strong>Requirements shown are typical / estimated guidelines.</strong> They vary by university and programme. Meeting these does not guarantee admission. Always check official university requirements.</div></div>
+        </div>`;
     } else {
-        reqHTML =
-            `<div class="qual-requirements-card"><p style="color:var(--gray-500);font-size:0.9rem;"><i class="fas fa-info-circle"></i> Typical requirements for this qualification are not yet available. Please check the individual university websites for specific requirements.</p></div>`;
+        reqHTML = `<div class="qual-requirements-card"><p style="color:var(--gray-500);font-size:0.9rem;"><i class="fas fa-info-circle"></i> Typical requirements for this qualification are not yet available. Please check the individual university websites for specific requirements.</p></div>`;
     }
     const keywords = q.name.split(' ').filter(w => w.length > 3);
     const matchingInsts = institutions.filter(inst => {
@@ -1362,41 +1309,34 @@ function openQualModal(field, index) {
         return keywords.some(k => desc.includes(k.toLowerCase()) || name.includes(k.toLowerCase()));
     }).slice(0, 6);
     qualModalContent.innerHTML = `
-                        <h2 id="qualModalTitle">${escapeHTML(q.name)}</h2>
-                        <div class="modal-subtitle" style="text-align:left;color:var(--gold-dark);"><i class="fas ${field.icon}"></i> ${escapeHTML(field.label)}</div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-graduation-cap" style="color:var(--gold-dark);"></i> What is this qualification?</h4><p>${escapeHTML(q.name)} is a qualification in the field of ${escapeHTML(field.label)}. It prepares students for careers such as ${careersList.slice(0,3).join(', ')} and many others.</p></div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-brain" style="color:var(--gold-dark);"></i> What will I learn?</h4><ul>${learnList.map(l => `<li>${escapeHTML(l)}</li>`).join('')}</ul></div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-briefcase" style="color:var(--gold-dark);"></i> Possible careers</h4><ul>${careersList.map(c => `<li>${escapeHTML(c)}</li>`).join('')}</ul></div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-school" style="color:var(--gold-dark);"></i> Recommended school subjects</h4><p>${escapeHTML(field.subjects)}</p><p style="font-size:0.8rem;color:var(--gray-500);margin-top:4px;"><i class="fas fa-info-circle"></i> These subjects are commonly required or recommended. Check each institution's specific requirements.</p></div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-clipboard-list" style="color:var(--gold-dark);"></i> Typical / Estimated Requirements</h4>${reqHTML}</div>
-                        <div class="qual-detail-section"><h4><i class="fas fa-university" style="color:var(--gold-dark);"></i> Where can I study?</h4>
-                            ${matchingInsts.length > 0 ? `<div class="qual-institutions">${matchingInsts.map(inst => `
-                                <div class="qual-institution-item">
-                                    <div class="inst-name">${escapeHTML(inst.name)} (${escapeHTML(inst.abbr)})</div>
-                                    <div class="inst-req"><span class="aps-badge">APS varies by programme</span> <span style="margin-left:8px;">${escapeHTML(inst.province)}</span></div>
-                                    <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
-                                </div>
-                            `).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
-                        </div>
-                        <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
-                        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>
-                    `;
+        <h2 id="qualModalTitle">${escapeHTML(q.name)}</h2>
+        <div class="modal-subtitle" style="text-align:left;color:var(--gold-dark);"><i class="fas ${field.icon}"></i> ${escapeHTML(field.label)}</div>
+        <div class="qual-detail-section"><h4><i class="fas fa-graduation-cap" style="color:var(--gold-dark);"></i> What is this qualification?</h4><p>${escapeHTML(q.name)} is a qualification in the field of ${escapeHTML(field.label)}. It prepares students for careers such as ${careersList.slice(0,3).join(', ')} and many others.</p></div>
+        <div class="qual-detail-section"><h4><i class="fas fa-brain" style="color:var(--gold-dark);"></i> What will I learn?</h4><ul>${learnList.map(l => `<li>${escapeHTML(l)}</li>`).join('')}</ul></div>
+        <div class="qual-detail-section"><h4><i class="fas fa-briefcase" style="color:var(--gold-dark);"></i> Possible careers</h4><ul>${careersList.map(c => `<li>${escapeHTML(c)}</li>`).join('')}</ul></div>
+        <div class="qual-detail-section"><h4><i class="fas fa-school" style="color:var(--gold-dark);"></i> Recommended school subjects</h4><p>${escapeHTML(field.subjects)}</p><p style="font-size:0.8rem;color:var(--gray-500);margin-top:4px;"><i class="fas fa-info-circle"></i> These subjects are commonly required or recommended. Check each institution's specific requirements.</p></div>
+        <div class="qual-detail-section"><h4><i class="fas fa-clipboard-list" style="color:var(--gold-dark);"></i> Typical / Estimated Requirements</h4>${reqHTML}</div>
+        <div class="qual-detail-section"><h4><i class="fas fa-university" style="color:var(--gold-dark);"></i> Where can I study?</h4>
+            ${matchingInsts.length > 0 ? `<div class="qual-institutions">${matchingInsts.map(inst => `
+                <div class="qual-institution-item">
+                    <div class="inst-name">${escapeHTML(inst.name)} (${escapeHTML(inst.abbr)})</div>
+                    <div class="inst-req"><span class="aps-badge">APS varies by programme</span> <span style="margin-left:8px;">${escapeHTML(inst.province)}</span></div>
+                    <div class="inst-actions"><a href="${inst.appUrl}" target="_blank" rel="noopener noreferrer" class="btn-sm gold"><i class="fas fa-paper-plane"></i> Apply</a><a href="${inst.prospectusLink}" target="_blank" rel="noopener noreferrer" class="btn-sm"><i class="fas fa-book-open"></i> Official Requirements</a></div>
+                </div>`).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
+        </div>
+        <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
+        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>`;
     qualModal.classList.add("show");
     qualModal.setAttribute("aria-hidden", "false");
     document.getElementById("qualModalCancel").addEventListener("click", closeQualModal);
 }
 
-function closeQualModal() { qualModal.classList.remove("show");
-    qualModal.setAttribute("aria-hidden", "true"); }
+function closeQualModal() { qualModal.classList.remove("show"); qualModal.setAttribute("aria-hidden", "true"); }
 qualModalClose.addEventListener("click", closeQualModal);
 qualModal.addEventListener("click", event => { if (event.target === qualModal) closeQualModal(); });
-document.addEventListener("keydown", event => { if (event.key === "Escape" && qualModal.classList.contains("show"))
-        closeQualModal(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && qualModal.classList.contains("show")) closeQualModal(); });
 renderStudyFields();
 
-// ============================================================
-// FINDER
-// ============================================================
 const finderStepsContainer = document.getElementById('finderSteps');
 const finderResults = document.getElementById('finderResults');
 const interestCategories = [
@@ -1430,26 +1370,25 @@ const interestFieldMap = {
 let selectedInterests = [];
 
 function renderFinder() {
+    if (!finderStepsContainer) return;
     finderStepsContainer.innerHTML = `
-                        <div class="finder-step">
-                            <div class="step-label"><i class="fas fa-star"></i> Step 1</div>
-                            <h4>What type of work interests you?</h4>
-                            <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:10px;">Select all that apply — this helps us recommend study fields.</p>
-                            <div class="finder-options" id="interestOptions">
-                                ${interestCategories.map(cat => `<button class="finder-option" data-interest="${cat.id}" type="button"><i class="fas ${cat.icon}"></i> ${cat.label}</button>`).join('')}
-                            </div>
-                        </div>
-                        <div style="text-align:right;margin-top:10px;">
-                            <button class="btn btn-apply" id="getRecommendationsBtn" style="padding:10px 32px;border-radius:40px;"><i class="fas fa-compass"></i> Get Recommendations</button>
-                        </div>
-                    `;
+        <div class="finder-step">
+            <div class="step-label"><i class="fas fa-star"></i> Step 1</div>
+            <h4>What type of work interests you?</h4>
+            <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:10px;">Select all that apply — this helps us recommend study fields.</p>
+            <div class="finder-options" id="interestOptions">
+                ${interestCategories.map(cat => `<button class="finder-option" data-interest="${cat.id}" type="button"><i class="fas ${cat.icon}"></i> ${cat.label}</button>`).join('')}
+            </div>
+        </div>
+        <div style="text-align:right;margin-top:10px;">
+            <button class="btn btn-apply" id="getRecommendationsBtn" style="padding:10px 32px;border-radius:40px;"><i class="fas fa-compass"></i> Get Recommendations</button>
+        </div>`;
     document.querySelectorAll('.finder-option').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.dataset.interest;
             const idx = selectedInterests.indexOf(id);
-            if (idx > -1) { selectedInterests.splice(idx, 1);
-                btn.classList.remove('selected'); } else { selectedInterests.push(id);
-                btn.classList.add('selected'); }
+            if (idx > -1) { selectedInterests.splice(idx, 1); btn.classList.remove('selected'); }
+            else { selectedInterests.push(id); btn.classList.add('selected'); }
         });
     });
     document.getElementById('getRecommendationsBtn').addEventListener('click', showRecommendations);
@@ -1457,36 +1396,26 @@ function renderFinder() {
 
 function showRecommendations() {
     if (selectedInterests.length === 0) {
-        finderResults.innerHTML =
-            `<div class="result-hint"><i class="fas fa-lightbulb"></i> Please select at least one interest above to see recommendations.</div>`;
+        finderResults.innerHTML = `<div class="result-hint"><i class="fas fa-lightbulb"></i> Please select at least one interest above to see recommendations.</div>`;
         return;
     }
     const fieldIds = new Set();
-    selectedInterests.forEach(interest => {
-        const mapped = interestFieldMap[interest] || [];
-        mapped.forEach(fid => fieldIds.add(fid));
-    });
+    selectedInterests.forEach(interest => { const mapped = interestFieldMap[interest] || []; mapped.forEach(fid => fieldIds.add(fid)); });
     if (fieldIds.size === 0) studyFields.forEach(f => fieldIds.add(f.id));
     const recommendedFields = studyFields.filter(f => fieldIds.has(f.id));
     if (recommendedFields.length === 0) {
-        finderResults.innerHTML =
-            `<div class="result-hint"><i class="fas fa-lightbulb"></i> Based on your interests, we recommend exploring all study fields. Try selecting different interests.</div>`;
+        finderResults.innerHTML = `<div class="result-hint"><i class="fas fa-lightbulb"></i> Based on your interests, we recommend exploring all study fields.</div>`;
         return;
     }
     finderResults.innerHTML = `
-                        <h4><i class="fas fa-compass" style="color:var(--gold-dark);"></i> Based on your interests, you may want to explore:</h4>
-                        <div style="margin-top:10px;">
-                            ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--gold-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--gold);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
-                        </div>
-                        <p style="color:var(--gray-500);font-size:0.85rem;margin-top:14px;"><i class="fas fa-info-circle"></i> This is guidance, not a definitive career test. Explore the fields above to learn more about qualifications and careers.</p>
-                        <div style="margin-top:12px;"><a href="#whatCanIStudy" class="btn btn-apply" style="padding:8px 24px;border-radius:40px;display:inline-flex;gap:8px;" onclick="document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});">Explore These Study Fields <i class="fas fa-arrow-right"></i></a></div>
-                    `;
+        <h4><i class="fas fa-compass" style="color:var(--gold-dark);"></i> Based on your interests, you may want to explore:</h4>
+        <div style="margin-top:10px;">
+            ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--gold-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--gold);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
+        </div>
+        <p style="color:var(--gray-500);font-size:0.85rem;margin-top:14px;"><i class="fas fa-info-circle"></i> This is guidance, not a definitive career test.</p>`;
 }
 renderFinder();
 
-// ============================================================
-// APS CALCULATOR
-// ============================================================
 const subjectEntriesContainer = document.getElementById('subjectEntries');
 const addSubjectBtn = document.getElementById('addSubjectBtn');
 const calculateBtn = document.getElementById('calculateApsBtn');
@@ -1502,46 +1431,42 @@ function createSubjectEntry(name = '', percentage = '', isFixed = false) {
     const div = document.createElement('div');
     div.className = 'subject-entry' + (isFixed ? ' fixed' : '');
     div.innerHTML = `
-                        <input type="text" placeholder="Subject name" value="${escapeHTML(name)}" class="subject-name" ${isFixed ? 'readonly' : ''} />
-                        <input type="number" placeholder="%" min="0" max="100" value="${percentage}" class="subject-percentage" />
-                        ${isFixed ? '<span class="fixed-badge"><i class="fas fa-lock"></i> Fixed</span>' : ''}
-                        <button type="button" class="remove-subject" title="Remove subject"><i class="fas fa-trash-can"></i></button>
-                    `;
+        <input type="text" placeholder="Subject name" value="${escapeHTML(name)}" class="subject-name" ${isFixed ? 'readonly' : ''} />
+        <input type="number" placeholder="%" min="0" max="100" value="${percentage}" class="subject-percentage" />
+        ${isFixed ? '<span class="fixed-badge"><i class="fas fa-lock"></i> Fixed</span>' : ''}
+        <button type="button" class="remove-subject" title="Remove subject"><i class="fas fa-trash-can"></i></button>`;
     if (isFixed) div.querySelector('.remove-subject').style.display = 'none';
     const removeBtn = div.querySelector('.remove-subject');
     if (!isFixed) {
         removeBtn.addEventListener('click', () => {
             const total = document.querySelectorAll('.subject-entry:not(.fixed)').length;
-            if (total > 1 || document.querySelectorAll('.subject-entry').length > 1) { div.remove();
-                updateAddButton(); } else
-                alert('You need at least one subject (Life Orientation is fixed).');
+            if (total > 1 || document.querySelectorAll('.subject-entry').length > 1) { div.remove(); updateAddButton(); }
+            else alert('You need at least one subject.');
         });
     }
     return div;
 }
 
 function renderDefaultSubjects() {
+    if (!subjectEntriesContainer) return;
     subjectEntriesContainer.innerHTML = '';
     subjectEntriesContainer.appendChild(createSubjectEntry('Life Orientation', 60, true));
-    const examples = [{ name: 'English Home Language', perc: 70 }, { name: 'Mathematics', perc: 65 },
-        { name: 'Physical Sciences', perc: 58 }, { name: 'Life Sciences', perc: 62 }
-    ];
-    examples.forEach(subj => subjectEntriesContainer.appendChild(createSubjectEntry(subj.name, subj.perc,
-        false)));
+    const examples = [{ name: 'English Home Language', perc: 70 }, { name: 'Mathematics', perc: 65 }, { name: 'Physical Sciences', perc: 58 }, { name: 'Life Sciences', perc: 62 }];
+    examples.forEach(subj => subjectEntriesContainer.appendChild(createSubjectEntry(subj.name, subj.perc, false)));
     updateAddButton();
 }
 
 function updateAddButton() {
+    if (!addSubjectBtn) return;
     const total = document.querySelectorAll('.subject-entry').length;
     addSubjectBtn.disabled = total >= MAX_SUBJECTS;
     addSubjectBtn.title = total >= MAX_SUBJECTS ? 'Maximum 7 subjects reached' : '';
 }
 renderDefaultSubjects();
-addSubjectBtn.addEventListener('click', () => {
+addSubjectBtn?.addEventListener('click', () => {
     const total = document.querySelectorAll('.subject-entry').length;
-    if (total < MAX_SUBJECTS) { subjectEntriesContainer.appendChild(createSubjectEntry('', '', false));
-        updateAddButton(); } else alert(
-        `You can add up to ${MAX_SUBJECTS} subjects total (including Life Orientation).`);
+    if (total < MAX_SUBJECTS) { subjectEntriesContainer.appendChild(createSubjectEntry('', '', false)); updateAddButton(); }
+    else alert(`You can add up to ${MAX_SUBJECTS} subjects total.`);
 });
 
 function getPoints(percentage) {
@@ -1564,18 +1489,14 @@ function calculateAPS() {
         const percInput = entry.querySelector('.subject-percentage');
         const name = nameInput.value.trim();
         const perc = parseFloat(percInput.value);
-        if (!name) { nameInput.style.borderColor = '#ef4444';
-            hasError = true; } else nameInput.style.borderColor = '';
-        if (isNaN(perc) || perc < 0 || perc > 100) { percInput.style.borderColor = '#ef4444';
-            hasError = true; } else {
-            percInput.style.borderColor = '';
-            subjects.push({ name, percentage: perc, points: getPoints(perc) });
-        }
+        if (!name) { nameInput.style.borderColor = '#ef4444'; hasError = true; } else nameInput.style.borderColor = '';
+        if (isNaN(perc) || perc < 0 || perc > 100) { percInput.style.borderColor = '#ef4444'; hasError = true; }
+        else { percInput.style.borderColor = ''; subjects.push({ name, percentage: perc, points: getPoints(perc) }); }
     });
     if (hasError) { alert('Please fill in all subject names and valid percentages (0-100).'); return; }
     let filtered = subjects;
-    if (excludeLO.checked) filtered = filtered.filter(s => s.name.toLowerCase() !== 'life orientation');
-    if (filtered.length === 0) { alert('No valid subjects to calculate APS. Please add subjects.'); return; }
+    if (excludeLO?.checked) filtered = filtered.filter(s => s.name.toLowerCase() !== 'life orientation');
+    if (filtered.length === 0) { alert('No valid subjects to calculate APS.'); return; }
     filtered.sort((a, b) => b.points - a.points);
     const topSubjects = filtered.slice(0, 6);
     const totalAPS = topSubjects.reduce((sum, s) => sum + s.points, 0);
@@ -1583,35 +1504,20 @@ function calculateAPS() {
     apsScore.textContent = totalAPS;
     apsSubjectsUsed.textContent = `(using best ${usedCount} subject${usedCount > 1 ? 's' : ''})`;
     let guidanceHTML = '';
-    if (totalAPS >= 40)
-        guidanceHTML =
-        `<strong>Excellent! </strong>You are likely eligible for admission to most universities and competitive programmes. Consider institutions like UCT, Wits, Stellenbosch, UP and others.`;
-    else if (totalAPS >= 35)
-        guidanceHTML =
-        `<strong>Good! </strong>You qualify for many programmes at universities such as UJ, NWU, UKZN, UWC. Check specific faculty requirements.`;
-    else if (totalAPS >= 30)
-        guidanceHTML =
-        `<strong>Average. </strong>You may be eligible for some programmes at universities and most universities of technology. Consider CPUT, DUT, TUT, VUT and others.`;
-    else if (totalAPS >= 25)
-        guidanceHTML =
-        `<strong>Below average. </strong>You may not meet the minimum APS for many university programmes, but universities of technology and some foundation programmes may be options. Check with institutions directly.`;
-    else
-        guidanceHTML =
-        `<strong>Low APS. </strong>You may not qualify for most degree programmes. Consider universities of technology, bridging courses, or improving your results. Speak to a career counsellor.`;
+    if (totalAPS >= 40) guidanceHTML = `<strong>Excellent! </strong>You are likely eligible for admission to most universities.`;
+    else if (totalAPS >= 35) guidanceHTML = `<strong>Good! </strong>You qualify for many programmes at universities.`;
+    else if (totalAPS >= 30) guidanceHTML = `<strong>Average. </strong>You may be eligible for some programmes.`;
+    else if (totalAPS >= 25) guidanceHTML = `<strong>Below average. </strong>Consider UoTs and foundation programmes.`;
+    else guidanceHTML = `<strong>Low APS. </strong>Consider UoTs, bridging courses, or improving your results.`;
     apsGuidance.innerHTML = guidanceHTML;
     apsResult.style.display = 'block';
 }
-calculateBtn.addEventListener('click', calculateAPS);
-resetBtn.addEventListener('click', () => { renderDefaultSubjects();
-    apsResult.style.display = 'none';
+calculateBtn?.addEventListener('click', calculateAPS);
+resetBtn?.addEventListener('click', () => { renderDefaultSubjects(); apsResult.style.display = 'none';
     document.querySelectorAll('.subject-entry input').forEach(inp => inp.style.borderColor = ''); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.closest('.subject-entry'))
-        calculateAPS(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.closest('.subject-entry')) calculateAPS(); });
 updateAddButton();
 
-// ============================================================
-// CHECKLIST
-// ============================================================
 const checklistItems = [
     "Does the institution offer the programme I actually want?",
     "Do I meet the admission requirements?",
@@ -1629,75 +1535,39 @@ const checklistItems = [
 
 function renderChecklist() {
     const container = document.getElementById('decision-checklist');
-    container.innerHTML = checklistItems.map((item, idx) => `
-                        <div class="checklist-item" data-idx="${idx}">
-                            <span class="check-icon"><i class="fas fa-check"></i></span>
-                            <span>${escapeHTML(item)}</span>
-                        </div>
-                    `).join('');
-    container.querySelectorAll('.checklist-item').forEach(el => {
-        el.addEventListener('click', () => el.classList.toggle('checked'));
-    });
+    if (!container) return;
+    container.innerHTML = checklistItems.map((item, idx) => `<div class="checklist-item" data-idx="${idx}"><span class="check-icon"><i class="fas fa-check"></i></span><span>${escapeHTML(item)}</span></div>`).join('');
+    container.querySelectorAll('.checklist-item').forEach(el => { el.addEventListener('click', () => el.classList.toggle('checked')); });
 }
 document.getElementById('reset-checklist')?.addEventListener('click', () => {
-    document.querySelectorAll('#decision-checklist .checklist-item').forEach(el => el.classList.remove(
-        'checked'));
+    document.querySelectorAll('#decision-checklist .checklist-item').forEach(el => el.classList.remove('checked'));
 });
 renderChecklist();
 
-// ============================================================
-// RESOURCES
-// ============================================================
 const resourceGrid = document.getElementById('resourceGrid');
-
 function renderResources() {
-    resourceGrid.innerHTML = resources.map(r => `
-                        <div class="resource-card" onclick="this.scrollIntoView({behavior:'smooth'});">
-                            <div class="res-icon"><i class="fas ${r.icon}"></i></div>
-                            <h4>${escapeHTML(r.title)}</h4>
-                            <p>${escapeHTML(r.desc)}</p>
-                        </div>
-                    `).join('');
+    if (!resourceGrid) return;
+    resourceGrid.innerHTML = resources.map(r => `<div class="resource-card" onclick="this.scrollIntoView({behavior:'smooth'});"><div class="res-icon"><i class="fas ${r.icon}"></i></div><h4>${escapeHTML(r.title)}</h4><p>${escapeHTML(r.desc)}</p></div>`).join('');
 }
 renderResources();
 
-// ============================================================
-// STUDENT SERVICES
-// ============================================================
 function renderStudentServices() {
     const grid = document.getElementById('servicesGrid');
     if (!grid) return;
-    grid.innerHTML = studentServices.map(service => `
-        <div class="service-card">
-            <div class="service-icon">${service.icon}</div>
-            <h4>${escapeHTML(service.title)}</h4>
-            <p>${escapeHTML(service.description)}</p>
-            <a href="${service.link}" target="_blank" rel="noopener noreferrer" class="btn btn-apply">${escapeHTML(service.buttonText)} <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a>
-        </div>
-    `).join('');
+    grid.innerHTML = studentServices.map(service => `<div class="service-card"><div class="service-icon">${service.icon}</div><h4>${escapeHTML(service.title)}</h4><p>${escapeHTML(service.description)}</p><a href="${service.link}" target="_blank" rel="noopener noreferrer" class="btn btn-apply">${escapeHTML(service.buttonText)} <i class="fas fa-arrow-up-right-from-square" style="margin-left:5px;"></i></a></div>`).join('');
 }
 renderStudentServices();
 
-// ============================================================
-// DAILY WORD
-// ============================================================
 const dailyMessages = [
-    { title: "Believe", message: "Believe in the future you are working towards.",
-        extra: "Your journey starts with the decisions you make today." },
-    { title: "Courage", message: "Fortune Favours The Brave!",
-        extra: "Take the next step. Your future starts with the decisions you make today." },
+    { title: "Believe", message: "Believe in the future you are working towards.", extra: "Your journey starts with the decisions you make today." },
+    { title: "Courage", message: "Fortune Favours The Brave!", extra: "Take the next step." },
     { title: "Focus", message: "Keep your eyes on the goal.", extra: "Stay focused. Stay consistent." },
-    { title: "Persistence", message: "Don't give up now.",
-        extra: "Your hard work will pay off. Keep pushing forward." },
-    { title: "Progress", message: "Small steps every day.",
-        extra: "Progress is still progress. Your effort matters." },
-    { title: "Hope", message: "Your future is still being written.",
-        extra: "Keep your head up. Your story is not over." },
-    { title: "Strength", message: "Keep Your Head Up, You're Very Close.",
-        extra: "Difficult roads often lead to beautiful destinations." },
+    { title: "Persistence", message: "Don't give up now.", extra: "Your hard work will pay off." },
+    { title: "Progress", message: "Small steps every day.", extra: "Progress is still progress." },
+    { title: "Hope", message: "Your future is still being written.", extra: "Keep your head up." },
+    { title: "Strength", message: "Keep Your Head Up, You're Very Close.", extra: "Difficult roads lead to beautiful destinations." },
     { title: "Believe", message: "Believe that you can.", extra: "You are capable of more than you think." },
-    { title: "Courage", message: "Do it scared. Do it anyway.",
-        extra: "Your dreams are bigger than your doubts." },
+    { title: "Courage", message: "Do it scared. Do it anyway.", extra: "Your dreams are bigger than your doubts." },
     { title: "Focus", message: "Stay focused. Stay consistent.", extra: "Your goals are worth the effort." }
 ];
 
@@ -1711,117 +1581,63 @@ function getDailyWord() {
 
 function renderDailyWord() {
     const word = getDailyWord();
-    document.getElementById('wordTitleWidget').textContent = word.title;
-    document.getElementById('wordMessageWidget').textContent = `"${word.message}"`;
-    document.getElementById('wordExtraWidget').textContent = word.extra;
-    document.getElementById('topBarWordText').textContent = `"${word.message}"`;
+    const t1 = document.getElementById('wordTitleWidget'); if (t1) t1.textContent = word.title;
+    const t2 = document.getElementById('wordMessageWidget'); if (t2) t2.textContent = `"${word.message}"`;
+    const t3 = document.getElementById('wordExtraWidget'); if (t3) t3.textContent = word.extra;
+    const t4 = document.getElementById('topBarWordText'); if (t4) t4.textContent = `"${word.message}"`;
 }
 renderDailyWord();
 
-// ============================================================
-// FLOATING HOME BUTTON
-// ============================================================
 const floatingHomeBtn = document.getElementById('floatingHomeBtn');
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) { floatingHomeBtn.classList.add('visible'); } else { floatingHomeBtn.classList
-            .remove('visible'); }
+    if (window.scrollY > 300) floatingHomeBtn?.classList.add('visible');
+    else floatingHomeBtn?.classList.remove('visible');
 });
-floatingHomeBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+floatingHomeBtn?.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-// ============================================================
-// DASHBOARD (with Compare section)
-// ============================================================
 function renderDashboard() {
     const container = document.getElementById('dashboardModalContent');
+    if (!container) return;
     const saved = getSavedIds();
     const viewed = getViewedIds();
     const savedInsts = saved.map(id => institutions.find(i => i.id === id)).filter(Boolean);
     const viewedInsts = viewed.map(id => institutions.find(i => i.id === id)).filter(Boolean);
     const compareInsts = compareIds.map(id => institutions.find(i => i.id === id)).filter(Boolean);
 
-    let html =
-        `<div class="dashboard-stats"><div class="dashboard-stat-card"><span class="stat-number">${saved.length}</span><span class="stat-label"><i class="fas fa-bookmark"></i> Saved</span></div><div class="dashboard-stat-card"><span class="stat-number">${viewed.length}</span><span class="stat-label"><i class="fas fa-eye"></i> Viewed</span></div><div class="dashboard-stat-card"><span class="stat-number">${institutions.length}</span><span class="stat-label"><i class="fas fa-university"></i> Total</span></div></div>`;
+    let html = `<div class="dashboard-stats"><div class="dashboard-stat-card"><span class="stat-number">${saved.length}</span><span class="stat-label"><i class="fas fa-bookmark"></i> Saved</span></div><div class="dashboard-stat-card"><span class="stat-number">${viewed.length}</span><span class="stat-label"><i class="fas fa-eye"></i> Viewed</span></div><div class="dashboard-stat-card"><span class="stat-number">${institutions.length}</span><span class="stat-label"><i class="fas fa-university"></i> Total</span></div></div>`;
 
-    html += `<div class="dashboard-compare-card">`;
-    html +=
-        `<div class="compare-header"><h4><i class="fas fa-arrow-right-arrow-left" style="color:var(--gold-dark);"></i> Compare <span class="badge-compare">${compareInsts.length} / 4</span></h4>`;
-    html +=
-        `<button class="btn btn-apply btn-sm" onclick="closeDashboard();openCompareModal();" style="padding:4px 14px;font-size:0.7rem;"><i class="fas fa-expand"></i> Open Compare</button>`;
-    html += `</div>`;
-    html += `<div class="compare-pills">`;
-    if (compareInsts.length === 0) {
-        html += `<span class="empty-pill">No universities selected. Click "Compare" on any university card.</span>`;
-    } else {
-        compareInsts.forEach(inst => {
-            html +=
-                `<span class="pill">${escapeHTML(inst.abbr)} <span class="remove-pill" onclick="toggleCompare(${inst.id});renderDashboard();" title="Remove"><i class="fas fa-times-circle"></i></span></span>`;
-        });
-    }
-    html += `</div>`;
-    html +=
-        `<div class="compare-actions-row">${compareInsts.length > 0 ? `<button class="btn btn-details btn-sm" onclick="closeDashboard();clearCompare();renderDashboard();"><i class="fas fa-trash"></i> Clear</button>` : ''}`;
-    html +=
-        `<button class="btn btn-details btn-sm" onclick="closeDashboard();document.getElementById('directory').scrollIntoView({behavior:'smooth'});"><i class="fas fa-plus"></i> Add More</button>`;
-    html += `</div></div>`;
+    html += `<div class="dashboard-compare-card"><div class="compare-header"><h4><i class="fas fa-arrow-right-arrow-left" style="color:var(--gold-dark);"></i> Compare <span class="badge-compare">${compareInsts.length} / 4</span></h4><button class="btn btn-apply btn-sm" onclick="closeDashboard();openCompareModal();" style="padding:4px 14px;font-size:0.7rem;"><i class="fas fa-expand"></i> Open Compare</button></div><div class="compare-pills">`;
+    if (compareInsts.length === 0) html += `<span class="empty-pill">No universities selected.</span>`;
+    else compareInsts.forEach(inst => { html += `<span class="pill">${escapeHTML(inst.abbr)} <span class="remove-pill" onclick="toggleCompare(${inst.id});renderDashboard();"><i class="fas fa-times-circle"></i></span></span>`; });
+    html += `</div><div class="compare-actions-row">`;
+    if (compareInsts.length > 0) html += `<button class="btn btn-details btn-sm" onclick="closeDashboard();clearCompare();renderDashboard();"><i class="fas fa-trash"></i> Clear</button>`;
+    html += `<button class="btn btn-details btn-sm" onclick="closeDashboard();document.getElementById('directory').scrollIntoView({behavior:'smooth'});"><i class="fas fa-plus"></i> Add More</button></div></div>`;
 
-    html +=
-        `<h4 style="margin-top:16px;font-weight:700;font-size:1rem;"><i class="fas fa-bookmark" style="color:var(--gold-dark);"></i> Saved Universities</h4>`;
-    if (savedInsts.length === 0) {
-        html +=
-            `<div class="dashboard-empty">You haven't saved any universities yet. Browse the <a href="#directory" style="color:var(--gold-dark);font-weight:600;" onclick="closeDashboard();">Universities</a> section and click "Save".</div>`;
-    } else {
-        html += `<ul class="dashboard-list">`;
-        savedInsts.forEach(inst => {
-            html +=
-                `<li><span class="univ-name">${escapeHTML(inst.name)}</span><span class="univ-action" onclick="closeDashboard(); document.getElementById('directory').scrollIntoView({behavior:'smooth'}); searchInput.value='${escapeHTML(inst.name)}'; filterInstitutions();">View</span></li>`;
-        });
-        html += `</ul>`;
-    }
+    html += `<h4 style="margin-top:16px;font-weight:700;font-size:1rem;"><i class="fas fa-bookmark" style="color:var(--gold-dark);"></i> Saved Universities</h4>`;
+    if (savedInsts.length === 0) html += `<div class="dashboard-empty">You haven't saved any universities yet.</div>`;
+    else { html += `<ul class="dashboard-list">`; savedInsts.forEach(inst => { html += `<li><span class="univ-name">${escapeHTML(inst.name)}</span><span class="univ-action" onclick="closeDashboard(); document.getElementById('directory').scrollIntoView({behavior:'smooth'}); searchInput.value='${escapeHTML(inst.name)}'; filterInstitutions();">View</span></li>`; }); html += `</ul>`; }
 
-    html +=
-        `<h4 style="margin-top:16px;font-weight:700;font-size:1rem;"><i class="fas fa-clock" style="color:var(--gold-dark);"></i> Recently Viewed</h4>`;
-    if (viewedInsts.length === 0) {
-        html += `<div class="dashboard-empty">No universities viewed yet. Start exploring!</div>`;
-    } else {
-        html += `<ul class="dashboard-list">`;
-        viewedInsts.forEach(inst => {
-            html +=
-                `<li><span class="univ-name">${escapeHTML(inst.name)}</span><span class="univ-action" onclick="closeDashboard(); document.getElementById('directory').scrollIntoView({behavior:'smooth'}); searchInput.value='${escapeHTML(inst.name)}'; filterInstitutions();">View</span></li>`;
-        });
-        html += `</ul>`;
-    }
+    html += `<h4 style="margin-top:16px;font-weight:700;font-size:1rem;"><i class="fas fa-clock" style="color:var(--gold-dark);"></i> Recently Viewed</h4>`;
+    if (viewedInsts.length === 0) html += `<div class="dashboard-empty">No universities viewed yet.</div>`;
+    else { html += `<ul class="dashboard-list">`; viewedInsts.forEach(inst => { html += `<li><span class="univ-name">${escapeHTML(inst.name)}</span><span class="univ-action" onclick="closeDashboard(); document.getElementById('directory').scrollIntoView({behavior:'smooth'}); searchInput.value='${escapeHTML(inst.name)}'; filterInstitutions();">View</span></li>`; }); html += `</ul>`; }
 
-    html +=
-        `<div class="dashboard-actions">${saved.length > 0 ? `<button class="btn btn-details" onclick="if(confirm('Clear all saved universities?')){setSavedIds([]); renderDashboard();}"><i class="fas fa-trash"></i> Clear Saved</button>` : ''}${viewed.length > 0 ? `<button class="btn btn-details" onclick="if(confirm('Clear viewing history?')){setViewedIds([]); renderDashboard();}"><i class="fas fa-eraser"></i> Clear History</button>` : ''}<button class="btn btn-apply" onclick="closeDashboard();"><i class="fas fa-close"></i> Close</button></div>`;
+    html += `<div class="dashboard-actions">${saved.length > 0 ? `<button class="btn btn-details" onclick="if(confirm('Clear all saved universities?')){setSavedIds([]); renderDashboard();}"><i class="fas fa-trash"></i> Clear Saved</button>` : ''}${viewed.length > 0 ? `<button class="btn btn-details" onclick="if(confirm('Clear viewing history?')){setViewedIds([]); renderDashboard();}"><i class="fas fa-eraser"></i> Clear History</button>` : ''}<button class="btn btn-apply" onclick="closeDashboard();"><i class="fas fa-close"></i> Close</button></div>`;
     container.innerHTML = html;
 }
 
-function openDashboard() { renderDashboard();
-    document.getElementById('dashboardModal').classList.add('show');
-    document.getElementById('dashboardModal').setAttribute('aria-hidden', 'false'); }
-
-function closeDashboard() { document.getElementById('dashboardModal').classList.remove('show');
-    document.getElementById('dashboardModal').setAttribute('aria-hidden', 'true'); }
+function openDashboard() { renderDashboard(); document.getElementById('dashboardModal')?.classList.add('show'); document.getElementById('dashboardModal')?.setAttribute('aria-hidden', 'false'); }
+function closeDashboard() { document.getElementById('dashboardModal')?.classList.remove('show'); document.getElementById('dashboardModal')?.setAttribute('aria-hidden', 'true'); }
 
 document.getElementById('dashboardIconBtn')?.addEventListener('click', openDashboard);
 document.getElementById('dashboardSidebarLink')?.addEventListener('click', openDashboard);
 document.getElementById('dashboardModalClose')?.addEventListener('click', closeDashboard);
-document.getElementById('dashboardModal')?.addEventListener('click', function(e) { if (e.target === this)
-        closeDashboard(); });
+document.getElementById('dashboardModal')?.addEventListener('click', function(e) { if (e.target === this) closeDashboard(); });
 
-// ============================================================
-// COMPARE SIDEBAR LINK & MODAL CLOSE
-// ============================================================
 document.getElementById('compareSidebarLink')?.addEventListener('click', openCompareModal);
 document.getElementById('compareModalClose')?.addEventListener('click', closeCompareModal);
-document.getElementById('compareModal')?.addEventListener('click', function(e) { if (e.target === this)
-        closeCompareModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('compareModal')
-        .classList.contains('show')) closeCompareModal(); });
+document.getElementById('compareModal')?.addEventListener('click', function(e) { if (e.target === this) closeCompareModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('compareModal')?.classList.contains('show')) closeCompareModal(); });
 
-// ============================================================
-// LEFT SIDEBAR NAV (desktop)
-// ============================================================
 const leftNavItems = document.querySelectorAll('.left-sidebar .nav-item');
 const sections = document.querySelectorAll('.feed-card, #home');
 
@@ -1834,64 +1650,32 @@ function updateActiveNav() {
         const bottom = top + rect.height;
         if (scrollPos >= top && scrollPos < bottom) current = section.id;
     });
-    leftNavItems.forEach(link => {
-        const sectionId = link.dataset.section;
-        link.classList.toggle('active', sectionId === current);
-    });
+    leftNavItems.forEach(link => { link.classList.toggle('active', link.dataset.section === current); });
 }
 window.addEventListener('scroll', updateActiveNav);
 window.addEventListener('load', updateActiveNav);
 
-// ============================================================
-// SMOOTH SCROLL (generic anchor links)
-// ============================================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         const target = document.querySelector(this.getAttribute('href'));
-        if (target) { e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
 });
 
-// ============================================================
-// DEVELOPER MODAL
-// ============================================================
 const developerLink = document.getElementById('developerLink');
 const developerModal = document.getElementById('developerModal');
 const developerModalClose = document.getElementById('developerModalClose');
 const developerModalCancel = document.getElementById('developerModalCancel');
 
-function openDeveloperModal() {
-    developerModal.classList.add('show');
-    developerModal.setAttribute('aria-hidden', 'false');
-}
+function openDeveloperModal() { developerModal?.classList.add('show'); developerModal?.setAttribute('aria-hidden', 'false'); }
+function closeDeveloperModal() { developerModal?.classList.remove('show'); developerModal?.setAttribute('aria-hidden', 'true'); }
 
-function closeDeveloperModal() {
-    developerModal.classList.remove('show');
-    developerModal.setAttribute('aria-hidden', 'true');
-}
-
-developerLink?.addEventListener('click', function(e) {
-    e.preventDefault();
-    openDeveloperModal();
-});
-
+developerLink?.addEventListener('click', function(e) { e.preventDefault(); openDeveloperModal(); });
 developerModalClose?.addEventListener('click', closeDeveloperModal);
 developerModalCancel?.addEventListener('click', closeDeveloperModal);
+developerModal?.addEventListener('click', function(e) { if (e.target === this) closeDeveloperModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && developerModal?.classList.contains('show')) closeDeveloperModal(); });
 
-developerModal?.addEventListener('click', function(e) {
-    if (e.target === this) closeDeveloperModal();
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && developerModal?.classList.contains('show')) {
-        closeDeveloperModal();
-    }
-});
-
-// ============================================================
-// MOBILE BOTTOM NAV + DRAWER
-// ============================================================
 (function initMobileNav() {
     const bottomNavItems = document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item[data-target]');
     const drawer = document.getElementById('mobileDrawer');
@@ -1899,39 +1683,27 @@ document.addEventListener('keydown', function(e) {
     const drawerClose = document.getElementById('mobileDrawerClose');
     const mobileNavMore = document.getElementById('mobileNavMore');
     const drawerItems = document.querySelectorAll('.mobile-drawer-nav .mobile-drawer-item');
-
     if (!drawer || !bottomNavItems.length) return;
 
-    // --- Bottom nav: smooth scroll to sections ---
     bottomNavItems.forEach(item => {
         item.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
+            e.preventDefault(); e.stopImmediatePropagation();
             const targetId = this.dataset.target;
             const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            // Immediately highlight this item
+            if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             bottomNavItems.forEach(i => i.classList.remove('active'));
             this.classList.add('active');
         });
     });
 
-    // --- Open / Close drawer ---
     function openDrawer() {
-        drawer.classList.add('show');
-        drawerOverlay.classList.add('show');
-        drawer.setAttribute('aria-hidden', 'false');
-        drawerOverlay.setAttribute('aria-hidden', 'false');
+        drawer.classList.add('show'); drawerOverlay.classList.add('show');
+        drawer.setAttribute('aria-hidden', 'false'); drawerOverlay.setAttribute('aria-hidden', 'false');
         document.body.classList.add('mobile-drawer-open');
     }
-
     function closeDrawer() {
-        drawer.classList.remove('show');
-        drawerOverlay.classList.remove('show');
-        drawer.setAttribute('aria-hidden', 'true');
-        drawerOverlay.setAttribute('aria-hidden', 'true');
+        drawer.classList.remove('show'); drawerOverlay.classList.remove('show');
+        drawer.setAttribute('aria-hidden', 'true'); drawerOverlay.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('mobile-drawer-open');
     }
 
@@ -1939,35 +1711,19 @@ document.addEventListener('keydown', function(e) {
     drawerClose?.addEventListener('click', closeDrawer);
     drawerOverlay?.addEventListener('click', closeDrawer);
 
-    // --- Drawer items: smooth scroll + close ---
     drawerItems.forEach(item => {
         item.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
+            e.preventDefault(); e.stopImmediatePropagation();
             const targetId = this.dataset.target;
             const targetSection = document.getElementById(targetId);
             closeDrawer();
-            if (targetSection) {
-                setTimeout(() => {
-                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 200);
-            }
+            if (targetSection) setTimeout(() => { targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
         });
     });
 
-    // --- Dashboard shortcut inside drawer ---
-    document.getElementById('mobileDashboardBtn')?.addEventListener('click', () => {
-        closeDrawer();
-        setTimeout(() => openDashboard(), 180);
-    });
+    document.getElementById('mobileDashboardBtn')?.addEventListener('click', () => { closeDrawer(); setTimeout(() => openDashboard(), 180); });
+    document.getElementById('mobileCompareBtn')?.addEventListener('click', () => { closeDrawer(); setTimeout(() => openCompareModal(), 180); });
 
-    // --- Compare shortcut inside drawer ---
-    document.getElementById('mobileCompareBtn')?.addEventListener('click', () => {
-        closeDrawer();
-        setTimeout(() => openCompareModal(), 180);
-    });
-
-    // --- Update active state based on scroll position ---
     function updateActiveMobileNav() {
         const scrollPos = window.scrollY + 130;
         let current = 'home';
@@ -1975,48 +1731,26 @@ document.addEventListener('keydown', function(e) {
         allSections.forEach(section => {
             const top = section.offsetTop;
             const bottom = top + section.offsetHeight;
-            if (scrollPos >= top && scrollPos < bottom) {
-                current = section.id;
-            }
+            if (scrollPos >= top && scrollPos < bottom) current = section.id;
         });
-
-        // Update bottom nav items
-        bottomNavItems.forEach(item => {
-            item.classList.toggle('active', item.dataset.target === current);
-        });
-
-        // Update drawer items
-        drawerItems.forEach(item => {
-            item.classList.toggle('active', item.dataset.target === current);
-        });
+        bottomNavItems.forEach(item => item.classList.toggle('active', item.dataset.target === current));
+        drawerItems.forEach(item => item.classList.toggle('active', item.dataset.target === current));
     }
-
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateActiveMobileNav();
-                ticking = false;
-            });
+            window.requestAnimationFrame(() => { updateActiveMobileNav(); ticking = false; });
             ticking = true;
         }
     }, { passive: true });
-
     updateActiveMobileNav();
 
-    // --- Close drawer on Escape ---
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && drawer.classList.contains('show')) {
-            closeDrawer();
-        }
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.classList.contains('show')) closeDrawer(); });
 
-    // --- Sync compare badge count ---
     function syncMobileCompareBadge() {
         const badge = document.getElementById('mobileCompareBadge');
         if (badge) badge.textContent = compareIds.length;
     }
-    // Observe the main badge for changes
     const mainBadge = document.getElementById('compareBadge');
     if (mainBadge && window.MutationObserver) {
         const observer = new MutationObserver(syncMobileCompareBadge);
@@ -2025,10 +1759,15 @@ document.addEventListener('keydown', function(e) {
     syncMobileCompareBadge();
 })();
 
-// ============================================================
-// INIT
-// ============================================================
-setTab('all');
+setTab('all', false);
 updateCompareBadge();
 
-console.log('✅ MyTertiary ZA — Mobile nav bar + drawer added; Explore Universities fixed; Student Services preserved.');
+window.addEventListener('load', () => {
+    if (searchInput)    searchInput.value    = '';
+    if (provinceFilter) provinceFilter.value = '';
+    activeTab = 'all';
+    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'all'));
+    filterInstitutions();
+});
+
+console.log('✅ MyTertiary ZA — Firebase bridge active; static fallback ready.');
