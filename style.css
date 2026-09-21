@@ -1,3 +1,9 @@
+/* Status badge variants (Firestore-driven) */
+.period-status.closing { background: #fef3c7; color: #b45309; }
+.period-status.closed  { background: #fee2e2; color: #b91c1c; }
+.period-status.notopen { background: #f1f5f9; color: #64748b; }
+.period-status.coming  { background: #dbeafe; color: #1d4ed8; }
+
 :root {
     --gold: #f5c842;
     --gold-dark: #dcae1f;
