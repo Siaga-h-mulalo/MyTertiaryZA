@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8820139489096330"
-     crossorigin="anonymous"></script>
 
 <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-20P5R1D9R0"></script>
@@ -103,6 +100,11 @@
 
             <!-- MAIN CONTENT -->
             <main class="main-content">
+
+                <!-- LIVE ANNOUNCEMENTS (Firestore-driven) -->
+                <div id="announcementsBar"></div>
+                <div id="importantNoticeBar" class="notice" style="display:none;"></div>
+
                 <!-- HOME -->
                 <section id="home" class="feed-card">
                     <div class="card-header">
@@ -410,7 +412,6 @@
                 <div><i class="fab fa-tiktok"></i> TikTok: <a href="https://www.tiktok.com/@mytertiaryza" target="_blank" rel="noopener noreferrer" style="color:var(--gold-dark);text-decoration:none;">@MyTertiary ZA</a></div>
                 <div><i class="fas fa-circle-exclamation"></i> Disclaimer: Independent platform. Verify all details with institutions.</div>
             </div>
-            <!-- Copyright & developer credit -->
             <div style="max-width:1400px;margin:8px auto 0;padding-top:8px;border-top:1px solid var(--gray-200);text-align:center;font-size:0.75rem;color:var(--gray-500);">
                 © 2026 MyTertiaryZA · Designed &amp; Developed by 
                 <a href="#" id="developerLink" style="color:var(--gold-dark);font-weight:600;text-decoration:none;cursor:pointer;">Siaga Mulalo</a>
@@ -419,9 +420,7 @@
 
     </div>
 
-    <!-- ============================================================ -->
-    <!-- MOBILE BOTTOM NAVIGATION (only shows on mobile)              -->
-    <!-- ============================================================ -->
+    <!-- MOBILE BOTTOM NAVIGATION -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
         <button class="mobile-nav-item active" data-target="home" type="button" aria-label="Go to Home">
             <i class="fas fa-home"></i>
@@ -445,10 +444,8 @@
         </button>
     </nav>
 
-    <!-- Mobile drawer overlay -->
     <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" aria-hidden="true"></div>
 
-    <!-- Mobile drawer (full navigation) -->
     <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
         <div class="mobile-drawer-header">
             <span class="mobile-drawer-title">MyTertiary <span class="flag-sa">ZA</span></span>
@@ -479,7 +476,6 @@
         </div>
     </aside>
 
-    <!-- FLOATING HOME BUTTON -->
     <button class="floating-home-btn" id="floatingHomeBtn" aria-label="Back to top">
         <i class="fas fa-home"></i>
     </button>
@@ -535,6 +531,12 @@
             </div>
         </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- FIREBASE (modular SDK) — must load BEFORE script.js          -->
+    <!-- ============================================================ -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="data-layer.js"></script>
 
     <script src="script.js"></script>
 </body>
