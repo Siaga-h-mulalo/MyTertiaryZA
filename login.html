@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyTertiary ZA · Admin Login</title>
+<link rel="icon" href="mytertiaryza-favicon.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--gold:#f5c842;--gold-dark:#dcae1f;--gold-light:#fef7e0;--gray-900:#0f172a;--gray-500:#64748b;--gray-200:#e2e8f0;--white:#fff;--red:#b91c1c;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#334155 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-card{background:#fff;border-radius:18px;max-width:420px;width:100%;padding:36px 32px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+  .brand{text-align:center;margin-bottom:24px}
+  .brand h1{font-family:Merriweather,serif;font-size:1.5rem;color:var(--gray-900)}
+  .brand h1 span{background:linear-gradient(135deg,#007A4B 0%,#007A4B 25%,#FFB612 25%,#FFB612 50%,#DE3831 50%,#DE3831 60%,#002395 60%,#002395 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .brand p{color:var(--gray-500);font-size:.8rem;margin-top:6px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.75rem;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .field input{width:100%;padding:11px 14px;border:1px solid var(--gray-200);border-radius:10px;font-size:.9rem;outline:none;transition:.2s}
+  .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,66,.2)}
+  .btn{width:100%;padding:12px;border:none;border-radius:10px;background:var(--gold);color:var(--gray-900);font-weight:800;font-size:.9rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn:hover{background:var(--gold-dark)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .msg{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.82rem;display:none}
+  .msg.error{background:#fee2e2;color:var(--red);display:block}
+  .msg.ok{background:#dcfce7;color:#15803d;display:block}
+  .back{display:block;text-align:center;margin-top:18px;color:var(--gray-500);font-size:.78rem;text-decoration:none}
+  .back:hover{color:var(--gold-dark)}
+  .shield{text-align:center;color:var(--gray-500);font-size:.7rem;margin-top:18px}
+</style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">
+      <h1>MyTertiary <span>ZA</span></h1>
+      <p><i class="fas fa-shield-halved"></i> Admin & Manager Portal</p>
+    </div>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" required placeholder="admin@mytertiaryza.co.za" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" required placeholder="••••••••" minlength="6" />
+      </div>
+      <button class="btn" id="loginBtn" type="submit">
+        <i class="fas fa-right-to-bracket"></i> Sign In
+      </button>
+      <div class="msg" id="msg"></div>
+    </form>
+
+    <a href="index.html" class="back"><i class="fas fa-arrow-left"></i> Back to public website</a>
+    <p class="shield"><i class="fas fa-lock"></i> Protected by Firebase Authentication</p>
+  </div>
+
+  <script type="module" src="login.js"></script>
+</body>
+</html>

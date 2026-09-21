@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Seed Firestore</title>
+<style>body{font-family:Inter,sans-serif;padding:30px;max-width:700px;margin:auto;background:#f0f2f5}
+button{background:#f5c842;border:none;padding:10px 20px;border-radius:8px;font-weight:800;cursor:pointer}
+pre{background:#0f172a;color:#dcfce7;padding:14px;border-radius:8px;max-height:400px;overflow:auto;white-space:pre-wrap}
+</style>
+</head><body>
+<h1>Seed Firestore with existing MyTertiary data</h1>
+<p>Sign in as admin first at <a href="login.html">login.html</a>, then come back and click below.</p>
+<button id="seed">🚀 Seed Firestore</button>
+<pre id="out"></pre>
+
+<!-- Load the static data from script.js FIRST so window.STATIC_INSTITUTIONS exists -->
+<script src="script.js"></script>
+
+<script type="module">
+import { db, auth } from "./firebase-config.js";
+import { doc, getDoc, collection, addDoc, serverTimestamp, getDocs }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const log = (m) => document.getElementById("out").textContent += m + "\n";
+
+onAuthStateChanged(auth, async (u) => {
+  if (!u) { log("❌ Not signed in. Visit login.html first."); return; }
+  const snap = await getDoc(doc(db, "admins", u.uid));
+  if (!snap.exists()) { log("❌ Not an admin."); return; }
+  log("✅ Authenticated as " + u.email);
+
+  // Show whether the static data loaded
+  const count = (window.STATIC_INSTITUTIONS || []).length;
+  log("📦 Static universities available: " + count);
+  if (count === 0) log("⚠ script.js loaded but STATIC_INSTITUTIONS is empty. Check that script.js sets window.STATIC_INSTITUTIONS.");
+});
+
+document.getElementById("seed").onclick = async () => {
+  const existing = await getDocs(collection(db, "universities"));
+  if (existing.size > 0 && !confirm(`Firestore already has ${existing.size} universities. Add anyway?`)) return;
+
+  const list = window.STATIC_INSTITUTIONS || [];
+  if (!list.length) {
+    log("⚠ No static data found in window.STATIC_INSTITUTIONS.");
+    return;
+  }
+
+  log(`\n🚀 Starting seed of ${list.length} universities...\n`);
+
+  for (const u of list) {
+    const payload = {
+      name: u.name || "",
+      abbreviation: u.abbr || "",
+      type: u.type || "University",
+      province: u.province || "",
+      city: u.city || "",
+      description: u.description || "",
+      logo: u.logo || "",
+      websiteUrl: u.website || "",
+      applicationUrl: u.appUrl || "",
+      prospectusUrl: u.prospectusLink || "",
+      prospectusYear: u.prospectusYear || "",
+      applicationOpeningDate: u.appOpenDate || "",
+      applicationClosingDate: u.appCloseDate || "",
+      applicationFee: u.appFee || "",
+      applicationStatus: u.status === "open" ? "open" : "coming-soon",
+      featured: false,
+      minimumRequirements: "",
+      lastUpdated: serverTimestamp(),
+      createdAt: serverTimestamp()
+    };
+    try {
+      const ref = await addDoc(collection(db, "universities"), payload);
+      log(`✔ ${u.name} → ${ref.id}`);
+    } catch (err) {
+      log(`✖ ${u.name} FAILED: ${err.message}`);
+    }
+  }
+  log("\n🎉 Done. Open admin.html to manage.");
+};
+</script>
+</body></html>

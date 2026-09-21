@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>MyTertiary ZA · Admin Portal</title>
+<link rel="icon" href="mytertiaryza-favicon.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-brand">
+      <span>MyTertiary <span class="flag-sa">ZA</span></span>
+      <small>Admin Portal</small>
+    </div>
+    <nav class="admin-nav">
+      <button class="anav active" data-view="dashboard"><i class="fas fa-gauge-high"></i> Dashboard</button>
+      <button class="anav" data-view="universities"><i class="fas fa-university"></i> Universities</button>
+      <button class="anav" data-view="colleges"><i class="fas fa-school"></i> Colleges</button>
+      <button class="anav" data-view="courses"><i class="fas fa-graduation-cap"></i> Courses</button>
+      <button class="anav" data-view="announcements"><i class="fas fa-bullhorn"></i> Announcements</button>
+      <button class="anav" data-view="featured"><i class="fas fa-star"></i> Featured Content</button>
+      <button class="anav" data-view="settings"><i class="fas fa-sliders"></i> Website Settings</button>
+      <button class="anav" data-view="profile"><i class="fas fa-user-shield"></i> Admin Profile</button>
+    </nav>
+    <button class="logout-btn" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+      <h1 id="viewTitle">Dashboard</h1>
+      <div class="admin-user">
+        <span id="adminEmail">—</span>
+        <div class="avatar" id="adminAvatar"><i class="fas fa-user-shield"></i></div>
+      </div>
+    </header>
+    <section class="admin-view" id="viewRoot"></section>
+  </main>
+</div>
+
+<div class="admin-modal" id="adminModal" aria-hidden="true">
+  <div class="admin-modal-box">
+    <button class="admin-modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="admin-modal" id="confirmModal" aria-hidden="true">
+  <div class="admin-modal-box" style="max-width:420px;">
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMessage" style="color:#64748b;margin:8px 0 20px;"></p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+      <button class="btn btn-danger" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="adminToast" class="admin-toast"></div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
