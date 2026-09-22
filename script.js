@@ -566,28 +566,149 @@ function applyFirestoreData(payload) {
 window.addEventListener("mytertiary:data-ready", e => applyFirestoreData(e.detail));
 
 // ============================================================
-// ANNOUNCEMENTS + SETTINGS RENDERERS
+// ANNOUNCEMENTS + NOTIFICATION BELL
 // ============================================================
-function renderAnnouncements(list = []) {
-    const host = document.getElementById("announcementsBar");
-    if (!host) return;
-    if (!list.length) { host.innerHTML = ""; return; }
-    host.innerHTML = list
-        .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
-        .map(a => `
-            <div class="announcement ${a.featured ? "featured" : ""}"
-                 style="background:${a.featured ? "var(--gold-light)" : "var(--gray-50)"};
-                        border-left:4px solid var(--gold);
-                        padding:10px 14px;border-radius:8px;margin-bottom:10px;
-                        font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
-                <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
-                <div>
-                    <strong>${escapeHTML(a.title || "")}</strong>
-                    <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
-                </div>
-            </div>`).join("");
+let notifOpen = false;
+let notifReadIds = (() => {
+    try { return JSON.parse(localStorage.getItem('mytertiary_notif_read')) || []; }
+    catch { return []; }
+})();
+
+function getUnreadCount(list) {
+    return list.filter(a => !notifReadIds.includes(a._id || a.title)).length;
 }
 
+function updateNotifBadge(list) {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unread = getUnreadCount(list || []);
+    if (unread > 0) {
+        badge.textContent = unread > 9 ? '9+' : String(unread);
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function renderAnnouncements(list = []) {
+    // Save for later re-use (badge updates, list re-renders)
+    window._latestAnnouncements = list;
+
+    // 1) Featured banner at top of homepage
+    const bannerHost = document.getElementById("announcementsBar");
+    if (bannerHost) {
+        const featured = list.filter(a => a.featured);
+        bannerHost.innerHTML = featured.length
+            ? featured.map(a => `
+                <div class="announcement featured"
+                     style="background:var(--gold-light);
+                            border-left:4px solid var(--gold);
+                            padding:10px 14px;border-radius:8px;margin-bottom:10px;
+                            font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
+                    <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
+                    <div>
+                        <strong>${escapeHTML(a.title || "")}</strong>
+                        <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
+                    </div>
+                </div>`).join("")
+            : "";
+    }
+
+    // 2) Update bell badge
+    updateNotifBadge(list);
+
+    // 3) Render the panel list
+    renderNotifList(list);
+}
+
+function renderNotifList(list = []) {
+    const listEl = document.getElementById('notifList');
+    if (!listEl) return;
+
+    if (!list.length) {
+        listEl.innerHTML = `
+            <div class="notif-empty">
+                <i class="fas fa-bell-slash"></i>
+                <p>No announcements right now.</p>
+            </div>`;
+        return;
+    }
+
+    const sorted = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+    listEl.innerHTML = sorted.map(a => {
+        const id = a._id || a.title;
+        const isUnread = !notifReadIds.includes(id);
+        return `
+            <div class="notif-item ${a.featured ? 'featured' : ''} ${isUnread ? 'unread' : ''}" data-id="${escapeHTML(id)}">
+                <div class="notif-icon"><i class="fas fa-bullhorn"></i></div>
+                <div class="notif-body">
+                    <div class="notif-title">${escapeHTML(a.title || '')}</div>
+                    <div class="notif-desc">${escapeHTML(a.description || '')}</div>
+                    ${a.date ? `<div class="notif-date"><i class="fas fa-calendar-alt"></i> ${escapeHTML(a.date)}</div>` : ''}
+                </div>
+            </div>`;
+    }).join("");
+
+    listEl.querySelectorAll('.notif-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = item.dataset.id;
+            if (!notifReadIds.includes(id)) {
+                notifReadIds.push(id);
+                localStorage.setItem('mytertiary_notif_read', JSON.stringify(notifReadIds));
+                item.classList.remove('unread');
+                updateNotifBadge(window._latestAnnouncements || []);
+            }
+        });
+    });
+}
+
+function openNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    if (!panel) return;
+    panel.classList.add('show');
+    panel.setAttribute('aria-hidden', 'false');
+    overlay.classList.add('show');
+    notifOpen = true;
+}
+
+function closeNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    if (!panel) return;
+    panel.classList.remove('show');
+    panel.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('show');
+    notifOpen = false;
+}
+
+function toggleNotifPanel() {
+    notifOpen ? closeNotifPanel() : openNotifPanel();
+}
+
+function initNotifications() {
+    document.getElementById('notifBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleNotifPanel();
+    });
+    document.getElementById('notifClose')?.addEventListener('click', closeNotifPanel);
+    document.getElementById('notifOverlay')?.addEventListener('click', closeNotifPanel);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && notifOpen) closeNotifPanel();
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNotifications);
+} else {
+    initNotifications();
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
 function applySettings(s = {}) {
     if (!s) return;
     if (s.currentCycle) {
@@ -1770,4 +1891,4 @@ window.addEventListener('load', () => {
     filterInstitutions();
 });
 
-console.log('✅ MyTertiary ZA — Firebase bridge active; static fallback ready.');
+console.log('✅ MyTertiary ZA — Firebase bridge + notification bell active.');
