@@ -50,6 +50,10 @@
                     <input type="search" id="topSearch" placeholder="Search..." aria-label="Search">
                 </div>
                 <div class="user-actions">
+                    <button class="icon-btn notif-btn" id="notifBtn" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                    </button>
                     <button class="icon-btn" id="dashboardIconBtn" aria-label="Dashboard">
                         <i class="fas fa-gauge-high"></i>
                     </button>
@@ -70,6 +74,21 @@
                 </div>
             </div>
         </header>
+
+        <!-- NOTIFICATION PANEL -->
+        <div class="notif-panel" id="notifPanel" aria-hidden="true">
+            <div class="notif-header">
+                <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+                <button class="notif-close" id="notifClose" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="notif-list" id="notifList">
+                <div class="notif-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No announcements right now.</p>
+                </div>
+            </div>
+        </div>
+        <div class="notif-overlay" id="notifOverlay"></div>
 
         <!-- BODY -->
         <div class="body-layout">
@@ -101,7 +120,7 @@
             <!-- MAIN CONTENT -->
             <main class="main-content">
 
-                <!-- LIVE ANNOUNCEMENTS (Firestore-driven) -->
+                <!-- LIVE ANNOUNCEMENTS (Firestore-driven featured banner) -->
                 <div id="announcementsBar"></div>
                 <div id="importantNoticeBar" class="notice" style="display:none;"></div>
 
@@ -532,9 +551,7 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- FIREBASE (modular SDK) — must load BEFORE script.js          -->
-    <!-- ============================================================ -->
+    <!-- FIREBASE (must load BEFORE script.js) -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="data-layer.js"></script>
 
