@@ -1075,7 +1075,7 @@ searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInst
 provinceFilter.addEventListener("change", filterInstitutions);
 
 // ============================================================
-// ✨ LIVE SEARCH SUGGESTIONS
+// ✨ LIVE SEARCH SUGGESTIONS (NEW)
 // ============================================================
 const searchBox = searchInput ? searchInput.closest('.search-box') : null;
 let suggestPanel = null;
@@ -1215,7 +1215,7 @@ function goToDirectory(reset) {
 }
 
 // ============================================================
-// ✨ EXPLORE UNIVERSITIES BUTTON
+// ✨ EXPLORE UNIVERSITIES BUTTON — direct jump fix (NEW)
 // ============================================================
 const exploreUniBtn = document.getElementById('exploreUniBtn');
 if (exploreUniBtn) {
@@ -1458,7 +1458,7 @@ function openQualModal(field, index) {
                 </div>`).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
         </div>
         <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
-        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="closeQualModal(); setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>`;
+        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>`;
     qualModal.classList.add("show");
     qualModal.setAttribute("aria-hidden", "false");
     document.getElementById("qualModalCancel").addEventListener("click", closeQualModal);
