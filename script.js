@@ -566,149 +566,28 @@ function applyFirestoreData(payload) {
 window.addEventListener("mytertiary:data-ready", e => applyFirestoreData(e.detail));
 
 // ============================================================
-// ANNOUNCEMENTS + NOTIFICATION BELL
+// ANNOUNCEMENTS + SETTINGS RENDERERS
 // ============================================================
-let notifOpen = false;
-let notifReadIds = (() => {
-    try { return JSON.parse(localStorage.getItem('mytertiary_notif_read')) || []; }
-    catch { return []; }
-})();
-
-function getUnreadCount(list) {
-    return list.filter(a => !notifReadIds.includes(a._id || a.title)).length;
-}
-
-function updateNotifBadge(list) {
-    const badge = document.getElementById('notifBadge');
-    if (!badge) return;
-    const unread = getUnreadCount(list || []);
-    if (unread > 0) {
-        badge.textContent = unread > 9 ? '9+' : String(unread);
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
-
 function renderAnnouncements(list = []) {
-    // Save for later re-use (badge updates, list re-renders)
-    window._latestAnnouncements = list;
-
-    // 1) Featured banner at top of homepage
-    const bannerHost = document.getElementById("announcementsBar");
-    if (bannerHost) {
-        const featured = list.filter(a => a.featured);
-        bannerHost.innerHTML = featured.length
-            ? featured.map(a => `
-                <div class="announcement featured"
-                     style="background:var(--gold-light);
-                            border-left:4px solid var(--gold);
-                            padding:10px 14px;border-radius:8px;margin-bottom:10px;
-                            font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
-                    <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
-                    <div>
-                        <strong>${escapeHTML(a.title || "")}</strong>
-                        <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
-                    </div>
-                </div>`).join("")
-            : "";
-    }
-
-    // 2) Update bell badge
-    updateNotifBadge(list);
-
-    // 3) Render the panel list
-    renderNotifList(list);
-}
-
-function renderNotifList(list = []) {
-    const listEl = document.getElementById('notifList');
-    if (!listEl) return;
-
-    if (!list.length) {
-        listEl.innerHTML = `
-            <div class="notif-empty">
-                <i class="fas fa-bell-slash"></i>
-                <p>No announcements right now.</p>
-            </div>`;
-        return;
-    }
-
-    const sorted = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-
-    listEl.innerHTML = sorted.map(a => {
-        const id = a._id || a.title;
-        const isUnread = !notifReadIds.includes(id);
-        return `
-            <div class="notif-item ${a.featured ? 'featured' : ''} ${isUnread ? 'unread' : ''}" data-id="${escapeHTML(id)}">
-                <div class="notif-icon"><i class="fas fa-bullhorn"></i></div>
-                <div class="notif-body">
-                    <div class="notif-title">${escapeHTML(a.title || '')}</div>
-                    <div class="notif-desc">${escapeHTML(a.description || '')}</div>
-                    ${a.date ? `<div class="notif-date"><i class="fas fa-calendar-alt"></i> ${escapeHTML(a.date)}</div>` : ''}
+    const host = document.getElementById("announcementsBar");
+    if (!host) return;
+    if (!list.length) { host.innerHTML = ""; return; }
+    host.innerHTML = list
+        .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+        .map(a => `
+            <div class="announcement ${a.featured ? "featured" : ""}"
+                 style="background:${a.featured ? "var(--gold-light)" : "var(--gray-50)"};
+                        border-left:4px solid var(--gold);
+                        padding:10px 14px;border-radius:8px;margin-bottom:10px;
+                        font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
+                <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
+                <div>
+                    <strong>${escapeHTML(a.title || "")}</strong>
+                    <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
                 </div>
-            </div>`;
-    }).join("");
-
-    listEl.querySelectorAll('.notif-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const id = item.dataset.id;
-            if (!notifReadIds.includes(id)) {
-                notifReadIds.push(id);
-                localStorage.setItem('mytertiary_notif_read', JSON.stringify(notifReadIds));
-                item.classList.remove('unread');
-                updateNotifBadge(window._latestAnnouncements || []);
-            }
-        });
-    });
+            </div>`).join("");
 }
 
-function openNotifPanel() {
-    const panel = document.getElementById('notifPanel');
-    const overlay = document.getElementById('notifOverlay');
-    if (!panel) return;
-    panel.classList.add('show');
-    panel.setAttribute('aria-hidden', 'false');
-    overlay.classList.add('show');
-    notifOpen = true;
-}
-
-function closeNotifPanel() {
-    const panel = document.getElementById('notifPanel');
-    const overlay = document.getElementById('notifOverlay');
-    if (!panel) return;
-    panel.classList.remove('show');
-    panel.setAttribute('aria-hidden', 'true');
-    overlay.classList.remove('show');
-    notifOpen = false;
-}
-
-function toggleNotifPanel() {
-    notifOpen ? closeNotifPanel() : openNotifPanel();
-}
-
-function initNotifications() {
-    document.getElementById('notifBtn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleNotifPanel();
-    });
-    document.getElementById('notifClose')?.addEventListener('click', closeNotifPanel);
-    document.getElementById('notifOverlay')?.addEventListener('click', closeNotifPanel);
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && notifOpen) closeNotifPanel();
-    });
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initNotifications);
-} else {
-    initNotifications();
-}
-
-// ============================================================
-// SETTINGS
-// ============================================================
 function applySettings(s = {}) {
     if (!s) return;
     if (s.currentCycle) {
@@ -1195,6 +1074,132 @@ searchInput.addEventListener("input", filterInstitutions);
 searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInstitutions(); });
 provinceFilter.addEventListener("change", filterInstitutions);
 
+// ============================================================
+// ✨ LIVE SEARCH SUGGESTIONS
+// ============================================================
+const searchBox = searchInput ? searchInput.closest('.search-box') : null;
+let suggestPanel = null;
+let searchDebounceTimer = null;
+let suppressNextSuggest = false;
+
+function ensureSuggestPanel() {
+    if (suggestPanel || !searchBox) return suggestPanel;
+    suggestPanel = document.createElement('div');
+    suggestPanel.className = 'search-suggest';
+    suggestPanel.setAttribute('role', 'listbox');
+    searchBox.appendChild(suggestPanel);
+    return suggestPanel;
+}
+
+function hideSuggestions() {
+    if (suggestPanel) suggestPanel.classList.remove('show');
+}
+
+function buildSuggestionHTML(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) return '';
+    const matches = institutions.filter(i => {
+        const hay = `${i.name||''} ${i.abbr||''} ${i.province||''} ${i.city||''} ${i.type||''}`.toLowerCase();
+        return hay.includes(q);
+    }).slice(0, 8);
+
+    if (matches.length === 0) {
+        return `<div class="sug-empty"><i class="fas fa-magnifying-glass"></i> No matches for "${escapeHTML(query)}"</div>`;
+    }
+
+    return `
+        <div class="sug-head">${matches.length} suggestion${matches.length === 1 ? '' : 's'}</div>
+        ${matches.map(i => `
+            <div class="sug-item" data-id="${i.id}" role="option">
+                <div class="sug-logo">${generateLogoHTML(i, false)}</div>
+                <div class="sug-text">
+                    <div class="sug-name">${escapeHTML(i.name)}</div>
+                    <div class="sug-meta">${escapeHTML(i.abbr)} · ${escapeHTML(i.city)}, ${escapeHTML(i.province)}</div>
+                </div>
+                <i class="fas fa-arrow-right sug-go"></i>
+            </div>`).join('')}
+        <div class="sug-all" data-all="1">See all results in Universities <i class="fas fa-arrow-down"></i></div>`;
+}
+
+function showSuggestions(query) {
+    const panel = ensureSuggestPanel();
+    if (!panel) return;
+    const html = buildSuggestionHTML(query);
+    if (!html) { hideSuggestions(); return; }
+    panel.innerHTML = html;
+    panel.classList.add('show');
+    panel.querySelectorAll('.sug-item').forEach(el => {
+        el.addEventListener('mousedown', e => {
+            e.preventDefault();
+            goToInstitution(Number(el.dataset.id));
+        });
+    });
+    const allBtn = panel.querySelector('.sug-all');
+    if (allBtn) {
+        allBtn.addEventListener('mousedown', e => {
+            e.preventDefault();
+            hideSuggestions();
+            goToDirectory(false);
+        });
+    }
+}
+
+function goToInstitution(id) {
+    const inst = institutions.find(i => i.id === id);
+    if (!inst) return;
+    hideSuggestions();
+    suppressNextSuggest = true;
+    if (provinceFilter) provinceFilter.value = '';
+    activeTab = 'all';
+    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'all'));
+    if (searchInput) searchInput.value = inst.name;
+    filterInstitutions();
+    goToDirectory(false);
+    requestAnimationFrame(() => {
+        const card = document.querySelector(`.institution-card[data-id="${id}"]`);
+        if (card) {
+            card.classList.add('search-hit');
+            setTimeout(() => card.classList.remove('search-hit'), 2400);
+        }
+    });
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim();
+        filterInstitutions();
+        if (suppressNextSuggest) { suppressNextSuggest = false; return; }
+        if (!q) { hideSuggestions(); return; }
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => showSuggestions(q), 120);
+    });
+
+    searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            hideSuggestions();
+            goToDirectory(false);
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
+
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim()) showSuggestions(searchInput.value);
+    });
+
+    searchInput.addEventListener('blur', () => {
+        setTimeout(hideSuggestions, 160);
+    });
+}
+
+document.addEventListener('mousedown', e => {
+    if (searchBox && !searchBox.contains(e.target)) hideSuggestions();
+});
+
+// ============================================================
+// DIRECTORY SCROLLING
+// ============================================================
 function goToDirectory(reset) {
     if (reset) {
         if (searchInput)    searchInput.value    = '';
@@ -1209,9 +1214,16 @@ function goToDirectory(reset) {
     window.scrollTo({ top, behavior: 'smooth' });
 }
 
+// ============================================================
+// ✨ EXPLORE UNIVERSITIES BUTTON
+// ============================================================
 const exploreUniBtn = document.getElementById('exploreUniBtn');
 if (exploreUniBtn) {
-    exploreUniBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopImmediatePropagation(); goToDirectory(true); });
+    exploreUniBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        goToDirectory(true);
+    }, true); // capture phase — runs before any other handler
 }
 
 function openModal(inst) {
@@ -1446,7 +1458,7 @@ function openQualModal(field, index) {
                 </div>`).join('')}</div><p style="font-size:0.75rem;color:var(--gray-400);margin-top:8px;"><i class="fas fa-triangle-exclamation"></i> This is a sample of institutions. Always verify the qualification is offered and check specific admission requirements with each institution.</p>` : `<p style="color:var(--gray-500);">Information about institutions offering this qualification is being verified. Please check individual university websites for programme availability.</p>`}
         </div>
         <div class="disclaimer-box"><i class="fas fa-shield-halved"></i> Requirements shown on MyTertiary ZA are general/estimated guidelines and may vary by university, programme and year. Meeting the stated minimum does not guarantee admission. Universities may use different APS/points calculations, selection criteria, subject combinations and additional requirements. Always confirm the latest official requirements directly with the university before applying.</div>
-        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>`;
+        <div class="modal-actions" style="margin-top:12px;"><button class="btn btn-details" type="button" id="qualModalCancel">Close</button><a class="btn btn-apply" href="#directory" onclick="closeQualModal(); setTab('all');document.getElementById('directory').scrollIntoView({behavior:'smooth'});">Explore Universities <i class="fas fa-arrow-right" style="margin-left:6px;"></i></a></div>`;
     qualModal.classList.add("show");
     qualModal.setAttribute("aria-hidden", "false");
     document.getElementById("qualModalCancel").addEventListener("click", closeQualModal);
@@ -1778,6 +1790,8 @@ window.addEventListener('load', updateActiveNav);
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
+        // Skip the explore button — it has its own capture-phase handler
+        if (this.id === 'exploreUniBtn') return;
         const target = document.querySelector(this.getAttribute('href'));
         if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
@@ -1891,4 +1905,4 @@ window.addEventListener('load', () => {
     filterInstitutions();
 });
 
-console.log('✅ MyTertiary ZA — Firebase bridge + notification bell active.');
+console.log('✅ MyTertiary ZA — Firebase bridge active; static fallback ready.');
