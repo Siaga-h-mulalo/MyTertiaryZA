@@ -4,115 +4,6 @@
 .period-status.notopen { background: #f1f5f9; color: #64748b; }
 .period-status.coming  { background: #dbeafe; color: #1d4ed8; }
 
-/* ============================================================ */
-/* LIVE SEARCH — dropdown + highlight                            */
-/* ============================================================ */
-.top-bar .search-box { position: relative; }
-
-.search-suggest {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    width: min(380px, calc(100vw - 32px));
-    max-height: 360px;
-    overflow-y: auto;
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: 12px;
-    box-shadow: 0 14px 40px rgba(0, 0, 0, .15);
-    z-index: 1400;
-    display: none;
-}
-.search-suggest.show { display: block; }
-
-.search-suggest .sug-head {
-    padding: 7px 12px;
-    font-size: .6rem;
-    font-weight: 800;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--gray-400);
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--gray-200);
-}
-.search-suggest .sug-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--gray-100);
-    transition: background .15s ease;
-}
-.search-suggest .sug-item:last-of-type { border-bottom: none; }
-.search-suggest .sug-item:hover { background: var(--gold-light); }
-
-.search-suggest .sug-logo {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    border: 1px solid var(--gray-200);
-    background: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-.search-suggest .sug-logo img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
-
-.search-suggest .sug-text { min-width: 0; flex: 1; }
-.search-suggest .sug-name {
-    font-size: .82rem;
-    font-weight: 700;
-    color: var(--gray-900);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.search-suggest .sug-meta { font-size: .68rem; color: var(--gray-500); font-weight: 600; }
-.search-suggest .sug-go { color: var(--gray-300); font-size: .7rem; }
-.search-suggest .sug-item:hover .sug-go { color: var(--gold-dark); }
-
-.search-suggest .sug-empty {
-    padding: 18px 14px;
-    text-align: center;
-    font-size: .82rem;
-    color: var(--gray-500);
-}
-.search-suggest .sug-all {
-    padding: 10px 12px;
-    text-align: center;
-    font-size: .74rem;
-    font-weight: 800;
-    color: var(--gold-dark);
-    background: var(--gray-50);
-    cursor: pointer;
-    border-top: 1px solid var(--gray-200);
-}
-.search-suggest .sug-all:hover { background: var(--gold-light); }
-
-@keyframes searchHitPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(245, 200, 66, .85); border-color: var(--gold); }
-    70%  { box-shadow: 0 0 0 14px rgba(245, 200, 66, 0); border-color: var(--gold); }
-    100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0); border-color: var(--gray-200); }
-}
-.institution-card.search-hit {
-    animation: searchHitPulse 1.1s ease-out 2;
-    border-color: var(--gold);
-}
-
-@media (max-width: 767px) {
-    .search-suggest {
-        position: fixed;
-        top: calc(var(--nav-height) + 6px);
-        left: 10px;
-        right: 10px;
-        width: auto;
-        max-height: 60vh;
-    }
-}
-
 :root {
     --gold: #f5c842;
     --gold-dark: #dcae1f;
@@ -459,7 +350,6 @@ select {
 .main-content .feed-card:hover {
     box-shadow: var(--shadow-hover);
 }
-/* Fix: offset sticky header when scrolling to any section */
 .feed-card,
 section[id] {
     scroll-margin-top: 80px;
@@ -1892,13 +1782,11 @@ footer {
 .mobile-nav-item:active {
     background: var(--gray-50);
 }
-/* Hide the mobile bottom nav on larger screens */
 @media (min-width: 768px) {
     .mobile-bottom-nav {
         display: none;
     }
 }
-/* Add bottom spacing on mobile so content isn't hidden behind the nav bar */
 @media (max-width: 767px) {
     body {
         padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
@@ -2050,14 +1938,12 @@ footer {
     padding: 1px 8px;
     border-radius: 12px;
 }
-/* Hide drawer on desktop */
 @media (min-width: 768px) {
     .mobile-drawer,
     .mobile-drawer-overlay {
         display: none !important;
     }
 }
-/* Prevent body scroll while drawer is open */
 body.mobile-drawer-open {
     overflow: hidden;
 }
