@@ -1074,132 +1074,6 @@ searchInput.addEventListener("input", filterInstitutions);
 searchInput.addEventListener("keydown", e => { if (e.key === "Enter") filterInstitutions(); });
 provinceFilter.addEventListener("change", filterInstitutions);
 
-// ============================================================
-// ✨ LIVE SEARCH SUGGESTIONS (NEW)
-// ============================================================
-const searchBox = searchInput ? searchInput.closest('.search-box') : null;
-let suggestPanel = null;
-let searchDebounceTimer = null;
-let suppressNextSuggest = false;
-
-function ensureSuggestPanel() {
-    if (suggestPanel || !searchBox) return suggestPanel;
-    suggestPanel = document.createElement('div');
-    suggestPanel.className = 'search-suggest';
-    suggestPanel.setAttribute('role', 'listbox');
-    searchBox.appendChild(suggestPanel);
-    return suggestPanel;
-}
-
-function hideSuggestions() {
-    if (suggestPanel) suggestPanel.classList.remove('show');
-}
-
-function buildSuggestionHTML(query) {
-    const q = query.toLowerCase().trim();
-    if (!q) return '';
-    const matches = institutions.filter(i => {
-        const hay = `${i.name||''} ${i.abbr||''} ${i.province||''} ${i.city||''} ${i.type||''}`.toLowerCase();
-        return hay.includes(q);
-    }).slice(0, 8);
-
-    if (matches.length === 0) {
-        return `<div class="sug-empty"><i class="fas fa-magnifying-glass"></i> No matches for "${escapeHTML(query)}"</div>`;
-    }
-
-    return `
-        <div class="sug-head">${matches.length} suggestion${matches.length === 1 ? '' : 's'}</div>
-        ${matches.map(i => `
-            <div class="sug-item" data-id="${i.id}" role="option">
-                <div class="sug-logo">${generateLogoHTML(i, false)}</div>
-                <div class="sug-text">
-                    <div class="sug-name">${escapeHTML(i.name)}</div>
-                    <div class="sug-meta">${escapeHTML(i.abbr)} · ${escapeHTML(i.city)}, ${escapeHTML(i.province)}</div>
-                </div>
-                <i class="fas fa-arrow-right sug-go"></i>
-            </div>`).join('')}
-        <div class="sug-all" data-all="1">See all results in Universities <i class="fas fa-arrow-down"></i></div>`;
-}
-
-function showSuggestions(query) {
-    const panel = ensureSuggestPanel();
-    if (!panel) return;
-    const html = buildSuggestionHTML(query);
-    if (!html) { hideSuggestions(); return; }
-    panel.innerHTML = html;
-    panel.classList.add('show');
-    panel.querySelectorAll('.sug-item').forEach(el => {
-        el.addEventListener('mousedown', e => {
-            e.preventDefault();
-            goToInstitution(Number(el.dataset.id));
-        });
-    });
-    const allBtn = panel.querySelector('.sug-all');
-    if (allBtn) {
-        allBtn.addEventListener('mousedown', e => {
-            e.preventDefault();
-            hideSuggestions();
-            goToDirectory(false);
-        });
-    }
-}
-
-function goToInstitution(id) {
-    const inst = institutions.find(i => i.id === id);
-    if (!inst) return;
-    hideSuggestions();
-    suppressNextSuggest = true;
-    if (provinceFilter) provinceFilter.value = '';
-    activeTab = 'all';
-    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'all'));
-    if (searchInput) searchInput.value = inst.name;
-    filterInstitutions();
-    goToDirectory(false);
-    requestAnimationFrame(() => {
-        const card = document.querySelector(`.institution-card[data-id="${id}"]`);
-        if (card) {
-            card.classList.add('search-hit');
-            setTimeout(() => card.classList.remove('search-hit'), 2400);
-        }
-    });
-}
-
-if (searchInput) {
-    searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim();
-        filterInstitutions();
-        if (suppressNextSuggest) { suppressNextSuggest = false; return; }
-        if (!q) { hideSuggestions(); return; }
-        clearTimeout(searchDebounceTimer);
-        searchDebounceTimer = setTimeout(() => showSuggestions(q), 120);
-    });
-
-    searchInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            hideSuggestions();
-            goToDirectory(false);
-        } else if (e.key === 'Escape') {
-            hideSuggestions();
-        }
-    });
-
-    searchInput.addEventListener('focus', () => {
-        if (searchInput.value.trim()) showSuggestions(searchInput.value);
-    });
-
-    searchInput.addEventListener('blur', () => {
-        setTimeout(hideSuggestions, 160);
-    });
-}
-
-document.addEventListener('mousedown', e => {
-    if (searchBox && !searchBox.contains(e.target)) hideSuggestions();
-});
-
-// ============================================================
-// DIRECTORY SCROLLING
-// ============================================================
 function goToDirectory(reset) {
     if (reset) {
         if (searchInput)    searchInput.value    = '';
@@ -1214,16 +1088,9 @@ function goToDirectory(reset) {
     window.scrollTo({ top, behavior: 'smooth' });
 }
 
-// ============================================================
-// ✨ EXPLORE UNIVERSITIES BUTTON — direct jump fix (NEW)
-// ============================================================
 const exploreUniBtn = document.getElementById('exploreUniBtn');
 if (exploreUniBtn) {
-    exploreUniBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        goToDirectory(true);
-    }, true); // capture phase — runs before any other handler
+    exploreUniBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopImmediatePropagation(); goToDirectory(true); });
 }
 
 function openModal(inst) {
@@ -1790,8 +1657,6 @@ window.addEventListener('load', updateActiveNav);
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-        // Skip the explore button — it has its own capture-phase handler
-        if (this.id === 'exploreUniBtn') return;
         const target = document.querySelector(this.getAttribute('href'));
         if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
