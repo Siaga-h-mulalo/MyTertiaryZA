@@ -503,6 +503,7 @@ const STATIC_INSTITUTIONS = [{
 // ============================================================
 let institutions = [...STATIC_INSTITUTIONS];
 window.STATIC_INSTITUTIONS = STATIC_INSTITUTIONS;
+window.MyTertiaryInstitutions = institutions;
 
 const STATUS_STYLES = {
     "open":         { label: "Applications Open",       emoji: "🟢", cls: "period-status open" },
@@ -547,6 +548,7 @@ function applyFirestoreData(payload) {
             featured: !!u.featured,
             lastUpdated: u.lastUpdated || null
         }));
+        window.MyTertiaryInstitutions = institutions;
         console.log("[MyTertiary] institutions after Firestore override:", institutions.length);
     } else {
         console.warn("[MyTertiary] Firestore returned 0 valid universities — keeping STATIC fallback (" + institutions.length + " items)");
@@ -555,6 +557,7 @@ function applyFirestoreData(payload) {
     if (!institutions || institutions.length === 0) {
         console.error("[MyTertiary] CRITICAL: institutions empty! Restoring static data.");
         institutions = [...STATIC_INSTITUTIONS];
+        window.MyTertiaryInstitutions = institutions;
     }
 
     if (typeof filterInstitutions === "function")  filterInstitutions();
@@ -576,11 +579,11 @@ function renderAnnouncements(list = []) {
         .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
         .map(a => `
             <div class="announcement ${a.featured ? "featured" : ""}"
-                 style="background:${a.featured ? "var(--gold-light)" : "var(--gray-50)"};
-                        border-left:4px solid var(--gold);
+                 style="background:${a.featured ? "var(--blue-light)" : "var(--gray-50)"};
+                        border-left:4px solid var(--blue);
                         padding:10px 14px;border-radius:8px;margin-bottom:10px;
                         font-size:.85rem;display:flex;gap:8px;align-items:flex-start;">
-                <i class="fas fa-bullhorn" style="color:var(--gold-dark);margin-top:3px;"></i>
+                <i class="fas fa-bullhorn" style="color:var(--blue-dark);margin-top:3px;"></i>
                 <div>
                     <strong>${escapeHTML(a.title || "")}</strong>
                     <div style="color:var(--gray-600);font-size:.8rem;margin-top:2px;">${escapeHTML(a.description || "")}</div>
@@ -1410,7 +1413,7 @@ function showRecommendations() {
     finderResults.innerHTML = `
         <h4><i class="fas fa-compass" style="color:var(--gold-dark);"></i> Based on your interests, you may want to explore:</h4>
         <div style="margin-top:10px;">
-            ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--gold-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--gold);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
+            ${recommendedFields.map(f => `<span class="result-field" style="cursor:pointer;display:inline-block;background:var(--blue-light);padding:6px 14px;border-radius:20px;margin:4px;font-weight:600;font-size:0.85rem;border:1px solid var(--blue);" onclick="document.querySelector('.study-field-tab[data-field=\\'${f.id}\\']')?.click();document.getElementById('whatCanIStudy').scrollIntoView({behavior:'smooth'});"><i class="fas ${f.icon}"></i> ${f.label}</span>`).join('')}
         </div>
         <p style="color:var(--gray-500);font-size:0.85rem;margin-top:14px;"><i class="fas fa-info-circle"></i> This is guidance, not a definitive career test.</p>`;
 }
@@ -1558,34 +1561,13 @@ function renderStudentServices() {
 }
 renderStudentServices();
 
-const dailyMessages = [
-    { title: "Believe", message: "Believe in the future you are working towards.", extra: "Your journey starts with the decisions you make today." },
-    { title: "Courage", message: "Fortune Favours The Brave!", extra: "Take the next step." },
-    { title: "Focus", message: "Keep your eyes on the goal.", extra: "Stay focused. Stay consistent." },
-    { title: "Persistence", message: "Don't give up now.", extra: "Your hard work will pay off." },
-    { title: "Progress", message: "Small steps every day.", extra: "Progress is still progress." },
-    { title: "Hope", message: "Your future is still being written.", extra: "Keep your head up." },
-    { title: "Strength", message: "Keep Your Head Up, You're Very Close.", extra: "Difficult roads lead to beautiful destinations." },
-    { title: "Believe", message: "Believe that you can.", extra: "You are capable of more than you think." },
-    { title: "Courage", message: "Do it scared. Do it anyway.", extra: "Your dreams are bigger than your doubts." },
-    { title: "Focus", message: "Stay focused. Stay consistent.", extra: "Your goals are worth the effort." }
-];
-
-function getDailyWord() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = (now - start) + (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60000;
-    const dayOfYear = Math.floor(diff / 86400000);
-    return dailyMessages[dayOfYear % dailyMessages.length];
-}
-
-function renderDailyWord() {
-    const word = getDailyWord();
-    const t1 = document.getElementById('wordTitleWidget'); if (t1) t1.textContent = word.title;
-    const t2 = document.getElementById('wordMessageWidget'); if (t2) t2.textContent = `"${word.message}"`;
-    const t3 = document.getElementById('wordExtraWidget'); if (t3) t3.textContent = word.extra;
-    const t4 = document.getElementById('topBarWordText'); if (t4) t4.textContent = `"${word.message}"`;
-}
+/* ============================================================
+   DAILY WORD — REMOVED
+   The Daily Word widget (sidebar + top bar) has been removed
+   from the HTML. This stub remains so any code that still
+   references renderDailyWord() will not error.
+   ============================================================ */
+function renderDailyWord() { /* Daily Word removed */ }
 renderDailyWord();
 
 const floatingHomeBtn = document.getElementById('floatingHomeBtn');
