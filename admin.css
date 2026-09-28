@@ -1,14 +1,19 @@
 :root {
-  --gold:#f5c842; --gold-dark:#dcae1f; --gold-light:#fef7e0;
-  --navy:#0f172a; --navy-2:#1e293b;
+  /* ===== Blue theme ===== */
+  --blue:#2563eb; --blue-dark:#1d4ed8; --blue-light:#dbeafe;
+  --navy:#1e3a8a; --navy-2:#172554;
+
+  /* Legacy aliases (existing rules keep working, now blue) */
+  --gold:#2563eb; --gold-dark:#1d4ed8; --gold-light:#dbeafe;
+
   --gray-50:#f8fafc; --gray-100:#f1f5f9; --gray-200:#e2e8f0;
   --gray-300:#cbd5e1; --gray-500:#64748b; --gray-600:#475569; --gray-700:#334155; --gray-900:#0f172a;
   --green:#15803d; --green-bg:#dcfce7;
   --amber:#b45309; --amber-bg:#fef3c7;
   --red:#b91c1c; --red-bg:#fee2e2;
-  --blue:#1d4ed8; --blue-bg:#dbeafe;
-  --shadow:0 2px 8px rgba(15,23,42,.06);
-  --shadow-lg:0 12px 40px rgba(15,23,42,.14);
+  --blue-bg:#dbeafe;
+  --shadow:0 2px 8px rgba(30,58,138,.08);
+  --shadow-lg:0 12px 40px rgba(30,58,138,.16);
   --radius:12px;
 }
 * { box-sizing:border-box; margin:0; padding:0; }
@@ -36,7 +41,7 @@ h1,h2,h3,h4 { font-family:Merriweather,serif; }
   border-radius:8px; cursor:pointer; font-weight:600; font-size:.85rem; transition:.15s;
 }
 .anav:hover { background:rgba(255,255,255,.06); color:#fff; }
-.anav.active { background:var(--gold); color:var(--navy); }
+.anav.active { background:var(--gold); color:#ffffff; }
 .anav i { width:18px; text-align:center; }
 .logout-btn {
   margin:14px 20px 4px; padding:10px; border:1px solid rgba(255,255,255,.15);
