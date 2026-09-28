@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Auth gate + guest-mode rules + cover banner -->
+    <!-- Auth gate + guest-mode rules + cover banners -->
     <style id="authGateStyle">
       html, body { background: #ffffff; }
       body { opacity: 0; }
@@ -186,7 +186,8 @@
       body.is-guest .top-bar .search-box { display: none !important; }
 
       /* ============================================================
-         GUEST WELCOME CARD (with second cover image)
+         GUEST WELCOME CARD
+         Text on top → second cover image BELOW the text
          ============================================================ */
       .guest-welcome {
         display: flex;
@@ -200,24 +201,7 @@
         overflow: hidden;
       }
 
-      /* Second cover image — sits above the welcome text */
-      .guest-welcome-cover {
-        position: relative;
-        width: 100%;
-        height: 180px;
-        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-        overflow: hidden;
-      }
-      .guest-welcome-cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      @media (max-width: 600px) {
-        .guest-welcome-cover { height: 140px; }
-      }
-
+      /* Welcome strip (icon + text + button) */
       .guest-welcome-body {
         display: flex;
         align-items: center;
@@ -241,6 +225,24 @@
       }
       @media (max-width: 600px) {
         .guest-welcome-body { flex-direction: column; text-align: center; }
+      }
+
+      /* Second cover — sits BELOW the welcome text */
+      .guest-welcome-cover {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        overflow: hidden;
+      }
+      .guest-welcome-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      @media (max-width: 600px) {
+        .guest-welcome-cover { height: 140px; }
       }
 
       /* Sign-in prompt modal */
@@ -382,11 +384,9 @@
                     </div>
                 </section>
 
-                <!-- Guest welcome — visible only when logged out (with second cover) -->
+                <!-- Guest welcome — visible only when logged out -->
+                <!-- Text on top, second cover image BELOW it -->
                 <div class="guest-welcome guest-only">
-                    <div class="guest-welcome-cover">
-                        <img src="covweb2.jpeg" alt="Welcome to MyTertiary ZA" loading="lazy" />
-                    </div>
                     <div class="guest-welcome-body">
                         <div class="guest-welcome-icon"><i class="fas fa-graduation-cap"></i></div>
                         <div class="guest-welcome-text">
@@ -394,6 +394,9 @@
                             <p>Sign in or create a free account to unlock the university directory, APS calculator, study fields, saved favourites, and application tracking.</p>
                         </div>
                         <a href="student-login.html" class="btn btn-apply">Sign In / Register</a>
+                    </div>
+                    <div class="guest-welcome-cover">
+                        <img src="webcov2.jpeg" alt="Explore MyTertiary ZA" loading="lazy" />
                     </div>
                 </div>
 
