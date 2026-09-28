@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyTertiary ZA · Student Portal</title>
+<link rel="icon" href="mytertiaryza-favicon.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--blue:#2563eb;--blue-dark:#1d4ed8;--blue-light:#dbeafe;--navy:#1e3a8a;--gray-900:#0f172a;--gray-500:#64748b;--gray-200:#e2e8f0;--white:#fff;--red:#b91c1c;--green:#15803d;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,sans-serif;background:linear-gradient(135deg,#172554 0%,#1e3a8a 55%,#2563eb 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-card{background:#fff;border-radius:18px;max-width:440px;width:100%;padding:32px;box-shadow:0 30px 80px rgba(15,23,42,.45)}
+  .brand{text-align:center;margin-bottom:20px}
+  .brand h1{font-family:Merriweather,serif;font-size:1.5rem;color:var(--gray-900)}
+  .brand h1 span{background:linear-gradient(135deg,#007A4B 0%,#007A4B 25%,#FFB612 25%,#FFB612 50%,#DE3831 50%,#DE3831 60%,#002395 60%,#002395 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .brand p{color:var(--gray-500);font-size:.8rem;margin-top:6px}
+  .tabs{display:flex;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:18px}
+  .tab{flex:1;padding:9px;border:none;background:transparent;border-radius:8px;font-weight:700;font-size:.85rem;color:#64748b;cursor:pointer;transition:.2s}
+  .tab.active{background:#fff;color:var(--blue);box-shadow:0 2px 6px rgba(30,58,138,.1)}
+  .pane{display:none}
+  .pane.active{display:block}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:.72rem;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .field input{width:100%;padding:11px 14px;border:1px solid var(--gray-200);border-radius:10px;font-size:.9rem;outline:none;transition:.2s}
+  .field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{width:100%;padding:12px;border:none;border-radius:10px;background:var(--blue);color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn:hover{background:var(--blue-dark)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .msg{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.82rem;display:none}
+  .msg.error{background:#fee2e2;color:var(--red);display:block}
+  .msg.ok{background:#dcfce7;color:var(--green);display:block}
+  .back{display:block;text-align:center;margin-top:18px;color:var(--gray-500);font-size:.78rem;text-decoration:none}
+  .back:hover{color:var(--blue)}
+</style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">
+      <h1>MyTertiary <span>ZA</span></h1>
+      <p><i class="fas fa-user-graduate"></i> Student Portal</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-pane="login" type="button">Sign In</button>
+      <button class="tab" data-pane="register" type="button">Create Account</button>
+    </div>
+
+    <form id="loginForm" class="pane active" data-pane="login" autocomplete="on">
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" required placeholder="you@example.com" />
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" required minlength="6" placeholder="••••••••" />
+      </div>
+      <button class="btn" type="submit"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+
+    <form id="registerForm" class="pane" data-pane="register" autocomplete="on">
+      <div class="row">
+        <div class="field">
+          <label for="regFirstName">First Name</label>
+          <input id="regFirstName" type="text" required placeholder="Thabo" />
+        </div>
+        <div class="field">
+          <label for="regLastName">Last Name</label>
+          <input id="regLastName" type="text" required placeholder="Mokoena" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="regEmail">Email</label>
+        <input id="regEmail" type="email" required placeholder="you@example.com" />
+      </div>
+      <div class="field">
+        <label for="regPassword">Password</label>
+        <input id="regPassword" type="password" required minlength="6" placeholder="At least 6 characters" />
+      </div>
+      <button class="btn" type="submit"><i class="fas fa-user-plus"></i> Create Account</button>
+      <div class="msg" id="registerMsg"></div>
+    </form>
+
+    <a href="index.html" class="back"><i class="fas fa-arrow-left"></i> Back to public website</a>
+  </div>
+
+  <script type="module" src="student-login.js"></script>
+</body>
+</html>
