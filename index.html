@@ -62,7 +62,7 @@
       @keyframes authSpin { to { transform: rotate(360deg); } }
 
       /* ============================================================
-         COVER BANNER
+         MAIN COVER BANNER (top of main content)
          ============================================================ */
       .cover-banner {
         position: relative;
@@ -185,17 +185,45 @@
 
       body.is-guest .top-bar .search-box { display: none !important; }
 
-      /* Guest welcome banner */
+      /* ============================================================
+         GUEST WELCOME CARD (with second cover image)
+         ============================================================ */
       .guest-welcome {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        background: #ffffff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 24px rgba(30, 58, 138, 0.10);
+        overflow: hidden;
+      }
+
+      /* Second cover image — sits above the welcome text */
+      .guest-welcome-cover {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        overflow: hidden;
+      }
+      .guest-welcome-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      @media (max-width: 600px) {
+        .guest-welcome-cover { height: 140px; }
+      }
+
+      .guest-welcome-body {
         display: flex;
         align-items: center;
         gap: 16px;
-        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
-        border: 1px solid #bfdbfe;
-        border-radius: 12px;
         padding: 16px 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.06);
+        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
       }
       .guest-welcome-icon {
         width: 48px; height: 48px; flex-shrink: 0;
@@ -212,7 +240,7 @@
         font-size: 0.8rem; color: #475569; margin-top: 2px; line-height: 1.4;
       }
       @media (max-width: 600px) {
-        .guest-welcome { flex-direction: column; text-align: center; }
+        .guest-welcome-body { flex-direction: column; text-align: center; }
       }
 
       /* Sign-in prompt modal */
@@ -354,14 +382,19 @@
                     </div>
                 </section>
 
-                <!-- Guest welcome — visible only when logged out -->
+                <!-- Guest welcome — visible only when logged out (with second cover) -->
                 <div class="guest-welcome guest-only">
-                    <div class="guest-welcome-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="guest-welcome-text">
-                        <strong>Welcome to MyTertiary ZA</strong>
-                        <p>Sign in or create a free account to unlock the university directory, APS calculator, study fields, saved favourites, and application tracking.</p>
+                    <div class="guest-welcome-cover">
+                        <img src="covweb2.jpeg" alt="Welcome to MyTertiary ZA" loading="lazy" />
                     </div>
-                    <a href="student-login.html" class="btn btn-apply">Sign In / Register</a>
+                    <div class="guest-welcome-body">
+                        <div class="guest-welcome-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="guest-welcome-text">
+                            <strong>Welcome to MyTertiary ZA</strong>
+                            <p>Sign in or create a free account to unlock the university directory, APS calculator, study fields, saved favourites, and application tracking.</p>
+                        </div>
+                        <a href="student-login.html" class="btn btn-apply">Sign In / Register</a>
+                    </div>
                 </div>
 
                 <!-- LIVE ANNOUNCEMENTS (Firestore-driven featured banner) -->
