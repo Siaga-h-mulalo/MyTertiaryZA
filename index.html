@@ -29,14 +29,183 @@
 <meta name="twitter:title" content="MyTertiary ZA | Your University Journey Starts Here!" />
 <meta name="twitter:description" content="Find South African universities, colleges, applications, NSFAS information, matric results, APS guidance and tertiary study opportunities." />
     <link rel="canonical" href="https://mytertiaryza.co.za/" />
-  
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Auth gate + guest-mode rules -->
+    <style id="authGateStyle">
+      html, body { background: #ffffff; }
+      body { opacity: 0; }
+      body.auth-ready { opacity: 1; transition: opacity .2s ease; }
+
+      #authLoadingOverlay {
+        position: fixed; inset: 0; background: #ffffff;
+        display: flex; align-items: center; justify-content: center;
+        flex-direction: column; gap: 16px;
+        z-index: 99999;
+        font-family: 'Inter', system-ui, sans-serif;
+        color: #1e3a8a; font-weight: 600;
+        transition: opacity .25s ease;
+      }
+      #authLoadingOverlay.hide { opacity: 0; pointer-events: none; }
+      #authLoadingOverlay .spinner {
+        width: 44px; height: 44px;
+        border: 3px solid #dbeafe;
+        border-top-color: #2563eb;
+        border-radius: 50%;
+        animation: authSpin .8s linear infinite;
+      }
+      @keyframes authSpin { to { transform: rotate(360deg); } }
+
+      /* ============================================================
+         GUEST MODE — show only Announcements, University vs UoT, About
+         ============================================================ */
+
+      body.is-guest #home,
+      body.is-guest #directory,
+      body.is-guest #whatCanIStudy,
+      body.is-guest #finder,
+      body.is-guest #aps-calculator,
+      body.is-guest #resources,
+      body.is-guest #student-services {
+        display: none !important;
+      }
+
+      body.is-guest .guest-hide { display: none !important; }
+      body.is-signed-in .guest-only { display: none !important; }
+
+      body.is-guest .left-sidebar .nav-item[data-section="home"],
+      body.is-guest .left-sidebar .nav-item[data-section="directory"],
+      body.is-guest .left-sidebar .nav-item[data-section="whatCanIStudy"],
+      body.is-guest .left-sidebar .nav-item[data-section="finder"],
+      body.is-guest .left-sidebar .nav-item[data-section="aps-calculator"],
+      body.is-guest .left-sidebar .nav-item[data-section="resources"],
+      body.is-guest .left-sidebar .nav-item[data-section="student-services"] {
+        display: none !important;
+      }
+
+      body.is-guest .mobile-nav-item[data-target="home"],
+      body.is-guest .mobile-nav-item[data-target="directory"],
+      body.is-guest .mobile-nav-item[data-target="whatCanIStudy"],
+      body.is-guest .mobile-nav-item[data-target="aps-calculator"] {
+        display: none !important;
+      }
+
+      body.is-guest .mobile-drawer-item[data-target="home"],
+      body.is-guest .mobile-drawer-item[data-target="directory"],
+      body.is-guest .mobile-drawer-item[data-target="whatCanIStudy"],
+      body.is-guest .mobile-drawer-item[data-target="finder"],
+      body.is-guest .mobile-drawer-item[data-target="aps-calculator"],
+      body.is-guest .mobile-drawer-item[data-target="resources"],
+      body.is-guest .mobile-drawer-item[data-target="student-services"] {
+        display: none !important;
+      }
+
+      body.is-guest .top-bar .search-box { display: none !important; }
+
+      /* Guest welcome banner */
+      .guest-welcome {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.06);
+      }
+      .guest-welcome-icon {
+        width: 48px; height: 48px; flex-shrink: 0;
+        border-radius: 50%;
+        background: #2563eb; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem;
+      }
+      .guest-welcome-text { flex: 1; min-width: 0; }
+      .guest-welcome-text strong {
+        display: block; font-size: 0.95rem; color: #1e3a8a;
+      }
+      .guest-welcome-text p {
+        font-size: 0.8rem; color: #475569; margin-top: 2px; line-height: 1.4;
+      }
+      @media (max-width: 600px) {
+        .guest-welcome { flex-direction: column; text-align: center; }
+      }
+
+      /* Sign-in prompt modal */
+      #signInPromptModal {
+        position: fixed; inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center; justify-content: center;
+        z-index: 99998;
+        padding: 20px;
+      }
+      #signInPromptModal.show { display: flex; }
+      .signin-prompt-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px 24px 22px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(15,23,42,.35);
+        position: relative;
+        font-family: 'Inter', sans-serif;
+      }
+      .signin-prompt-close {
+        position: absolute; top: 10px; right: 10px;
+        background: #f1f5f9; border: none;
+        width: 30px; height: 30px; border-radius: 50%;
+        cursor: pointer; color: #475569;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.85rem;
+      }
+      .signin-prompt-close:hover { background: #e2e8f0; }
+      .signin-prompt-icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #2563eb;
+        font-size: 1.6rem;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 14px;
+      }
+      .signin-prompt-box h3 {
+        font-family: 'Merriweather', serif;
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 6px;
+      }
+      .signin-prompt-box p {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 18px;
+        line-height: 1.5;
+      }
+      .signin-prompt-actions {
+        display: flex; gap: 10px;
+      }
+      .signin-prompt-actions .btn {
+        flex: 1;
+        padding: 10px 16px;
+        font-size: 0.82rem;
+      }
+    </style>
 </head>
 <body>
+    <!-- Auth loading overlay — removed by student-auth-bridge.js once auth resolves -->
+    <div id="authLoadingOverlay" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <div>Loading…</div>
+    </div>
+
     <div class="app-wrapper">
 
         <!-- TOP BAR -->
@@ -50,45 +219,19 @@
                     <input type="search" id="topSearch" placeholder="Search..." aria-label="Search">
                 </div>
                 <div class="user-actions">
-                    <button class="icon-btn notif-btn" id="notifBtn" aria-label="Notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
-                    </button>
                     <button class="icon-btn" id="dashboardIconBtn" aria-label="Dashboard">
                         <i class="fas fa-gauge-high"></i>
                     </button>
-                    <span class="top-bar-word" id="topBarWord">
-                        <span id="topBarWordText">"Believe in the future"</span>
-                        <span class="admin">
-                            <span class="admin-avatar-sm">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
-                                <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                            </span>
-                            Admin 
-                        </span>
-                    </span>
+                    <a href="student-login.html" class="icon-btn" id="studentAuthBtn" aria-label="Sign in" title="Sign in">
+                        <i class="fas fa-user"></i>
+                    </a>
                     <span class="avatar" title="Admin " id="topBarAvatar">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23dbeafe'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%231d4ed8'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
                         <span class="avatar-fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
                     </span>
                 </div>
             </div>
         </header>
-
-        <!-- NOTIFICATION PANEL -->
-        <div class="notif-panel" id="notifPanel" aria-hidden="true">
-            <div class="notif-header">
-                <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
-                <button class="notif-close" id="notifClose" aria-label="Close"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="notif-list" id="notifList">
-                <div class="notif-empty">
-                    <i class="fas fa-bell-slash"></i>
-                    <p>No announcements right now.</p>
-                </div>
-            </div>
-        </div>
-        <div class="notif-overlay" id="notifOverlay"></div>
 
         <!-- BODY -->
         <div class="body-layout">
@@ -105,20 +248,31 @@
                 <a href="#resources" class="nav-item" data-section="resources"><i class="fas fa-book-open"></i> Resources</a>
                 <a href="#student-services" class="nav-item" data-section="student-services"><i class="fas fa-headset"></i> Student Services</a>
                 <a href="#about" class="nav-item" data-section="about"><i class="fas fa-info-circle"></i> About</a>
-                <div class="nav-divider"></div>
-                <div class="nav-label">Shortcuts</div>
-                <div class="shortcuts">
+
+                <div class="nav-divider guest-hide"></div>
+                <div class="nav-label guest-hide">Shortcuts</div>
+                <div class="shortcuts guest-hide">
                     <div class="shortcut-item" id="dashboardSidebarLink"><i class="fas fa-gauge-high"></i> Dashboard</div>
                     <div class="shortcut-item" id="compareSidebarLink">
                         <i class="fas fa-arrow-right-arrow-left"></i> Compare
                         <span class="compare-badge" id="compareBadge">0</span>
                     </div>
-                    <div class="shortcut-item"><i class="fas fa-file-alt"></i> My Applications</div>
+                    <div class="shortcut-item" id="myApplicationsLink"><i class="fas fa-file-alt"></i> My Applications</div>
                 </div>
             </nav>
 
             <!-- MAIN CONTENT -->
             <main class="main-content">
+
+                <!-- Guest welcome — visible only when logged out -->
+                <div class="guest-welcome guest-only">
+                    <div class="guest-welcome-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="guest-welcome-text">
+                        <strong>Welcome to MyTertiary ZA</strong>
+                        <p>Sign in or create a free account to unlock the university directory, APS calculator, study fields, saved favourites, and application tracking.</p>
+                    </div>
+                    <a href="student-login.html" class="btn btn-apply">Sign In / Register</a>
+                </div>
 
                 <!-- LIVE ANNOUNCEMENTS (Firestore-driven featured banner) -->
                 <div id="announcementsBar"></div>
@@ -148,7 +302,6 @@
                             <a href="#choose-path" class="btn btn-details"><i class="fas fa-arrows-split-up-and-left"></i> University vs UoT</a>
                         </div>
                     </div>
-                    <!-- Carousel -->
                     <div class="carousel-wrapper">
                         <div class="carousel-track" id="carouselTrack"></div>
                         <button class="carousel-btn prev" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
@@ -364,21 +517,6 @@
             <!-- RIGHT SIDEBAR -->
             <aside class="right-sidebar">
                 <div class="widget">
-                    <h4><i class="fas fa-star" style="color:var(--gold);"></i> Daily Word</h4>
-                    <div class="daily-word" id="dailyWordWidget">
-                        <div class="word" id="wordTitleWidget">BELIEVE</div>
-                        <div class="message" id="wordMessageWidget">"Believe in the future you are working towards."</div>
-                        <div class="extra" id="wordExtraWidget">Your journey starts with the decisions you make today.</div>
-                        <div class="admin-tag">
-                            <span class="admin-avatar-sm">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23fef7e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23dcae1f'%3E👤%3C/text%3E%3C/svg%3E" alt="Admin" style="width:100%;height:100%;object-fit:cover;display:block;">
-                                <span class="fallback" style="display:none;"><i class="fas fa-user-shield"></i></span>
-                            </span>
-                              Admin 
-                        </div>
-                    </div>
-                </div>
-                <div class="widget">
                     <h4><i class="fas fa-chart-simple"></i> Quick Stats</h4>
                     <div class="stat-item"><span class="label"><i class="fas fa-university"></i> Universities</span><span class="value">26</span></div>
                     <div class="stat-item"><span class="label"><i class="fas fa-map"></i> Provinces</span><span class="value">9</span></div>
@@ -389,19 +527,13 @@
                     <h4><i class="fas fa-lightbulb"></i> Quick Tip</h4>
                     <p style="font-size:0.85rem;color:var(--gray-600);">Start your research early. Check application deadlines and make sure you meet the subject requirements.</p>
                 </div>
-                <div class="widget">
+                <div class="widget guest-hide">
                     <h4><i class="fas fa-arrow-right"></i> Jump to</h4>
                     <div style="display:flex;flex-direction:column;gap:4px;">
                         <a href="#directory" style="padding:4px 0;color:var(--gray-700);text-decoration:none;font-size:0.8rem;"><i class="fas fa-university"></i> Universities</a>
                         <a href="#whatCanIStudy" style="padding:4px 0;color:var(--gray-700);text-decoration:none;font-size:0.8rem;"><i class="fas fa-graduation-cap"></i> Study Fields</a>
                         <a href="#aps-calculator" style="padding:4px 0;color:var(--gray-700);text-decoration:none;font-size:0.8rem;"><i class="fas fa-calculator"></i> APS Calculator</a>
                         <a href="#student-services" style="padding:4px 0;color:var(--gray-700);text-decoration:none;font-size:0.8rem;"><i class="fas fa-headset"></i> Student Services</a>
-                    </div>
-                </div>
-                <div class="widget">
-                    <h4><i class="fas fa-users"></i> Community</h4>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <a href="https://www.tiktok.com/@mytertiaryza" target="_blank" rel="noopener noreferrer" style="background:var(--gray-100);padding:4px 10px;border-radius:20px;font-size:0.7rem;color:var(--gray-700);text-decoration:none;"><i class="fab fa-tiktok"></i> 540</a>
                     </div>
                 </div>
             </aside>
@@ -432,7 +564,7 @@
                 <div><i class="fas fa-circle-exclamation"></i> Disclaimer: Independent platform. Verify all details with institutions.</div>
             </div>
             <div style="max-width:1400px;margin:8px auto 0;padding-top:8px;border-top:1px solid var(--gray-200);text-align:center;font-size:0.75rem;color:var(--gray-500);">
-                © 2026 MyTertiaryZA · Designed &amp; Developed by 
+                © 2026 MyTertiaryZA · Designed &amp; Developed by
                 <a href="#" id="developerLink" style="color:var(--gold-dark);font-weight:600;text-decoration:none;cursor:pointer;">Siaga Mulalo</a>
             </div>
         </footer>
@@ -457,6 +589,10 @@
             <i class="fas fa-calculator"></i>
             <span>APS</span>
         </button>
+        <a href="student-login.html" class="mobile-nav-item guest-only" id="mobileSignInBtn" aria-label="Sign In">
+            <i class="fas fa-user"></i>
+            <span>Sign In</span>
+        </a>
         <button class="mobile-nav-item mobile-nav-more" id="mobileNavMore" type="button" aria-label="Open more menu">
             <i class="fas fa-bars"></i>
             <span>More</span>
@@ -483,8 +619,8 @@
             <button class="mobile-drawer-item" data-target="student-services" type="button"><i class="fas fa-headset"></i> Student Services</button>
             <button class="mobile-drawer-item" data-target="about" type="button"><i class="fas fa-info-circle"></i> About</button>
         </nav>
-        <div class="mobile-drawer-divider"></div>
-        <div class="mobile-drawer-shortcuts">
+        <div class="mobile-drawer-divider guest-hide"></div>
+        <div class="mobile-drawer-shortcuts guest-hide">
             <button class="mobile-drawer-item" id="mobileDashboardBtn" type="button">
                 <i class="fas fa-gauge-high"></i> Dashboard
             </button>
@@ -498,6 +634,24 @@
     <button class="floating-home-btn" id="floatingHomeBtn" aria-label="Back to top">
         <i class="fas fa-home"></i>
     </button>
+
+    <!-- SIGN-IN PROMPT MODAL (for gated actions when guest) -->
+    <div id="signInPromptModal" aria-hidden="true" role="dialog" aria-labelledby="signInPromptTitle">
+        <div class="signin-prompt-box">
+            <button class="signin-prompt-close" data-prompt-close aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="signin-prompt-icon">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h3 id="signInPromptTitle">Sign in to continue</h3>
+            <p>Create a free student account or sign in to save universities, compare options, and apply.</p>
+            <div class="signin-prompt-actions">
+                <button class="btn btn-details" data-prompt-close type="button">Not now</button>
+                <button class="btn btn-apply" data-prompt-signin type="button">Sign In / Register</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODALS -->
     <div class="modal" id="detailModal" aria-hidden="true">
@@ -554,7 +708,10 @@
     <!-- FIREBASE (must load BEFORE script.js) -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="data-layer.js"></script>
+    <script type="module" src="student-auth-bridge.js"></script>
+    <script type="module" src="apply-handler.js"></script>
 
     <script src="script.js"></script>
+
 </body>
 </html>
